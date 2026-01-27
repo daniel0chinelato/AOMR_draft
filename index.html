@@ -237,40 +237,43 @@
         }
 
                 .vs-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 100;
-            font-size: 6vh;
+            position: static;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20vh;
             font-weight: 900;
             color: #fff;
             text-transform: uppercase;
-            letter-spacing: 5px;
+            letter-spacing: 20px;
             pointer-events: none;
             font-family: 'Cinzel', serif;
-            text-shadow: 0 0 20px rgba(52, 152, 219, 0.8),
-                         0 0 40px rgba(231, 76, 60, 0.8),
-                         0 3px 15px rgba(0,0,0,0.9);
+            text-shadow: 0 0 60px rgba(52, 152, 219, 1),
+                         0 0 120px rgba(231, 76, 60, 1),
+                         0 10px 35px rgba(0,0,0,0.9);
             animation: vsGlow 3s ease-in-out infinite;
+            line-height: 1;
+            margin: 0;
+            padding: 0 2vw;
+            align-self: center;
         }
 
         @keyframes vsGlow {
             0%, 100% {
-                text-shadow: 0 0 20px rgba(52, 152, 219, 0.8),
-                             0 0 40px rgba(231, 76, 60, 0.8),
-                             0 3px 15px rgba(0,0,0,0.9);
+                text-shadow: 0 0 60px rgba(52, 152, 219, 1),
+                             0 0 120px rgba(231, 76, 60, 1),
+                             0 10px 35px rgba(0,0,0,0.9);
             }
             50% {
-                text-shadow: 0 0 35px rgba(52, 152, 219, 1),
-                             0 0 70px rgba(231, 76, 60, 1),
-                             0 3px 20px rgba(0,0,0,0.9);
+                text-shadow: 0 0 90px rgba(52, 152, 219, 1),
+                             0 0 180px rgba(231, 76, 60, 1),
+                             0 10px 45px rgba(0,0,0,0.9);
             }
         }
 
         .main-container { display: flex; flex-direction: column; width: 98vw; max-width: 1900px; justify-content: flex-start; align-items: center; gap: 1vh; flex: 1; padding-bottom: 20px; }
         
-        .god-groups-container { display: flex; justify-content: center; gap: 4vw; width: 100%; perspective: 1000px; flex-wrap: wrap; }
+        .god-groups-container { display: flex; justify-content: center; align-items: center; gap: 4vw; width: 100%; perspective: 1000px; flex-wrap: wrap; position: relative; }
         .god-group { display: flex; gap: 0.8vw; justify-content: center; width: 45%; min-width: 300px; }
         .god-group.mirror-layout { flex-direction: row-reverse; }
         
@@ -570,6 +573,39 @@
         .selectable-card.picked-overlay::after { content: "USADO"; position: absolute; color: #f1c40f; font-weight: 900; font-family: sans-serif; font-size: 1.2em; transform: rotate(-25deg); text-shadow: 0 2px 10px black; border: 3px solid #f1c40f; padding: 5px 10px; border-radius: 4px; opacity: 0.8; }
         .selectable-card.protected-overlay::after { content: "EM JOGO"; position: absolute; color: #3498db; font-weight: 900; font-family: sans-serif; font-size: 1.2em; transform: rotate(-25deg); text-shadow: 0 2px 10px black; border: 3px solid #3498db; padding: 5px 10px; border-radius: 4px; opacity: 0.8; }
         .selectable-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s;}
+        
+        .selectable-card.selected {
+            border: 3px solid var(--text-gold) !important;
+            background: rgba(241, 196, 15, 0.2);
+            box-shadow: 0 0 30px rgba(241, 196, 15, 0.6), 0 10px 30px rgba(0,0,0,0.8);
+            transform: scale(1.08);
+            z-index: 20;
+        }
+        
+        .selectable-card.selected::before {
+            content: "✓ SELECIONADO";
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-gold);
+            color: #000;
+            font-weight: 900;
+            font-family: 'Cinzel', serif;
+            font-size: 0.7em;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            z-index: 10;
+            animation: checkmarkPulse 0.5s ease-out;
+        }
+        
+        @keyframes checkmarkPulse {
+            0% { transform: translateX(-50%) scale(0); opacity: 0; }
+            50% { transform: translateX(-50%) scale(1.2); }
+            100% { transform: translateX(-50%) scale(1); opacity: 1; }
+        }
+        
         .card-name-overlay { position: absolute; bottom: 0; width: 100%; background: linear-gradient(to top, black, transparent); color: #fff; font-size: 0.8em; text-align: center; padding: 8px 0; font-weight: 700; text-shadow: 0 1px 3px black; }
 
         
@@ -631,6 +667,90 @@
         .ready-btn:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.05); }
         .ready-box.ready { border-color: #2ecc71; box-shadow: 0 0 40px rgba(46, 204, 113, 0.1); }
         .ready-box.ready .ready-btn { background: #27ae60; border-color: #2ecc71; color: white; cursor: default; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+
+        /* Estilos para links do lobby */
+        .lobby-links-container {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 15px 25px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 85%;
+        }
+
+        .lobby-link-item {
+            margin-bottom: 10px;
+        }
+
+        .lobby-link-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .lobby-link-item label {
+            display: block;
+            color: #fff;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .lobby-link-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .lobby-link-input-group input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 7px 12px;
+            border-radius: 4px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.75em;
+            transition: 0.3s;
+        }
+
+        .lobby-link-input-group input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .lobby-copy-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #fff;
+            padding: 7px 15px;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.3s;
+            font-size: 0.7em;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .lobby-copy-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .lobby-copy-btn.copied {
+            background: #27ae60;
+            border-color: #2ecc71;
+            color: #fff;
+        }
 
         @media (max-width: 768px) {
             /* Esconder VS header original no mobile */
@@ -694,22 +814,6 @@
                 color: var(--p2-color);
                 text-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
                 white-space: nowrap;
-                display: block !important;
-            }
-            
-            /* VS entre P1 e P2 */
-            .god-group.p1-group::after {
-                content: "VS";
-                position: absolute;
-                bottom: -20px;
-                left: 50%;
-                transform: translateX(-50%);
-                font-size: 2em;
-                font-weight: 900;
-                color: var(--text-gold);
-                text-shadow: 0 0 15px rgba(241, 196, 15, 0.6);
-                letter-spacing: 3px;
-                z-index: 10;
                 display: block !important;
             }
             
@@ -936,7 +1040,7 @@
             }
 
             .vs-center {
-                font-size: 5vh;
+                font-size: 12vh;
             }
         }
 
@@ -996,7 +1100,16 @@
             }
 
             .vs-center {
-                display: none;
+                position: relative;
+                display: block;
+                font-size: 6vh;
+                letter-spacing: 6px;
+                padding: 25px 0;
+                margin: 0;
+                text-align: center;
+                text-shadow: 0 0 30px rgba(52, 152, 219, 1),
+                             0 0 60px rgba(231, 76, 60, 1),
+                             0 5px 20px rgba(0,0,0,0.9);
             }
 
             .god-slot {
@@ -1119,7 +1232,25 @@
     </div>
 
     <div id="readyOverlay" class="ready-check-overlay">
-        <h1 style="color:#fff; margin-bottom:50px; font-size: 3.5em; text-shadow: 0 0 20px rgba(0,0,0,0.8); letter-spacing: 5px; text-align:center;">LOBBY DE ESPERA</h1>
+        <h1 style="color:#fff; margin-bottom:20px; font-size: 3.5em; text-shadow: 0 0 20px rgba(0,0,0,0.8); letter-spacing: 5px; text-align:center;">LOBBY DE ESPERA</h1>
+        
+        <div id="lobbyLinks" class="lobby-links-container" style="display:none;">
+            <div class="lobby-link-item">
+                <label>LINK JOGADOR 2:</label>
+                <div class="lobby-link-input-group">
+                    <input type="text" id="linkP2Lobby" readonly>
+                    <button class="lobby-copy-btn" onclick="copyLobbyLink('linkP2Lobby', this)">COPIAR</button>
+                </div>
+            </div>
+            <div class="lobby-link-item">
+                <label>LINK ESPECTADOR:</label>
+                <div class="lobby-link-input-group">
+                    <input type="text" id="linkSpecLobby" readonly>
+                    <button class="lobby-copy-btn" onclick="copyLobbyLink('linkSpecLobby', this)">COPIAR</button>
+                </div>
+            </div>
+        </div>
+        
         <div class="ready-container">
             <div id="p1ReadyBox" class="ready-box">
                 <h2>JOGADOR 1</h2>
@@ -1162,9 +1293,9 @@
     </div>
 
     <div class="vs-header">
-        <input class="p1-name" id="p1NameInput" value="[CAOK] LIGHT" oninput="syncPlayerName('p1', this.value)">
+        <input class="p1-name" id="p1NameInput" oninput="syncPlayerName('p1', this.value)">
         <div id="timerDisplay" class="timer-display">45</div>
-        <input class="p2-name" id="p2NameInput" value="[CAOK] PAIN" oninput="syncPlayerName('p2', this.value)">
+        <input class="p2-name" id="p2NameInput" oninput="syncPlayerName('p2', this.value)">
     </div>
 
     <div class="timeline-container">
@@ -1378,7 +1509,6 @@
         let currentDraftId = null; 
 
         function syncPlayerName(player, value) {
-        updateGodGroupNames();
             if (player === 'p1') {
                 state.p1Name = value;
             } else if (player === 'p2') {
@@ -1387,8 +1517,10 @@
             
             if (!isOfflineMode && myRole === 'host') {
                 broadcastState();
-            } else if (!isOfflineMode && myRole === 'p2') {
+            } else if (!isOfflineMode && myRole === 'p2' && player === 'p2') {
                 sendAction('UPDATE_NAME', { player: player, name: value });
+            } else if (isOfflineMode) {
+                render();
             }
         }
 
@@ -1630,6 +1762,7 @@
         }
 
         function init() {
+            updatePlayerNames();
             if (!lobbyID) {
                 myRole = 'host'; 
                 document.getElementById('hostPanel').style.display = 'block'; 
@@ -1905,8 +2038,11 @@
                 if (msg.payload.player === 'p2') state.p2Name = msg.payload.name;
             }
             else if (msg.action === 'RESET') {
-                state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [], p1Name: "[CAOK] LIGHT", p2Name: "[CAOK] PAIN" };
+                const currentP1Name = state.p1Name || "[CAOK] LIGHT";
+                const currentP2Name = state.p2Name || "[CAOK] PAIN";
+                state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [], p1Name: currentP1Name, p2Name: currentP2Name };
                 document.getElementById('logContainer').innerHTML = '';
+                updatePlayerNames();
             }
             broadcastState();
         }
@@ -1981,15 +2117,49 @@
 
                 if (disabled) c.classList.add('card-disabled');
                 c.innerHTML = "<img src='" + d.img + "' onerror=\"this.style.display='none'; this.parentNode.innerHTML+='<span style=\\'color:red;font-size:0.7em\\'>IMG ERR</span>'\"><div class='card-name-overlay'>" + d.n + "</div>";
-                if (!disabled) c.onclick = function() { selectItem(d); };
+                if (!disabled) {
+                    c.onclick = function(event) { 
+                        selectItem(d, event.currentTarget); 
+                    };
+                }
                 grid.appendChild(c);
             });
+            
             const modal = document.getElementById('selectionModal');
             modal.style.display = 'flex';
             setTimeout(function() { modal.classList.add('show'); }, 10);
         }
 
-        function selectItem(data) {
+        function selectItem(data, cardElement) {
+            // No mobile, fecha modal e mostra botão de confirmar (comportamento original mantido)
+            if (window.innerWidth <= 768) {
+                // Remover seleção anterior
+                document.querySelectorAll('.selectable-card.selected').forEach(function(card) {
+                    card.classList.remove('selected');
+                });
+                
+                // Adicionar classe selected no card clicado (feedback visual antes de fechar)
+                if (cardElement) {
+                    cardElement.classList.add('selected');
+                }
+                
+                // Aguardar animação de seleção antes de fechar
+                setTimeout(function() {
+                    closeModal();
+                    state.selections[currentModalTarget] = data;
+                    render();
+                    
+                    // Mostrar botão de confirmar embaixo (comportamento original)
+                    let currentPhase = TIMELINE[state.phaseIndex];
+                    let p1Need = currentPhase.p1 && !state.p1Ready;
+                    let p2Need = currentPhase.p2 && !state.p2Ready;
+                    if(p1Need || p2Need) document.getElementById('confirmBtn').style.display = 'block';
+                }, 400);
+                
+                return;
+            }
+            
+            // Desktop - comportamento original
             closeModal();
             if (isOfflineMode || (myRole === 'host' && connections.length === 0)) {
                 state.selections[currentModalTarget] = data;
@@ -2002,6 +2172,7 @@
                 sendAction('SELECT', { slot: currentModalTarget, data: data });
             }
         }
+        
 
         function confirmTurn() {
             document.getElementById('confirmBtn').style.display = 'none';
@@ -2244,6 +2415,7 @@
                         console.log("Tempo limite excedido. Forçando modo offline.");
                         isOfflineMode = true;
                         document.getElementById('linkP2').value = "MODO OFFLINE (Auto)";
+                        document.getElementById('linkP2Lobby').value = "MODO OFFLINE (Auto)";
                         render();
                     }
                 }, 3000);
@@ -2252,13 +2424,25 @@
                 peer.on('open', function(id) {
                     clearTimeout(connectionTimeout);
                     const u = window.location.href.split('?')[0];
-                    document.getElementById('linkP2').value = u + '?lobby=' + id + '&role=p2';
-                    document.getElementById('linkSpec').value = u + '?lobby=' + id + '&role=spec';
+                    const p2Link = u + '?lobby=' + id + '&role=p2';
+                    const specLink = u + '?lobby=' + id + '&role=spec';
+                    
+                    // Preencher campos do painel host (canto inferior esquerdo)
+                    document.getElementById('linkP2').value = p2Link;
+                    document.getElementById('linkSpec').value = specLink;
+                    
+                    // Preencher campos do lobby (tela de espera)
+                    document.getElementById('linkP2Lobby').value = p2Link;
+                    document.getElementById('linkSpecLobby').value = specLink;
+                    
+                    // Mostrar seção de links no lobby
+                    document.getElementById('lobbyLinks').style.display = 'block';
                 });
                 peer.on('error', function(e) { 
                     clearTimeout(connectionTimeout);
                     isOfflineMode = true; 
                     document.getElementById('linkP2').value = "MODO OFFLINE (Err)"; 
+                    document.getElementById('linkP2Lobby').value = "MODO OFFLINE (Err)";
                     render();
                 });
                 peer.on('connection', function(c) {
@@ -2311,6 +2495,21 @@
             }, 2000);
         }
 
+        function copyLobbyLink(id, btnElement) { 
+            const i = document.getElementById(id); 
+            i.select(); 
+            document.execCommand('copy'); 
+            
+            const originalText = btnElement.innerText;
+            btnElement.innerText = "COPIADO!";
+            btnElement.classList.add('copied');
+            
+            setTimeout(function() {
+                btnElement.innerText = originalText;
+                btnElement.classList.remove('copied');
+            }, 2000);
+        }
+
         function closeModal(e) { 
             if(e && e.target !== document.getElementById('selectionModal')) return; 
             document.getElementById('selectionModal').classList.remove('show'); 
@@ -2320,7 +2519,9 @@
         function resetDraft() { 
             if(confirm("Reset?")) { 
                 if(isOfflineMode) { 
-                    state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [], p1Name: "[CAOK] LIGHT", p2Name: "[CAOK] PAIN" }; 
+                    const currentP1Name = state.p1Name || "[CAOK] LIGHT";
+                    const currentP2Name = state.p2Name || "[CAOK] PAIN";
+                    state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [], p1Name: currentP1Name, p2Name: currentP2Name }; 
                     document.getElementById('logContainer').innerHTML = '';
                     updatePlayerNames();
                     render(); 
