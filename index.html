@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AoM Retold - Draft System</title>
+    <title>AoM Retold - Draft V63 (Mobile Fixed)</title>
+    
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700;900&display=swap" rel="stylesheet">
+    
     <style>
-
         :root {
             --bg-body: #050505;
             --text-gold: #f1c40f;
@@ -235,43 +237,40 @@
         }
 
                 .vs-center {
-            position: static;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20vh;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            font-size: 6vh;
             font-weight: 900;
             color: #fff;
             text-transform: uppercase;
-            letter-spacing: 20px;
+            letter-spacing: 5px;
             pointer-events: none;
             font-family: 'Cinzel', serif;
-            text-shadow: 0 0 60px rgba(52, 152, 219, 1),
-                         0 0 120px rgba(231, 76, 60, 1),
-                         0 10px 35px rgba(0,0,0,0.9);
+            text-shadow: 0 0 20px rgba(52, 152, 219, 0.8),
+                         0 0 40px rgba(231, 76, 60, 0.8),
+                         0 3px 15px rgba(0,0,0,0.9);
             animation: vsGlow 3s ease-in-out infinite;
-            line-height: 1;
-            margin: 0;
-            padding: 0 2vw;
-            align-self: center;
         }
 
         @keyframes vsGlow {
             0%, 100% {
-                text-shadow: 0 0 60px rgba(52, 152, 219, 1),
-                             0 0 120px rgba(231, 76, 60, 1),
-                             0 10px 35px rgba(0,0,0,0.9);
+                text-shadow: 0 0 20px rgba(52, 152, 219, 0.8),
+                             0 0 40px rgba(231, 76, 60, 0.8),
+                             0 3px 15px rgba(0,0,0,0.9);
             }
             50% {
-                text-shadow: 0 0 90px rgba(52, 152, 219, 1),
-                             0 0 180px rgba(231, 76, 60, 1),
-                             0 10px 45px rgba(0,0,0,0.9);
+                text-shadow: 0 0 35px rgba(52, 152, 219, 1),
+                             0 0 70px rgba(231, 76, 60, 1),
+                             0 3px 20px rgba(0,0,0,0.9);
             }
         }
 
         .main-container { display: flex; flex-direction: column; width: 98vw; max-width: 1900px; justify-content: flex-start; align-items: center; gap: 1vh; flex: 1; padding-bottom: 20px; }
         
-        .god-groups-container { display: flex; justify-content: center; align-items: center; gap: 4vw; width: 100%; perspective: 1000px; flex-wrap: wrap; position: relative; }
+        .god-groups-container { display: flex; justify-content: center; gap: 4vw; width: 100%; perspective: 1000px; flex-wrap: wrap; }
         .god-group { display: flex; gap: 0.8vw; justify-content: center; width: 45%; min-width: 300px; }
         .god-group.mirror-layout { flex-direction: row-reverse; }
         
@@ -571,39 +570,6 @@
         .selectable-card.picked-overlay::after { content: "USADO"; position: absolute; color: #f1c40f; font-weight: 900; font-family: sans-serif; font-size: 1.2em; transform: rotate(-25deg); text-shadow: 0 2px 10px black; border: 3px solid #f1c40f; padding: 5px 10px; border-radius: 4px; opacity: 0.8; }
         .selectable-card.protected-overlay::after { content: "EM JOGO"; position: absolute; color: #3498db; font-weight: 900; font-family: sans-serif; font-size: 1.2em; transform: rotate(-25deg); text-shadow: 0 2px 10px black; border: 3px solid #3498db; padding: 5px 10px; border-radius: 4px; opacity: 0.8; }
         .selectable-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s;}
-        
-        .selectable-card.selected {
-            border: 3px solid var(--text-gold) !important;
-            background: rgba(241, 196, 15, 0.2);
-            box-shadow: 0 0 30px rgba(241, 196, 15, 0.6), 0 10px 30px rgba(0,0,0,0.8);
-            transform: scale(1.08);
-            z-index: 20;
-        }
-        
-        .selectable-card.selected::before {
-            content: "✓ SELECIONADO";
-            position: absolute;
-            top: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--text-gold);
-            color: #000;
-            font-weight: 900;
-            font-family: 'Cinzel', serif;
-            font-size: 0.7em;
-            padding: 3px 8px;
-            border-radius: 4px;
-            letter-spacing: 1px;
-            z-index: 10;
-            animation: checkmarkPulse 0.5s ease-out;
-        }
-        
-        @keyframes checkmarkPulse {
-            0% { transform: translateX(-50%) scale(0); opacity: 0; }
-            50% { transform: translateX(-50%) scale(1.2); }
-            100% { transform: translateX(-50%) scale(1); opacity: 1; }
-        }
-        
         .card-name-overlay { position: absolute; bottom: 0; width: 100%; background: linear-gradient(to top, black, transparent); color: #fff; font-size: 0.8em; text-align: center; padding: 8px 0; font-weight: 700; text-shadow: 0 1px 3px black; }
 
         
@@ -812,6 +778,22 @@
                 color: var(--p2-color);
                 text-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
                 white-space: nowrap;
+                display: block !important;
+            }
+            
+            /* VS entre P1 e P2 */
+            .god-group.p1-group::after {
+                content: "VS";
+                position: absolute;
+                bottom: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 2em;
+                font-weight: 900;
+                color: var(--text-gold);
+                text-shadow: 0 0 15px rgba(241, 196, 15, 0.6);
+                letter-spacing: 3px;
+                z-index: 10;
                 display: block !important;
             }
             
@@ -1038,7 +1020,7 @@
             }
 
             .vs-center {
-                font-size: 12vh;
+                font-size: 5vh;
             }
         }
 
@@ -1098,16 +1080,7 @@
             }
 
             .vs-center {
-                position: relative;
-                display: block;
-                font-size: 6vh;
-                letter-spacing: 6px;
-                padding: 25px 0;
-                margin: 0;
-                text-align: center;
-                text-shadow: 0 0 30px rgba(52, 152, 219, 1),
-                             0 0 60px rgba(231, 76, 60, 1),
-                             0 5px 20px rgba(0,0,0,0.9);
+                display: none;
             }
 
             .god-slot {
@@ -1216,11 +1189,530 @@
             }
         }
 
-    
+        /* ============================================ */
+        /* TELA DE TRANSIÇÃO ÉPICA */
+        /* ============================================ */
+        .epic-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 20000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .epic-transition.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .epic-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+            animation: epicBgPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes epicBgPulse {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+
+        .epic-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 60%, white, transparent),
+                radial-gradient(1px 1px at 33% 80%, white, transparent);
+            background-size: 200% 200%;
+            animation: particlesFloat 20s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes particlesFloat {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        .epic-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .epic-title {
+            font-size: 5em;
+            font-weight: 900;
+            color: var(--text-gold);
+            text-shadow: 0 0 30px rgba(241, 196, 15, 0.8), 0 0 60px rgba(241, 196, 15, 0.4);
+            letter-spacing: 15px;
+            margin-bottom: 20px;
+            animation: epicTitleEntrance 1s ease-out, epicTitleGlow 2s ease-in-out infinite 1s;
+            text-align: center;
+        }
+
+        @keyframes epicTitleEntrance {
+            0% { opacity: 0; transform: scale(0.5) translateY(-50px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes epicTitleGlow {
+            0%, 100% { text-shadow: 0 0 30px rgba(241, 196, 15, 0.8), 0 0 60px rgba(241, 196, 15, 0.4); }
+            50% { text-shadow: 0 0 50px rgba(241, 196, 15, 1), 0 0 100px rgba(241, 196, 15, 0.6); }
+        }
+
+        .epic-subtitle {
+            font-size: 1.5em;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            letter-spacing: 3px;
+            margin-bottom: 60px;
+            animation: epicSubtitleEntrance 1s ease-out 0.3s backwards;
+        }
+
+        @keyframes epicSubtitleEntrance {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .epic-vs {
+            display: flex;
+            align-items: center;
+            gap: 80px;
+            margin-bottom: 80px;
+            animation: epicVsEntrance 1s ease-out 0.6s backwards;
+        }
+
+        @keyframes epicVsEntrance {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .epic-player {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            min-width: 300px;
+        }
+
+        .player-epic-name {
+            font-size: 2.5em;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px currentColor;
+            animation: epicNamePulse 2s ease-in-out infinite;
+        }
+
+        .p1-epic .player-epic-name {
+            color: var(--p1-color);
+        }
+
+        .p2-epic .player-epic-name {
+            color: var(--p2-color);
+        }
+
+        @keyframes epicNamePulse {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.05); filter: brightness(1.3); }
+        }
+
+        .player-epic-gods {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .player-epic-gods img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            animation: epicGodFloat 3s ease-in-out infinite;
+            animation-delay: calc(var(--i) * 0.2s);
+        }
+
+        .p1-epic .player-epic-gods img {
+            border-color: var(--p1-color);
+        }
+
+        .p2-epic .player-epic-gods img {
+            border-color: var(--p2-color);
+        }
+
+        @keyframes epicGodFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .epic-vs-symbol {
+            font-size: 6em;
+            animation: epicVsRotate 4s linear infinite, epicVsGlow 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(241, 196, 15, 0.8));
+        }
+
+        @keyframes epicVsRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes epicVsGlow {
+            0%, 100% { filter: drop-shadow(0 0 30px rgba(241, 196, 15, 0.8)) brightness(1); }
+            50% { filter: drop-shadow(0 0 50px rgba(241, 196, 15, 1)) brightness(1.5); }
+        }
+
+        .epic-loading {
+            width: 600px;
+            max-width: 90%;
+            animation: epicLoadingEntrance 1s ease-out 1s backwards;
+        }
+
+        @keyframes epicLoadingEntrance {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .epic-loading-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);
+        }
+
+        .epic-loading-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--text-gold), #fff, var(--text-gold));
+            background-size: 200% 100%;
+            animation: epicLoadingProgress 3s ease-out forwards, epicLoadingShine 1.5s linear infinite;
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--text-gold);
+        }
+
+        @keyframes epicLoadingProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes epicLoadingShine {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
+        }
+
+        .epic-loading-text {
+            text-align: center;
+            color: #fff;
+            font-size: 1.2em;
+            margin-top: 15px;
+            letter-spacing: 2px;
+            animation: epicLoadingTextBlink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes epicLoadingTextBlink {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* ============================================ */
+        /* TELA DE SELEÇÃO DE JOGOS */
+        /* ============================================ */
+        .game-selection-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('fundooo.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: 15000;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .game-selection-screen::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: -1;
+        }
+
+        .game-selection-screen.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .game-selection-header {
+            text-align: center;
+            padding: 40px 20px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .game-selection-header h1 {
+            font-size: 4em;
+            color: var(--text-gold);
+            text-shadow: 0 0 30px rgba(241, 196, 15, 0.6);
+            letter-spacing: 10px;
+            margin: 0 0 15px 0;
+        }
+
+        .game-selection-subtitle {
+            font-size: 1.3em;
+            color: #fff;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+
+        .maps-game-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .map-game-card {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            animation: cardEntrance 0.6s ease-out backwards;
+            animation-delay: calc(var(--i) * 0.1s);
+            transition: all 0.3s ease;
+        }
+
+        .map-game-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(241, 196, 15, 0.5);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.7), 0 0 30px rgba(241, 196, 15, 0.2);
+        }
+
+        @keyframes cardEntrance {
+            0% { opacity: 0; transform: translateX(-50px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .map-game-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .map-game-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            border: 3px solid rgba(241, 196, 15, 0.5);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            object-fit: cover;
+        }
+
+        .map-game-info {
+            flex: 1;
+        }
+
+        .map-game-name {
+            font-size: 2em;
+            color: var(--text-gold);
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .map-game-label {
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 1px;
+        }
+
+        .map-game-selector {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .game-number-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 1.8em;
+            font-weight: bold;
+            padding: 20px 35px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+            min-width: 100px;
+        }
+
+        .game-number-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+
+        .game-number-btn.selected {
+            background: linear-gradient(135deg, var(--text-gold), #ffeb3b);
+            border-color: var(--text-gold);
+            color: #000;
+            box-shadow: 0 0 30px rgba(241, 196, 15, 0.6), 0 5px 20px rgba(0,0,0,0.5);
+            transform: scale(1.1);
+        }
+
+        .game-selection-footer {
+            text-align: center;
+            padding: 40px 20px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .finalize-games-btn {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: none;
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: bold;
+            padding: 20px 60px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 3px;
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .finalize-games-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(46, 204, 113, 0.6);
+        }
+
+        .finalize-games-btn:active {
+            transform: translateY(0);
+        }
+
+        .finalize-games-btn:disabled {
+            background: rgba(100, 100, 100, 0.5);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .epic-title {
+                font-size: 2.5em;
+                letter-spacing: 5px;
+            }
+
+            .epic-subtitle {
+                font-size: 1em;
+            }
+
+            .epic-vs {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .player-epic-name {
+                font-size: 1.8em;
+            }
+
+            .epic-vs-symbol {
+                font-size: 4em;
+            }
+
+            .game-selection-header h1 {
+                font-size: 2.5em;
+                letter-spacing: 5px;
+            }
+
+            .map-game-card {
+                padding: 20px;
+            }
+
+            .map-game-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .map-game-image {
+                width: 100px;
+                height: 100px;
+            }
+
+            .map-game-name {
+                font-size: 1.5em;
+            }
+
+            .game-number-btn {
+                font-size: 1.5em;
+                padding: 15px 25px;
+                min-width: 80px;
+            }
+
+            .finalize-games-btn {
+                font-size: 1.2em;
+                padding: 15px 40px;
+            }
+        }
+
     </style>
 </head>
 <body>
-
 
     <div id="hostPanel" class="host-panel">
         <div class="host-container">
@@ -1387,954 +1879,1322 @@
         </div>
     </div>
 
-    
-<script>
-// ============================================================================
-// AOM RETOLD DRAFT SYSTEM - CLEAN VERSION
-// ============================================================================
+    <!-- Tela de Transição Épica -->
+    <div id="epicTransition" class="epic-transition">
+        <div class="epic-bg"></div>
+        <div class="epic-particles"></div>
+        <div class="epic-content">
+            <div class="epic-title">DRAFT COMPLETO</div>
+            <div class="epic-subtitle">Preparando para o Confronto</div>
+            <div class="epic-vs">
+                <div class="epic-player p1-epic">
+                    <div class="player-epic-name" id="epicP1Name"></div>
+                    <div class="player-epic-gods" id="epicP1Gods"></div>
+                </div>
+                <div class="epic-vs-symbol">⚔️</div>
+                <div class="epic-player p2-epic">
+                    <div class="player-epic-name" id="epicP2Name"></div>
+                    <div class="player-epic-gods" id="epicP2Gods"></div>
+                </div>
+            </div>
+            <div class="epic-loading">
+                <div class="epic-loading-bar">
+                    <div class="epic-loading-fill"></div>
+                </div>
+                <div class="epic-loading-text">Carregando...</div>
+            </div>
+        </div>
+    </div>
 
-'use strict';
-
-// ============================================================================
-// 1. DADOS E CONFIGURAÇÃO
-// ============================================================================
-
-const GODS = [
-    {n:"Zeus", img:"zeus_portrait.png"}, {n:"Poseidon", img:"poseidon_portrait.png"}, {n:"Hades", img:"hades_portrait.png"},
-    {n:"Isis", img:"isis_portrait.png"}, {n:"Ra", img:"ra_portrait.png"}, {n:"Set", img:"set_portrait.png"},
-    {n:"Odin", img:"odin_portrait.png"}, {n:"Thor", img:"thor_portrait.png"}, {n:"Loki", img:"loki_portrait.png"}, {n:"Freyr", img:"freyr_portrait.png"},
-    {n:"Kronos", img:"kronos_portrait.png"}, {n:"Gaia", img:"gaia_portrait.png"}, {n:"Oranos", img:"oranos_portrait.png"},
-    {n:"Fu Xi", img:"fuxi_portrait.png"}, {n:"Nu Wa", img:"nuwa_portrait.png"}, {n:"Shennong", img:"shennong_portrait.png"},
-    {n:"Amaterasu", img:"amaterasu_portrait.png"}, {n:"Tsukuyomi", img:"tsukuyomi_portrait.png"}, {n:"Susanoo", img:"susanoo_portrait.png"}
-];
-
-const MAPS = [
-    {n:"Air", img:"https://i.ibb.co/nsmbmGX9/air.png"}, {n:"Alfheim", img:"https://i.ibb.co/8gLtp62y/alfheim.png"},
-    {n:"Blue Lagoon", img:"https://i.ibb.co/RpYKNMK7/blue-lagoon.png"}, {n:"Elysium", img:"https://i.ibb.co/JW3DNSC2/elysium.png"},
-    {n:"Ghost Lake", img:"https://i.ibb.co/7ttqfhXs/ghost-lake.png"}, {n:"Giza", img:"https://i.ibb.co/s9nc4qyq/giza.png"},
-    {n:"Kii", img:"https://i.ibb.co/VWZwbrvJ/kii.png"}, {n:"Marsh", img:"https://i.ibb.co/rKV4bTYq/marsh.png"},
-    {n:"Mediterranean", img:"https://i.ibb.co/MDN5Qynb/mediterranean.png"}, {n:"Megalopolis", img:"https://i.ibb.co/b5b9XhQ2/megalopolis.png"},
-    {n:"Nile Shallows", img:"https://i.ibb.co/dsRLZMQ9/nile-shallows.png"}, {n:"Oasis", img:"https://i.ibb.co/vRfNt3N/oasis.png"},
-    {n:"Savannah", img:"https://i.ibb.co/rG5mywpB/savannah.png"}, {n:"Steppe", img:"https://i.ibb.co/fG1Hc99D/steppe.png"},
-    {n:"Tundra", img:"https://i.ibb.co/k2yfvvvQ/tundra.png"}, {n:"Valley of Kings", img:"https://i.ibb.co/C33ZV2Qp/valley-of-kings.png"},
-    {n:"Watering Hole", img:"https://i.ibb.co/N6WMy1xr/watering-hole.png"}
-];
-
-const TIMELINE = [
-    {label:"G1 PICK", p1:"p1-god-0", p2:"p2-god-0", type:"BLIND_PICK"}, {label:"G1 REVEAL", type:"REVEAL_STEP"},
-    {label:"P1 BAN GOD 1", p1:"p1-bangod-0", p2:null, type:"BAN"}, {label:"P2 BAN GOD 1", p1:null, p2:"p2-bangod-0", type:"BAN"},
-    {label:"P2 BAN GOD 2", p1:null, p2:"p2-bangod-1", type:"BAN"}, {label:"P1 BAN GOD 2", p1:"p1-bangod-1", p2:null, type:"BAN"},
-    {label:"P1 BAN GOD 3", p1:"p1-bangod-2", p2:null, type:"BAN"}, {label:"P2 BAN GOD 3", p1:null, p2:"p2-bangod-2", type:"BAN"},
-    {label:"G2 PICK", p1:"p1-god-1", p2:"p2-god-1", type:"BLIND_PICK"}, {label:"G2 REVEAL", type:"REVEAL_STEP"},
-    {label:"G3 PICK", p1:"p1-god-2", p2:"p2-god-2", type:"BLIND_PICK"}, {label:"G3 REVEAL", type:"REVEAL_STEP"},
-    {label:"G4 PICK", p1:"p1-god-3", p2:"p2-god-3", type:"BLIND_PICK"}, {label:"G4 REVEAL", type:"REVEAL_STEP"},
-    {label:"G5 PICK", p1:"p1-god-4", p2:"p2-god-4", type:"BLIND_PICK"}, {label:"G5 REVEAL", type:"REVEAL_STEP"},
-    {label:"P1 BAN MAP 1", p1:"p1-banmap-0", p2:null, type:"BAN"}, {label:"P2 BAN MAP 1", p1:null, p2:"p2-banmap-0", type:"BAN"},
-    {label:"P2 BAN MAP 2", p1:null, p2:"p2-banmap-1", type:"BAN"}, {label:"P1 BAN MAP 2", p1:"p1-banmap-1", p2:null, type:"BAN"},
-    {label:"P1 BAN MAP 3", p1:"p1-banmap-2", p2:null, type:"BAN"}, {label:"P2 BAN MAP 3", p1:null, p2:"p2-banmap-2", type:"BAN"},
-    {label:"PICK MAP 1", p1:"map-0", p2:null, type:"PICK_MAP"}, {label:"PICK MAP 2", p1:null, p2:"map-3", type:"PICK_MAP"},
-    {label:"PICK MAP 3", p1:"map-1", p2:null, type:"PICK_MAP"}, {label:"PICK MAP 4", p1:null, p2:"map-4", type:"PICK_MAP"},
-    {label:"DECIDER", p1:"DECIDER", p2:"DECIDER", type:"DECIDER"}, {label:"FINAL", p1:null, p2:null}
-];
-
-const GOD_BLOCKS = [
-    {label:"PICK", type:"PICK", phases:[0]}, {label:"REVEAL", type:"REVEAL", phases:[]},
-    {label:"BAN 1", type:"BAN", phases:[2,3]}, {label:"BAN 2", type:"BAN", phases:[4,5]}, {label:"BAN 3", type:"BAN", phases:[6,7]},
-    {label:"PICK", type:"PICK", phases:[8,9,10,11,12,13,14,15]}, {label:"REVEAL", type:"REVEAL", phases:[]}
-];
-
-const MAP_BLOCKS = [
-    {label:"BAN 1", type:"BAN", phases:[16,17]}, {label:"BAN 2", type:"BAN", phases:[18,19]}, {label:"BAN 3", type:"BAN", phases:[20,21]},
-    {label:"PICK", type:"PICK", phases:[22]}, {label:"PICK", type:"PICK", phases:[23]},
-    {label:"PICK", type:"PICK", phases:[24]}, {label:"PICK", type:"PICK", phases:[25]}, {label:"REVEAL", type:"REVEAL", phases:[26]}
-];
-
-// ============================================================================
-// 2. ESTADO GLOBAL
-// ============================================================================
-
-const state = {
-    phaseIndex: -1,
-    p1Ready: false,
-    p2Ready: false,
-    p1Presence: false,
-    p2Presence: false,
-    p1Name: "[CAOK] LIGHT",
-    p2Name: "[CAOK] PAIN",
-    selections: {},
-    logs: []
-};
-
-let myRole = 'host';
-let peer = null;
-let connections = [];
-let isOfflineMode = false;
-let currentModalTarget = null;
-let currentContext = 'GODS';
-
-let timerInterval = null;
-let timeLeft = 45;
-let isTransitioning = false;
-
-// ============================================================================
-// 3. INICIALIZAÇÃO
-// ============================================================================
-
-function init() {
-    const params = new URLSearchParams(window.location.search);
-    const lobbyID = params.get('lobby');
-    const roleParam = params.get('role');
-
-    if (!lobbyID) {
-        myRole = 'host';
-        document.getElementById('hostPanel').style.display = 'block';
-        setupHost();
-    } else {
-        myRole = roleParam || 'spec';
-        setupClient(lobbyID);
-        if (myRole === 'spec') {
-            document.getElementById('specBanner').style.display = 'block';
-            document.body.classList.add('spectator-mode');
-        }
-    }
-    render();
-}
-
-function setupHost() {
-    const timeout = setTimeout(() => {
-        if (!peer || !peer.id) {
-            console.log('⚠️ Timeout - entrando em modo offline');
-            isOfflineMode = true;
-            updateLinkFields('MODO OFFLINE');
-            render();
-        }
-    }, 5000);
-
-    try {
-        peer = new Peer({
-            debug: 1,
-            config: { iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:global.stun.twilio.com:3478' }
-            ]}
-        });
-
-        peer.on('error', (err) => {
-            console.error('❌ Erro PeerJS:', err);
-            clearTimeout(timeout);
-            isOfflineMode = true;
-            updateLinkFields('MODO OFFLINE (Erro)');
-            render();
-        });
-
-        peer.on('open', (id) => {
-            console.log('✅ Host ID:', id);
-            clearTimeout(timeout);
-            
-            const baseUrl = window.location.href.split('?')[0];
-            const p2Link = `${baseUrl}?lobby=${id}&role=p2`;
-            const specLink = `${baseUrl}?lobby=${id}&role=spec`;
-
-            setTimeout(() => {
-                const els = {
-                    linkP2: document.getElementById('linkP2'),
-                    linkSpec: document.getElementById('linkSpec'),
-                    linkP2Lobby: document.getElementById('linkP2Lobby'),
-                    linkSpecLobby: document.getElementById('linkSpecLobby'),
-                    lobbyLinks: document.getElementById('lobbyLinks')
-                };
-
-                if (els.linkP2) els.linkP2.value = p2Link;
-                if (els.linkSpec) els.linkSpec.value = specLink;
-                if (els.linkP2Lobby) els.linkP2Lobby.value = p2Link;
-                if (els.linkSpecLobby) els.linkSpecLobby.value = specLink;
-                if (els.lobbyLinks) els.lobbyLinks.style.display = 'block';
-
-                console.log('✅ Links atualizados');
-            }, 100);
-        });
-
-        peer.on('connection', (conn) => {
-            console.log('🔗 Nova conexão');
-            connections.push(conn);
-            
-            conn.on('open', () => {
-                console.log('✅ Conexão aberta');
-                conn.send({type:'STATE', state:state});
-            });
-            
-            conn.on('data', (data) => {
-                if (data.type === 'ACTION') processHostAction(data);
-            });
-            
-            conn.on('error', (err) => console.error('❌ Erro conexão:', err));
-        });
-    } catch (err) {
-        console.error('❌ Erro setupHost:', err);
-        clearTimeout(timeout);
-        isOfflineMode = true;
-        render();
-    }
-}
-
-function setupClient(lobbyId) {
-    try {
-        peer = new Peer({
-            debug: 1,
-            config: { iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:global.stun.twilio.com:3478' }
-            ]}
-        });
-
-        peer.on('open', () => {
-            const conn = peer.connect(lobbyId);
-            connections.push(conn);
-            
-            conn.on('open', () => console.log('✅ Conectado ao host'));
-            
-            conn.on('data', (data) => {
-                if (data.type === 'STATE') {
-                    const oldPhase = state.phaseIndex;
-                    Object.assign(state, data.state);
-                    render();
-                    
-                    if (oldPhase !== state.phaseIndex && state.phaseIndex < TIMELINE.length - 1) {
-                        startTimer();
-                    }
-                }
-            });
-            
-            conn.on('error', (err) => console.error('❌ Erro cliente:', err));
-        });
-
-        peer.on('error', (err) => {
-            console.error('❌ Erro conexão:', err);
-            alert('Falha ao conectar');
-        });
-    } catch (err) {
-        console.error('❌ Erro setupClient:', err);
-    }
-}
-
-function updateLinkFields(message) {
-    ['linkP2', 'linkSpec', 'linkP2Lobby', 'linkSpecLobby'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = message;
-    });
-}
-
-// ============================================================================
-// 4. TIMER
-// ============================================================================
-
-function startTimer() {
-    clearInterval(timerInterval);
-    timeLeft = 45;
-
-    const el = document.getElementById('timerDisplay');
-    if (!el) return;
-    
-    el.textContent = "45";
-    el.classList.remove('timer-urgent');
-    el.classList.add('timer-resetting');
-    setTimeout(() => el.classList.remove('timer-resetting'), 500);
-
-    const phase = TIMELINE[state.phaseIndex];
-    if (!phase || phase.type.includes("REVEAL") || phase.type === "DECIDER" || state.phaseIndex >= 27) {
-        el.style.display = 'none';
-        return;
-    }
-
-    el.style.display = 'block';
-
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        el.textContent = timeLeft;
+    <!-- Tela de Seleção de Jogos nos Mapas -->
+    <div id="gameSelection" class="game-selection-screen">
+        <div class="game-selection-header">
+            <h1>SELEÇÃO DE JOGOS</h1>
+            <div class="game-selection-subtitle">Escolha o número do jogo em cada mapa</div>
+        </div>
         
-        if (timeLeft <= 10) el.classList.add('timer-urgent');
-        else el.classList.remove('timer-urgent');
+        <div class="maps-game-container" id="mapsGameContainer">
+            <!-- Será preenchido dinamicamente -->
+        </div>
 
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            handleTimeout();
+        <div class="game-selection-footer">
+            <button id="btnFinalizeGames" class="finalize-games-btn" onclick="finalizeGameSelection()">FINALIZAR CONFIGURAÇÃO</button>
+        </div>
+    </div>
+
+    <script>
+        const godsData = [
+            {n:"Zeus", img:"zeus_portrait.png"}, {n:"Poseidon", img:"poseidon_portrait.png"}, {n:"Hades", img:"hades_portrait.png"},
+            {n:"Isis", img:"isis_portrait.png"}, {n:"Ra", img:"ra_portrait.png"}, {n:"Set", img:"set_portrait.png"},
+            {n:"Odin", img:"odin_portrait.png"}, {n:"Thor", img:"thor_portrait.png"}, {n:"Loki", img:"loki_portrait.png"}, {n:"Freyr", img:"freyr_portrait.png"},
+            {n:"Kronos", img:"kronos_portrait.png"}, {n:"Gaia", img:"gaia_portrait.png"}, {n:"Oranos", img:"oranos_portrait.png"},
+            {n:"Fu Xi", img:"fuxi_portrait.png"}, {n:"Nu Wa", img:"nuwa_portrait.png"}, {n:"Shennong", img:"shennong_portrait.png"},
+            {n:"Amaterasu", img:"amaterasu_portrait.png"}, {n:"Tsukuyomi", img:"tsukuyomi_portrait.png"}, {n:"Susanoo", img:"susanoo_portrait.png"}
+        ];
+
+        const mapsData = [
+            {n:"Air", img:"https://i.ibb.co/nsmbmGX9/air.png"}, {n:"Alfheim", img:"https://i.ibb.co/8gLtp62y/alfheim.png"},
+            {n:"Blue Lagoon", img:"https://i.ibb.co/RpYKNMK7/blue-lagoon.png"}, {n:"Elysium", img:"https://i.ibb.co/JW3DNSC2/elysium.png"},
+            {n:"Ghost Lake", img:"https://i.ibb.co/7ttqfhXs/ghost-lake.png"}, {n:"Giza", img:"https://i.ibb.co/s9nc4qyq/giza.png"},
+            {n:"Kii", img:"https://i.ibb.co/VWZwbrvJ/kii.png"}, {n:"Marsh", img:"https://i.ibb.co/rKV4bTYq/marsh.png"},
+            {n:"Mediterranean", img:"https://i.ibb.co/MDN5Qynb/mediterranean.png"}, {n:"Megalopolis", img:"https://i.ibb.co/b5b9XhQ2/megalopolis.png"},
+            {n:"Nile Shallows", img:"https://i.ibb.co/dsRLZMQ9/nile-shallows.png"}, {n:"Oasis", img:"https://i.ibb.co/vRfNt3N/oasis.png"},
+            {n:"Savannah", img:"https://i.ibb.co/rG5mywpB/savannah.png"}, {n:"Steppe", img:"https://i.ibb.co/fG1Hc99D/steppe.png"},
+            {n:"Tundra", img:"https://i.ibb.co/k2yfvvvQ/tundra.png"}, {n:"Valley of Kings", img:"https://i.ibb.co/C33ZV2Qp/valley-of-kings.png"},
+            {n:"Watering Hole", img:"https://i.ibb.co/N6WMy1xr/watering-hole.png"}
+        ];
+
+        const GOD_BLOCKS = [
+            { label: "PICK", type: "PICK", phases: [0] }, 
+            { label: "REVEAL", type: "REVEAL", phases: [] }, 
+            { label: "BAN 1", type: "BAN", phases: [2, 3] }, 
+            { label: "BAN 2", type: "BAN", phases: [4, 5] }, 
+            { label: "BAN 3", type: "BAN", phases: [6, 7] }, 
+            { label: "PICK", type: "PICK", phases: [8,9,10,11,12,13,14,15] }, 
+            { label: "REVEAL", type: "REVEAL", phases: [] }
+        ];
+        
+        const MAP_BLOCKS = [
+            { label: "BAN 1", type: "BAN", phases: [16, 17] }, 
+            { label: "BAN 2", type: "BAN", phases: [18, 19] }, 
+            { label: "BAN 3", type: "BAN", phases: [20, 21] }, 
+            { label: "PICK", type: "PICK", phases: [22] }, 
+            { label: "PICK", type: "PICK", phases: [23] }, 
+            { label: "PICK", type: "PICK", phases: [24] }, 
+            { label: "PICK", type: "PICK", phases: [25] }, 
+            { label: "REVEAL", type: "REVEAL", phases: [26] }
+        ];
+
+        function getTimelineState(phase) {
+            let context = 'GODS';
+            let index = 0;
+            if (phase < 16) { 
+                context = 'GODS';
+                if (phase === 0) index = 0; 
+                else if (phase === 1) index = 1; 
+                else if (phase <= 3) index = 2; 
+                else if (phase <= 5) index = 3; 
+                else if (phase <= 7) index = 4; 
+                else if (phase <= 14) index = 5; 
+                else if (phase === 15) index = 6;
+            } else { 
+                context = 'MAPS';
+                if (phase <= 17) index = 0; 
+                else if (phase <= 19) index = 1; 
+                else if (phase <= 21) index = 2; 
+                else if (phase === 22) index = 3; 
+                else if (phase === 23) index = 4; 
+                else if (phase === 24) index = 5; 
+                else if (phase === 25) index = 6; 
+                else if (phase >= 26) index = 7;
+            }
+            return { context, index };
         }
-    }, 1000);
-}
 
-function handleTimeout() {
-    if (isTransitioning) return;
-    
-    const phase = TIMELINE[state.phaseIndex];
-    if (!phase) return;
+        const TIMELINE = [
+            { label: "G1 PICK", p1: "p1-god-0", p2: "p2-god-0", type: "BLIND_PICK" }, 
+            { label: "G1 REVEAL", type: "REVEAL_STEP" },
+            { label: "P1 BAN GOD 1", p1: "p1-bangod-0", p2: null, type: "BAN" }, 
+            { label: "P2 BAN GOD 1", p1: null, p2: "p2-bangod-0", type: "BAN" },
+            { label: "P2 BAN GOD 2", p1: null, p2: "p2-bangod-1", type: "BAN" }, 
+            { label: "P1 BAN GOD 2", p1: "p1-bangod-1", p2: null, type: "BAN" },
+            { label: "P1 BAN GOD 3", p1: "p1-bangod-2", p2: null, type: "BAN" }, 
+            { label: "P2 BAN GOD 3", p1: null, p2: "p2-bangod-2", type: "BAN" },
+            { label: "G2 PICK", p1: "p1-god-1", p2: "p2-god-1", type: "BLIND_PICK" }, 
+            { label: "G2 REVEAL", type: "REVEAL_STEP" },
+            { label: "G3 PICK", p1: "p1-god-2", p2: "p2-god-2", type: "BLIND_PICK" }, 
+            { label: "G3 REVEAL", type: "REVEAL_STEP" },
+            { label: "G4 PICK", p1: "p1-god-3", p2: "p2-god-3", type: "BLIND_PICK" }, 
+            { label: "G4 REVEAL", type: "REVEAL_STEP" },
+            { label: "G5 PICK", p1: "p1-god-4", p2: "p2-god-4", type: "BLIND_PICK" }, 
+            { label: "G5 REVEAL", type: "REVEAL_STEP" },
+            { label: "P1 BAN MAP 1", p1: "p1-banmap-0", p2: null, type: "BAN" }, 
+            { label: "P2 BAN MAP 1", p1: null, p2: "p2-banmap-0", type: "BAN" },
+            { label: "P2 BAN MAP 2", p1: null, p2: "p2-banmap-1", type: "BAN" }, 
+            { label: "P1 BAN MAP 2", p1: "p1-banmap-1", p2: null, type: "BAN" },
+            { label: "P1 BAN MAP 3", p1: "p1-banmap-2", p2: null, type: "BAN" }, 
+            { label: "P2 BAN MAP 3", p1: null, p2: "p2-banmap-2", type: "BAN" },
+            { label: "PICK MAP 1", p1: "map-0", p2: null, type: "PICK_MAP" }, 
+            { label: "PICK MAP 2", p1: null, p2: "map-3", type: "PICK_MAP" },
+            { label: "PICK MAP 3", p1: "map-1", p2: null, type: "PICK_MAP" }, 
+            { label: "PICK MAP 4", p1: null, p2: "map-4", type: "PICK_MAP" },
+            { label: "DECIDER", p1: "DECIDER", p2: "DECIDER", type: "DECIDER" }, 
+            { label: "FINAL", p1: null, p2: null }
+        ];
 
-    if (isOfflineMode || myRole === 'host') {
-        if (phase.p1 && !state.p1Ready) {
-            const data = getRandomFor(phase.p1);
-            if (data) processHostAction({action:'SELECT_RANDOM', payload:{slot:phase.p1, data:data}});
-        }
-        if (phase.p2 && !state.p2Ready) {
-            const data = getRandomFor(phase.p2);
-            if (data) processHostAction({action:'SELECT_RANDOM', payload:{slot:phase.p2, data:data}});
-        }
-    }
-}
+        let state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [], p1Name: "[CAOK] LIGHT", p2Name: "[CAOK] PAIN" };
+        let myRole = 'host'; 
+        let peer = null; 
+        let connections = []; 
+        let currentModalTarget = null;
+        let isOfflineMode = false;
+        let currentContext = 'GODS';
+        
+        let timerInterval = null;
+        let timeLeft = 45;
+        let isTransitioning = false;
 
-// ============================================================================
-// 5. AÇÕES DO USUÁRIO
-// ============================================================================
+        let replayHistory = []; 
+        let replayIndex = -1; 
+        let isReplayMode = false; 
+        let replayInterval = null; 
+        let replaySpeed = 1; 
+        let isRecording = false; 
+        let recordingStartTime = 0;
+        let currentDraftId = null; 
 
-function toggleReady(player) {
-    if (window.toggleReadyLock) return;
-    
-    window.toggleReadyLock = true;
-    setTimeout(() => { window.toggleReadyLock = false; }, 500);
-
-    let allowed = false;
-
-    if (isOfflineMode) {
-        allowed = true;
-    } else {
-        if (myRole === 'host') {
-            if (player === 'p1') allowed = true;
-            if (player === 'p2' && connections.length === 0) allowed = true;
-        }
-        if (myRole === 'p2' && player === 'p2') allowed = true;
-    }
-
-    if (allowed) {
-        if (isOfflineMode) {
-            if (player === 'p1') state.p1Presence = !state.p1Presence;
-            if (player === 'p2') state.p2Presence = !state.p2Presence;
-            checkReadyStart();
-            render();
-        } else {
-            sendAction('TOGGLE_READY', {player:player});
-        }
-    }
-}
-
-function checkReadyStart() {
-    if (state.p1Presence && state.p2Presence) {
-        setTimeout(() => {
-            state.phaseIndex = 0;
-            if (!isOfflineMode) {
+        function syncPlayerName(player, value) {
+            if (player === 'p1') {
+                state.p1Name = value;
+            } else if (player === 'p2') {
+                state.p2Name = value;
+            }
+            
+            if (!isOfflineMode && myRole === 'host') {
                 broadcastState();
-                if (myRole === 'host') startTimer();
-            } else {
-                startTimer();
+            } else if (!isOfflineMode && myRole === 'p2' && player === 'p2') {
+                sendAction('UPDATE_NAME', { player: player, name: value });
+            } else if (isOfflineMode) {
                 render();
             }
-        }, 500);
-    }
-}
-
-function clickSlot(player, type, index) {
-    if (state.phaseIndex === -1) return;
-    
-    const slotId = (player === 'map') ? `map-${index}` : `${player}-${type}-${index}`;
-    const phase = TIMELINE[state.phaseIndex];
-    
-    if (!phase || phase.type.includes("REVEAL") || phase.type === "DECIDER") return;
-
-    let owner = null;
-    if (slotId === phase.p1) owner = 'p1';
-    if (slotId === phase.p2) owner = 'p2';
-    if (!owner) return;
-
-    let hasPermission = false;
-    if (isOfflineMode) hasPermission = true;
-    else {
-        if (myRole === 'host' && owner === 'p1') hasPermission = true;
-        if (myRole === 'p2' && owner === 'p2') hasPermission = true;
-        if (myRole === 'host' && owner === 'p2' && connections.length === 0) hasPermission = true;
-    }
-
-    if (owner === 'p1' && state.p1Ready) hasPermission = false;
-    if (owner === 'p2' && state.p2Ready) hasPermission = false;
-
-    if (hasPermission) openModal(slotId, type, owner);
-}
-
-function confirmTurn() {
-    document.getElementById('confirmBtn').style.display = 'none';
-    
-    if (isOfflineMode || (myRole === 'host' && connections.length === 0)) {
-        const phase = TIMELINE[state.phaseIndex];
-        if (phase.p1) state.p1Ready = true;
-        if (phase.p2) state.p2Ready = true;
-        checkPhaseAdvance();
-        render();
-    } else {
-        sendAction('CONFIRM', null);
-    }
-}
-
-function syncPlayerName(player, value) {
-    if (player === 'p1') state.p1Name = value;
-    else if (player === 'p2') state.p2Name = value;
-
-    if (!isOfflineMode && myRole === 'host') {
-        broadcastState();
-    } else if (!isOfflineMode && myRole === 'p2') {
-        sendAction('UPDATE_NAME', {player:player, name:value});
-    }
-}
-
-function resetDraft() {
-    if (!confirm('Resetar?')) return;
-
-    if (isOfflineMode) {
-        Object.assign(state, {
-            phaseIndex: -1, p1Ready: false, p2Ready: false,
-            p1Presence: false, p2Presence: false,
-            p1Name: "[CAOK] LIGHT", p2Name: "[CAOK] PAIN",
-            selections: {}, logs: []
-        });
-        document.getElementById('logContainer').innerHTML = '';
-        render();
-    } else {
-        sendAction('RESET', null);
-    }
-}
-
-// ============================================================================
-// 6. LÓGICA DE FASE
-// ============================================================================
-
-function checkPhaseAdvance() {
-    const phase = TIMELINE[state.phaseIndex];
-    const p1OK = !phase.p1 || state.p1Ready;
-    const p2OK = !phase.p2 || state.p2Ready;
-
-    if (p1OK && p2OK) {
-        clearInterval(timerInterval);
-        isTransitioning = true;
-        document.getElementById('timerDisplay').textContent = "--";
-
-        if (phase.p1 && state.selections[phase.p1]) {
-            const item = state.selections[phase.p1];
-            addLogEntry('p1', phase.p1.includes('ban') ? 'baniu' : 'escolheu', item.n, item.isRandom || false);
-        }
-        if (phase.p2 && state.selections[phase.p2]) {
-            const item = state.selections[phase.p2];
-            addLogEntry('p2', phase.p2.includes('ban') ? 'baniu' : 'escolheu', item.n, item.isRandom || false);
         }
 
-        renderLogs();
+        function updatePlayerNames() {
+            if (document.getElementById('p1NameInput').value !== state.p1Name) {
+                document.getElementById('p1NameInput').value = state.p1Name;
+            }
+            if (document.getElementById('p2NameInput').value !== state.p2Name) {
+                document.getElementById('p2NameInput').value = state.p2Name;
+            }
+        }
 
-        setTimeout(() => {
-            state.phaseIndex++;
-            state.p1Ready = false;
-            state.p2Ready = false;
-            isTransitioning = false;
+        function generateDraftId() {
+            return 'draft_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
 
-            if (TIMELINE[state.phaseIndex].type === "REVEAL_STEP") {
-                if (isOfflineMode) render();
-                else broadcastState();
-                
-                setTimeout(() => {
-                    state.phaseIndex++;
-                    if (isOfflineMode) { render(); startTimer(); }
-                    else { broadcastState(); if (myRole === 'host') startTimer(); }
-                }, 3000);
+        function saveDraftToStorage() {
+            if (replayHistory.length === 0) return;
+            
+            const draftData = {
+                id: currentDraftId,
+                timestamp: Date.now(),
+                date: new Date().toLocaleString('pt-BR'),
+                p1Name: state.p1Name,
+                p2Name: state.p2Name,
+                snapshots: replayHistory,
+                totalActions: replayHistory.length
+            };
+            
+            localStorage.setItem('currentDraft', JSON.stringify(draftData));
+            
+            let savedDrafts = JSON.parse(localStorage.getItem('savedDrafts') || '[]');
+            
+            const existingIndex = savedDrafts.findIndex(d => d.id === currentDraftId);
+            if (existingIndex >= 0) {
+                savedDrafts[existingIndex] = draftData;
+            } else {
+                savedDrafts.push(draftData);
+            }
+            
+            if (savedDrafts.length > 20) {
+                savedDrafts = savedDrafts.slice(-20);
+            }
+            
+            localStorage.setItem('savedDrafts', JSON.stringify(savedDrafts));
+            
+            console.log('Draft salvo: ' + draftData.totalActions + ' acoes');
+        }
+
+        function loadDraftFromStorage(draftId) {
+            const savedDrafts = JSON.parse(localStorage.getItem('savedDrafts') || '[]');
+            const draft = savedDrafts.find(d => d.id === draftId);
+            
+            if (!draft) {
+                alert('Draft não encontrado!');
+                return false;
+            }
+            
+            replayHistory = draft.snapshots;
+            currentDraftId = draft.id;
+            state.p1Name = draft.p1Name;
+            state.p2Name = draft.p2Name;
+            updatePlayerNames();
+            
+            console.log('Draft carregado: ' + draft.totalActions + ' acoes');
+            enterReplayMode();
+            return true;
+        }
+
+        function loadLastDraft() {
+            const currentDraft = localStorage.getItem('currentDraft');
+            if (!currentDraft) return false;
+            
+            const draft = JSON.parse(currentDraft);
+            replayHistory = draft.snapshots;
+            currentDraftId = draft.id;
+            state.p1Name = draft.p1Name;
+            state.p2Name = draft.p2Name;
+            updatePlayerNames();
+            
+            console.log('Ultimo draft carregado: ' + draft.totalActions + ' acoes');
+            return true;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const lobbyID = params.get('lobby');
+        const roleParam = params.get('role');
+        const draftParam = params.get('draft'); 
+        
+        function saveSnapshot() {
+            if (!isRecording && myRole !== 'spec') return;
+            
+            const snapshot = {
+                timestamp: Date.now(),
+                state: JSON.parse(JSON.stringify(state)),
+                p1Name: state.p1Name,
+                p2Name: state.p2Name
+            };
+            
+            replayHistory.push(snapshot);
+            updateReplayUI();
+            
+            if (replayHistory.length % 3 === 0) {
+                saveDraftToStorage();
+            }
+        }
+
+        function generateShareableLink() {
+            if (!currentDraftId) return null;
+            
+            const baseUrl = window.location.href.split('?')[0];
+            return baseUrl + '?role=spec&draft=' + currentDraftId;
+        }
+
+        function enterReplayMode() {
+            if (replayHistory.length === 0) return;
+            
+            isReplayMode = true;
+            replayIndex = 0;
+            loadReplaySnapshot(0);
+            updateReplayUI();
+        }
+
+        function exitReplayMode() {
+            isReplayMode = false;
+            stopReplayPlay();
+            replayIndex = -1;
+            updateReplayUI();
+        }
+
+        function loadReplaySnapshot(index) {
+            if (index < 0 || index >= replayHistory.length) return;
+            
+            const snapshot = replayHistory[index];
+            state = JSON.parse(JSON.stringify(snapshot.state)); 
+            state.p1Name = snapshot.p1Name;
+            state.p2Name = snapshot.p2Name;
+            updatePlayerNames();
+            
+            document.getElementById('logContainer').innerHTML = '';
+            
+            replayIndex = index;
+            render();
+            updateReplayUI();
+        }
+
+        function replayRewind() {
+            if (replayHistory.length === 0) {
+                alert('Nenhuma gravação disponível. Clique em "Gravar" durante um draft.');
+                return;
+            }
+            
+            stopReplayPlay();
+            if (!isReplayMode) enterReplayMode();
+            loadReplaySnapshot(0);
+        }
+
+        function replayTogglePlay() {
+            if (replayHistory.length === 0) {
+                alert('Nenhuma gravação disponível. Clique em "Gravar" durante um draft.');
                 return;
             }
 
-            if (TIMELINE[state.phaseIndex].type === "DECIDER") autoPickDecider();
-
-            if (state.phaseIndex >= TIMELINE.length - 1) {
-                console.log('🎉 Draft finalizado');
-            }
-
-            if (isOfflineMode) { render(); startTimer(); }
-            else { broadcastState(); if (myRole === 'host') startTimer(); }
-        }, 500);
-    }
-}
-
-function autoPickDecider() {
-    const forbidden = Object.values(state.selections).map(s => s.n);
-    const available = MAPS.filter(m => !forbidden.includes(m.n));
-    
-    if (available.length > 0) {
-        const picked = available[Math.floor(Math.random() * available.length)];
-        state.selections['map-2'] = picked;
-        
-        setTimeout(() => {
-            state.phaseIndex++;
-            if (isOfflineMode) render();
-            else broadcastState();
-        }, 1500);
-    }
-}
-
-function addLogEntry(player, action, itemName, isRandom) {
-    const pName = player === 'p1' ? state.p1Name : state.p2Name;
-    state.logs.push({player:player, name:pName, action:action, item:itemName, isRandom:isRandom});
-}
-
-// ============================================================================
-// 7. REDE P2P
-// ============================================================================
-
-function sendAction(action, payload) {
-    const msg = {type:'ACTION', action:action, payload:payload, role:myRole};
-    if (myRole === 'host') processHostAction(msg);
-    else if (connections[0]) connections[0].send(msg);
-}
-
-function processHostAction(msg) {
-    if (msg.action === 'SELECT') {
-        state.selections[msg.payload.slot] = msg.payload.data;
-    } else if (msg.action === 'SELECT_RANDOM') {
-        state.selections[msg.payload.slot] = {...msg.payload.data, isRandom:true};
-        const phase = TIMELINE[state.phaseIndex];
-        if (phase.p1 === msg.payload.slot) state.p1Ready = true;
-        if (phase.p2 === msg.payload.slot) state.p2Ready = true;
-        checkPhaseAdvance();
-    } else if (msg.action === 'CONFIRM') {
-        if (msg.role === 'host' || msg.role === 'p1') state.p1Ready = true;
-        if (msg.role === 'p2') state.p2Ready = true;
-        checkPhaseAdvance();
-    } else if (msg.action === 'TOGGLE_READY') {
-        if (msg.payload.player === 'p1') state.p1Presence = !state.p1Presence;
-        if (msg.payload.player === 'p2') state.p2Presence = !state.p2Presence;
-        checkReadyStart();
-    } else if (msg.action === 'UPDATE_NAME') {
-        if (msg.payload.player === 'p1') state.p1Name = msg.payload.name;
-        if (msg.payload.player === 'p2') state.p2Name = msg.payload.name;
-    } else if (msg.action === 'RESET') {
-        Object.assign(state, {
-            phaseIndex: -1, p1Ready: false, p2Ready: false,
-            p1Presence: false, p2Presence: false,
-            p1Name: "[CAOK] LIGHT", p2Name: "[CAOK] PAIN",
-            selections: {}, logs: []
-        });
-        document.getElementById('logContainer').innerHTML = '';
-    }
-    broadcastState();
-}
-
-function broadcastState() {
-    render();
-    connections.forEach(c => c.send({type:'STATE', state:state}));
-}
-
-// ============================================================================
-// 8. MODAL DE SELEÇÃO
-// ============================================================================
-
-function openModal(slotId, type, activePlayer) {
-    currentModalTarget = slotId;
-    const grid = document.getElementById('modalGrid');
-    grid.innerHTML = '';
-    
-    const list = (type === 'map' || type === 'banmap') ? MAPS : GODS;
-    
-    let bannedNames = [];
-    let myUsedNames = [];
-    let globalUsedMaps = [];
-    let opponentPickedGods = [];
-    const opponentPrefix = (activePlayer === 'p1') ? 'p2-' : 'p1-';
-
-    Object.keys(state.selections).forEach(key => {
-        const item = state.selections[key];
-        if (!item) return;
-        if (key.includes('ban')) bannedNames.push(item.n);
-        else {
-            if (key.includes('god')) {
-                if (key.startsWith(opponentPrefix)) opponentPickedGods.push(item.n);
-                if (key.startsWith(activePlayer + '-god-')) myUsedNames.push(item.n);
-            }
-            if (key.startsWith('map-')) globalUsedMaps.push(item.n);
-        }
-    });
-
-    list.forEach(d => {
-        const c = document.createElement('div');
-        c.className = 'selectable-card';
-        if (type.includes('map')) c.classList.add('is-map-card');
-
-        let disabled = false;
-        if (bannedNames.includes(d.n)) { disabled = true; c.classList.add('banned-overlay'); }
-        if (type === 'bangod' && opponentPickedGods.includes(d.n)) { disabled = true; c.classList.add('protected-overlay'); }
-        if (type.includes('map') && globalUsedMaps.includes(d.n)) { disabled = true; c.classList.add('picked-overlay'); }
-        if (type === 'god' && myUsedNames.includes(d.n)) { disabled = true; c.classList.add('picked-overlay'); }
-
-        if (disabled) c.classList.add('card-disabled');
-        
-        c.innerHTML = `<img src="${d.img}" onerror="this.style.display='none'"><div class="card-name-overlay">${d.n}</div>`;
-        if (!disabled) c.onclick = () => selectItem(d);
-        grid.appendChild(c);
-    });
-
-    const modal = document.getElementById('selectionModal');
-    modal.style.display = 'flex';
-    setTimeout(() => modal.classList.add('show'), 10);
-}
-
-function selectItem(data) {
-    closeModal();
-    
-    if (isOfflineMode || (myRole === 'host' && connections.length === 0)) {
-        state.selections[currentModalTarget] = data;
-        render();
-        
-        const phase = TIMELINE[state.phaseIndex];
-        const p1Need = phase.p1 && !state.p1Ready;
-        const p2Need = phase.p2 && !state.p2Ready;
-        if (p1Need || p2Need) document.getElementById('confirmBtn').style.display = 'block';
-    } else {
-        sendAction('SELECT', {slot:currentModalTarget, data:data});
-    }
-}
-
-function closeModal(event) {
-    if (event && event.target !== document.getElementById('selectionModal')) return;
-    const modal = document.getElementById('selectionModal');
-    modal.classList.remove('show');
-    setTimeout(() => modal.style.display = 'none', 300);
-}
-
-// ============================================================================
-// 9. HELPERS
-// ============================================================================
-
-function getRandomFor(slotId, tempExclusions) {
-    if (!tempExclusions) tempExclusions = [];
-    if (!slotId) return null;
-    
-    const type = slotId.includes('god') ? 'god' : 'map';
-    let activePlayer = slotId.startsWith('p1') ? 'p1' : (slotId.startsWith('p2') ? 'p2' : null);
-    if (!activePlayer) {
-        const ph = TIMELINE[state.phaseIndex];
-        if (ph.p1 === slotId) activePlayer = 'p1';
-        else if (ph.p2 === slotId) activePlayer = 'p2';
-    }
-
-    const list = (type === 'map' || type === 'banmap') ? MAPS : GODS;
-    let bannedNames = tempExclusions.slice();
-    let myUsedNames = [];
-    let globalUsedMaps = [];
-    let opponentPickedGods = [];
-    const opponentPrefix = (activePlayer === 'p1') ? 'p2-' : 'p1-';
-
-    Object.keys(state.selections).forEach(key => {
-        const item = state.selections[key];
-        if (!item) return;
-        if (key.includes('ban')) bannedNames.push(item.n);
-        else {
-            if (key.includes('god')) {
-                if (key.startsWith(opponentPrefix)) opponentPickedGods.push(item.n);
-                if (key.startsWith(activePlayer + '-god-')) myUsedNames.push(item.n);
-            }
-            if (key.startsWith('map-')) globalUsedMaps.push(item.n);
-        }
-    });
-
-    const validItems = list.filter(d => {
-        if (bannedNames.includes(d.n)) return false;
-        if (slotId.includes('ban') && opponentPickedGods.includes(d.n)) return false;
-        if (type === 'map' && globalUsedMaps.includes(d.n)) return false;
-        if (type === 'god' && !slotId.includes('ban') && myUsedNames.includes(d.n)) return false;
-        return true;
-    });
-
-    if (validItems.length > 0) return validItems[Math.floor(Math.random() * validItems.length)];
-    return null;
-}
-
-function getTimelineState(phase) {
-    let context = 'GODS';
-    let index = 0;
-    
-    if (phase < 16) {
-        context = 'GODS';
-        if (phase === 0) index = 0;
-        else if (phase === 1) index = 1;
-        else if (phase <= 3) index = 2;
-        else if (phase <= 5) index = 3;
-        else if (phase <= 7) index = 4;
-        else if (phase <= 14) index = 5;
-        else if (phase === 15) index = 6;
-    } else {
-        context = 'MAPS';
-        if (phase <= 17) index = 0;
-        else if (phase <= 19) index = 1;
-        else if (phase <= 21) index = 2;
-        else if (phase === 22) index = 3;
-        else if (phase === 23) index = 4;
-        else if (phase === 24) index = 5;
-        else if (phase === 25) index = 6;
-        else if (phase >= 26) index = 7;
-    }
-    
-    return {context, index};
-}
-
-function copyLink(id, btnElement) {
-    const input = document.getElementById(id);
-    if (!input) return;
-    
-    input.select();
-    document.execCommand('copy');
-    
-    const originalText = btnElement.textContent;
-    btnElement.textContent = 'COPIADO!';
-    btnElement.style.background = '#2ecc71';
-    btnElement.style.color = '#000';
-    
-    setTimeout(() => {
-        btnElement.textContent = originalText;
-        btnElement.style.background = '';
-        btnElement.style.color = '';
-    }, 2000);
-}
-
-function copyLobbyLink(id, btnElement) {
-    copyLink(id, btnElement);
-}
-
-// ============================================================================
-// 10. RENDERIZAÇÃO
-// ============================================================================
-
-function render() {
-    const overlay = document.getElementById('readyOverlay');
-    
-    if (state.phaseIndex === -1) {
-        overlay.style.display = 'flex';
-        overlay.style.opacity = '1';
-        
-        const box1 = document.getElementById('p1ReadyBox');
-        const btn1 = document.getElementById('btnReadyP1');
-        if (state.p1Presence) { box1.classList.add('ready'); btn1.textContent = "PRONTO"; }
-        else { box1.classList.remove('ready'); btn1.textContent = "CONFIRMAR"; }
-        
-        const box2 = document.getElementById('p2ReadyBox');
-        const btn2 = document.getElementById('btnReadyP2');
-        if (state.p2Presence) { box2.classList.add('ready'); btn2.textContent = "PRONTO"; }
-        else { box2.classList.remove('ready'); btn2.textContent = "CONFIRMAR"; }
-        return;
-    } else {
-        overlay.style.opacity = '0';
-        setTimeout(() => overlay.style.display = 'none', 500);
-    }
-
-    updatePlayerNames();
-    updateTurnIndicators();
-    renderTimeline();
-    renderLogs();
-    renderSlots();
-    renderConfirmButton();
-}
-
-function updatePlayerNames() {
-    const p1Input = document.getElementById('p1NameInput');
-    const p2Input = document.getElementById('p2NameInput');
-    
-    if (p1Input && p1Input.value !== state.p1Name) p1Input.value = state.p1Name;
-    if (p2Input && p2Input.value !== state.p2Name) p2Input.value = state.p2Name;
-    
-    const p1Group = document.querySelector('.god-group.p1-group');
-    const p2Group = document.querySelector('.god-group.p2-group');
-    if (p1Group) p1Group.setAttribute('data-player-name', state.p1Name);
-    if (p2Group) p2Group.setAttribute('data-player-name', state.p2Name);
-}
-
-function updateTurnIndicators() {
-    const p1Arrow = document.getElementById('p1Arrow');
-    const p2Arrow = document.getElementById('p2Arrow');
-    
-    if (!p1Arrow || !p2Arrow) return;
-    
-    p1Arrow.classList.remove('active', 'p1-turn', 'p2-turn');
-    p2Arrow.classList.remove('active', 'p1-turn', 'p2-turn');
-    p1Arrow.innerHTML = '&lt;';
-    p2Arrow.innerHTML = '&gt;';
-    
-    if (state.phaseIndex === -1) return;
-    
-    const phase = TIMELINE[state.phaseIndex];
-    if (!phase || phase.type.includes('REVEAL') || phase.type === 'DECIDER') return;
-    
-    if (phase.p1 && !state.p1Ready) p1Arrow.classList.add('active', 'p1-turn');
-    if (phase.p2 && !state.p2Ready) p2Arrow.classList.add('active', 'p2-turn');
-}
-
-function renderTimeline() {
-    if (state.phaseIndex === -1) return;
-    
-    const tlState = getTimelineState(state.phaseIndex);
-    
-    if (currentContext !== tlState.context || document.getElementById('timelineSteps').children.length === 0) {
-        currentContext = tlState.context;
-        const container = document.getElementById('timelineSteps');
-        container.innerHTML = '';
-        const blocks = (currentContext === 'GODS') ? GOD_BLOCKS : MAP_BLOCKS;
-        
-        blocks.forEach((block, i) => {
-            const el = document.createElement('div');
-            el.className = 't-pill';
-            el.textContent = block.label;
-            el.setAttribute('data-type', block.type);
-            el.id = `tpill-${i}`;
-            container.appendChild(el);
-        });
-    }
-    
-    const total = (currentContext === 'GODS') ? GOD_BLOCKS.length : MAP_BLOCKS.length;
-    for (let i = 0; i < total; i++) {
-        const el = document.getElementById(`tpill-${i}`);
-        if (!el) continue;
-        el.className = 't-pill';
-        if (i < tlState.index) el.classList.add('done');
-        else if (i === tlState.index) el.classList.add('active');
-    }
-}
-
-function renderLogs() {
-    const container = document.getElementById('logContainer');
-    const currentLogCount = container.querySelectorAll('.log-entry').length;
-    const newLogs = state.logs.slice(currentLogCount);
-    
-    newLogs.forEach(log => {
-        const entry = document.createElement('div');
-        entry.className = 'log-entry';
-        const playerClass = log.player === 'p1' ? 'p1' : 'p2';
-        const randomText = log.isRandom ? " <span class='random'>(Aleatório ❓)</span>" : "";
-        entry.innerHTML = `<span class="${playerClass}">${log.name}</span> ${log.action} <strong>${log.item}</strong>${randomText}`;
-        container.appendChild(entry);
-    });
-    
-    setTimeout(() => container.scrollTop = container.scrollHeight, 10);
-}
-
-function renderSlots() {
-    const allSlots = document.querySelectorAll('.god-slot, .ban-slot, .map-slot');
-    const phase = TIMELINE[state.phaseIndex];
-    
-    allSlots.forEach(el => {
-        const id = el.id;
-        const data = state.selections[id];
-        
-        el.classList.remove('slot-active', 'slot-locked', 'slot-pending-confirm', 'slot-blind-ready');
-        
-        // Renderizar conteúdo
-        if (id.includes('ban')) {
-            if (!data) {
-                el.innerHTML = '';
-                el.classList.remove('filled');
-            } else if (!el.classList.contains('filled')) {
-                const randomMark = data.isRandom ? '<div class="random-mark">❓</div>' : '';
-                el.innerHTML = `<img src="${data.img}">${randomMark}`;
-                el.classList.add('filled');
-                
-                const img = el.querySelector('img');
-                if (img) setTimeout(() => img.classList.add('animated'), 500);
-            }
-        } else if (id.includes('map')) {
-            if (!data) {
-                el.innerHTML = '';
-                el.classList.remove('filled');
-            } else if (!el.classList.contains('filled')) {
-                const randomMark = data.isRandom ? '<div class="random-mark">❓</div>' : '';
-                el.innerHTML = `<img src="${data.img}">${randomMark}<div class="map-name-label">${data.n}</div>`;
-                el.classList.add('filled');
-            }
-        } else {
-            if (!data) {
-                el.innerHTML = '';
-                el.classList.remove('filled');
+            if (!isReplayMode) enterReplayMode();
+            
+            const btn = document.getElementById('btnPlayPause');
+            
+            if (replayInterval) {
+                stopReplayPlay();
             } else {
-                let hideMe = false;
-                if (phase && phase.type === "BLIND_PICK" && (id === phase.p1 || id === phase.p2)) {
-                    if (isOfflineMode) {
-                        if ((id === phase.p1 && state.p1Ready) || (id === phase.p2 && state.p2Ready)) hideMe = true;
-                    } else {
-                        if (myRole === 'host' && connections.length === 0) {
-                            if ((id === phase.p1 && state.p1Ready) || (id === phase.p2 && state.p2Ready)) hideMe = true;
-                        } else {
-                            if (myRole === 'host' && id === phase.p2) hideMe = true;
-                            if (myRole === 'p2' && id === phase.p1) hideMe = true;
-                            if (myRole === 'spec') hideMe = true;
-                        }
+                startReplayPlay();
+            }
+        }
+
+        function startReplayPlay() {
+            const btn = document.getElementById('btnPlayPause');
+            btn.innerHTML = '⏸️ Pausar';
+            btn.classList.add('playing');
+            
+            const baseInterval = 1000; 
+            const interval = baseInterval / replaySpeed;
+            
+            replayInterval = setInterval(function() {
+                if (replayIndex >= replayHistory.length - 1) {
+                    stopReplayPlay();
+                    return;
+                }
+                loadReplaySnapshot(replayIndex + 1);
+            }, interval);
+        }
+
+        function stopReplayPlay() {
+            if (replayInterval) {
+                clearInterval(replayInterval);
+                replayInterval = null;
+            }
+            
+            const btn = document.getElementById('btnPlayPause');
+            btn.innerHTML = '▶️ Play';
+            btn.classList.remove('playing');
+        }
+
+        function updateReplaySpeed() {
+            replaySpeed = parseFloat(document.getElementById('replaySpeed').value);
+            
+            if (replayInterval) {
+                stopReplayPlay();
+                startReplayPlay();
+            }
+        }
+
+        function seekReplay(event) {
+            if (replayHistory.length === 0) return;
+            
+            const rect = event.currentTarget.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const percent = x / rect.width;
+            const targetIndex = Math.floor(percent * replayHistory.length);
+            
+            stopReplayPlay();
+            if (!isReplayMode) enterReplayMode();
+            loadReplaySnapshot(Math.max(0, Math.min(targetIndex, replayHistory.length - 1)));
+        }
+
+        function updateReplayUI() {
+            if (myRole !== 'spec') return;
+            
+            const progressBar = document.getElementById('replayProgressBar');
+            const timeDisplay = document.getElementById('replayTime');
+            
+            if (replayHistory.length > 0 && isReplayMode) {
+                const percent = (replayIndex / (replayHistory.length - 1)) * 100;
+                progressBar.style.width = percent + '%';
+                timeDisplay.innerText = (replayIndex + 1) + ' / ' + replayHistory.length;
+            } else {
+                progressBar.style.width = '0%';
+                timeDisplay.innerText = '0 / ' + replayHistory.length;
+            }
+        }
+
+        function init() {
+            updatePlayerNames();
+            if (!lobbyID) {
+                myRole = 'host'; 
+                document.getElementById('hostPanel').style.display = 'block'; 
+                render(); 
+                setupHost();
+            } else {
+                myRole = roleParam || 'spec'; 
+                
+                if (draftParam && myRole === 'spec') {
+                    if (loadDraftFromStorage(draftParam)) {
+                        document.getElementById('specBanner').style.display='block';
+                        document.getElementById('replayControls').classList.add('active');
+                        document.body.classList.add('spectator-mode');
+                        console.log('Draft carregado do URL');
+                        return; 
                     }
                 }
+                
+                setupClient(lobbyID); 
+                
+                if(myRole==='spec') {
+                    document.getElementById('specBanner').style.display='block';
+                    document.getElementById('replayControls').classList.add('active');
+                    document.body.classList.add('spectator-mode');
+                    
+                    isRecording = true;
+                    currentDraftId = generateDraftId();
+                    
+                    if (loadLastDraft()) {
+                        enterReplayMode();
+                        console.log('Ultimo draft carregado automaticamente');
+                    }
+                }
+            }
+            render();
+        }
 
-                if (hideMe) {
-                    el.classList.add('slot-blind-ready');
-                    el.innerHTML = '';
+        function startTimer() {
+            clearInterval(timerInterval); 
+            timeLeft = 45; 
+            
+            const el = document.getElementById('timerDisplay');
+            el.innerText = "45";
+            el.classList.remove('timer-urgent');
+            el.classList.add('timer-resetting');
+            setTimeout(function() { el.classList.remove('timer-resetting'); }, 500);
+            
+            const currentPhase = TIMELINE[state.phaseIndex];
+            if (!currentPhase || currentPhase.type.includes("REVEAL") || currentPhase.type === "DECIDER" || state.phaseIndex >= 27) {
+                el.style.display = 'none';
+                return;
+            }
+            
+            el.style.display = 'block';
+            
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeout();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const el = document.getElementById('timerDisplay');
+            el.innerText = timeLeft;
+            if (timeLeft <= 10) el.classList.add('timer-urgent'); 
+            else el.classList.remove('timer-urgent');
+        }
+
+        function handleTimeout() {
+            if (isTransitioning) return; 
+
+            const currentPhase = TIMELINE[state.phaseIndex];
+            if (!currentPhase) return;
+
+            if (isOfflineMode) {
+                const p1Data = (currentPhase.p1 && !state.p1Ready) ? getRandomFor(currentPhase.p1) : null;
+                const p2Data = (currentPhase.p2 && !state.p2Ready) ? getRandomFor(currentPhase.p2, (p1Data ? [p1Data.n] : [])) : null;
+
+                if(p1Data) state.selections[currentPhase.p1] = { n: p1Data.n, img: p1Data.img, isRandom: true };
+                if(p2Data) state.selections[currentPhase.p2] = { n: p2Data.n, img: p2Data.img, isRandom: true };
+
+                if (currentPhase.p1) state.p1Ready = true;
+                if (currentPhase.p2) state.p2Ready = true;
+
+                checkPhaseAdvance();
+                render();
+            } 
+            else {
+                if (myRole === 'host') {
+                    const p1Data = (currentPhase.p1 && !state.p1Ready) ? getRandomFor(currentPhase.p1) : null;
+                    const p2Data = (currentPhase.p2 && !state.p2Ready) ? getRandomFor(currentPhase.p2, (p1Data ? [p1Data.n] : [])) : null;
+                    
+                    if(p1Data) processHostAction({ action: 'SELECT_RANDOM', payload: { slot: currentPhase.p1, data: p1Data } });
+                    if(p2Data) processHostAction({ action: 'SELECT_RANDOM', payload: { slot: currentPhase.p2, data: p2Data } });
+                }
+                else if (myRole === 'p2') {
+                     if (currentPhase.p2 && !state.p2Ready) {
+                         const d = getRandomFor(currentPhase.p2);
+                         if(d) sendAction('SELECT_RANDOM', { slot: currentPhase.p2, data: d });
+                     }
+                }
+            }
+        }
+
+        function getRandomFor(slotId, tempExclusions) {
+            if (!tempExclusions) tempExclusions = [];
+            if (!slotId) return null;
+            let type = slotId.includes('god') ? 'god' : 'map';
+            let activePlayer = slotId.startsWith('p1') ? 'p1' : (slotId.startsWith('p2') ? 'p2' : null);
+            if(!activePlayer) { 
+                 const ph = TIMELINE[state.phaseIndex];
+                 if(ph.p1 === slotId) activePlayer = 'p1'; 
+                 else if(ph.p2 === slotId) activePlayer = 'p2';
+            }
+
+            const list = (type === 'map' || type === 'banmap') ? mapsData : godsData;
+            let bannedNames = tempExclusions.slice();
+            let myUsedNames = [];
+            let globalUsedMaps = [];
+            let opponentPickedGods = [];
+            const opponentPrefix = (activePlayer === 'p1') ? 'p2-' : 'p1-';
+
+            Object.keys(state.selections).forEach(function(key) {
+                const item = state.selections[key];
+                if (!item) return;
+                if (key.includes('ban')) bannedNames.push(item.n);
+                else {
+                    if (key.includes('god')) {
+                        if (key.startsWith(opponentPrefix)) opponentPickedGods.push(item.n);
+                        if (key.startsWith(activePlayer + '-god-')) myUsedNames.push(item.n);
+                    }
+                    if (key.startsWith('map-')) globalUsedMaps.push(item.n);
+                }
+            });
+
+            let validItems = list.filter(function(d) {
+                if (bannedNames.includes(d.n)) return false;
+                if (slotId.includes('ban') && opponentPickedGods.includes(d.n)) return false; 
+                if (type === 'map' && globalUsedMaps.includes(d.n)) return false;
+                if (type === 'god' && !slotId.includes('ban') && myUsedNames.includes(d.n)) return false;
+                return true;
+            });
+
+            if (validItems.length > 0) return validItems[Math.floor(Math.random() * validItems.length)];
+            return null;
+        }
+
+        function addLogEntry(player, type, itemName, isRandom) {
+            const pName = player === 'p1' ? state.p1Name : state.p2Name;
+            const logEntry = { player: player, name: pName, action: type === 'ban' ? 'baniu' : 'escolheu', item: itemName, isRandom: isRandom };
+            state.logs.push(logEntry);
+        }
+
+        function renderLogs() {
+            const container = document.getElementById('logContainer');
+            
+            const currentLogCount = container.querySelectorAll('.log-entry').length;
+            const newLogs = state.logs.slice(currentLogCount);
+            
+            newLogs.forEach(function(log) {
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                let playerClass = log.player === 'p1' ? 'p1' : 'p2';
+                let randomText = log.isRandom ? " <span class='random'>(Aleatório ❓)</span>" : "";
+                entry.innerHTML = "<span class='" + playerClass + "'>" + log.name + "</span> " + log.action + " <strong>" + log.item + "</strong>" + randomText;
+                container.appendChild(entry);
+            });
+            
+            setTimeout(function() { container.scrollTop = container.scrollHeight; }, 10);
+        }
+
+        function toggleReady(player) {
+            let allowed = false;
+            
+            if(isOfflineMode) {
+                allowed = true;
+            } else {
+                if (myRole === 'host') {
+                    if (player === 'p1') allowed = true;
+                    if (player === 'p2' && connections.length === 0) allowed = true;
+                }
+                if (myRole === 'p2' && player === 'p2') allowed = true;
+            }
+
+            if (allowed) {
+                if (isOfflineMode) {
+                    if (player === 'p1') state.p1Presence = !state.p1Presence;
+                    if (player === 'p2') state.p2Presence = !state.p2Presence;
+                    checkReadyStart();
+                    render();
                 } else {
-                    const randomMark = data.isRandom ? '<div class="random-mark">❓</div>' : '';
-                    const htmlContent = `<img src="${data.img}">${randomMark}`;
-                    if (el.innerHTML !== htmlContent) {
+                    sendAction('TOGGLE_READY', { player: player });
+                }
+            }
+        }
+
+        function checkReadyStart() {
+            if (state.p1Presence && state.p2Presence) {
+                setTimeout(function() {
+                    state.phaseIndex = 0; 
+                    if (!isOfflineMode) {
+                        broadcastState();
+                        if (myRole === 'host') startTimer();
+                    } else {
+                        startTimer(); 
+                        render();
+                    }
+                }, 500);
+            }
+        }
+
+        function renderTimeline() {
+            if (state.phaseIndex === -1) return;
+            const tlState = getTimelineState(state.phaseIndex);
+            
+            if (currentContext !== tlState.context || document.getElementById('timelineSteps').children.length === 0) {
+                currentContext = tlState.context;
+                const container = document.getElementById('timelineSteps');
+                container.innerHTML = '';
+                const blocks = (currentContext === 'GODS') ? GOD_BLOCKS : MAP_BLOCKS;
+                blocks.forEach(function(block, i) {
+                    const el = document.createElement('div');
+                    el.className = 't-pill';
+                    el.innerText = block.label;
+                    el.setAttribute('data-type', block.type);
+                    el.id = 'tpill-' + i;
+                    container.appendChild(el);
+                });
+            }
+            const total = (currentContext === 'GODS') ? GOD_BLOCKS.length : MAP_BLOCKS.length;
+            for(let i=0; i<total; i++) {
+                const el = document.getElementById('tpill-' + i);
+                if(!el) continue;
+                el.className = 't-pill'; 
+                if (i < tlState.index) el.classList.add('done');
+                else if (i === tlState.index) el.classList.add('active');
+            }
+        }
+
+        function sendAction(actionType, payload) {
+            const msg = { type: 'ACTION', action: actionType, payload: payload, role: myRole };
+            if (myRole === 'host') processHostAction(msg);
+            else if (connections[0]) connections[0].send(msg);
+        }
+
+        function processHostAction(msg) {
+            if (msg.action === 'SELECT') {
+                state.selections[msg.payload.slot] = msg.payload.data;
+            } 
+            else if (msg.action === 'SELECT_RANDOM') {
+                state.selections[msg.payload.slot] = { n: msg.payload.data.n, img: msg.payload.data.img, isRandom: true };
+                let current = TIMELINE[state.phaseIndex];
+                if (current.p1 === msg.payload.slot) state.p1Ready = true;
+                if (current.p2 === msg.payload.slot) state.p2Ready = true;
+                checkPhaseAdvance();
+            }
+            else if (msg.action === 'CONFIRM') {
+                if (msg.role === 'host' || msg.role === 'p1') state.p1Ready = true;
+                if (msg.role === 'p2') state.p2Ready = true;
+                checkPhaseAdvance();
+            }
+            else if (msg.action === 'TOGGLE_READY') {
+                if (msg.payload.player === 'p1') state.p1Presence = !state.p1Presence;
+                if (msg.payload.player === 'p2') state.p2Presence = !state.p2Presence;
+                checkReadyStart();
+            }
+            else if (msg.action === 'UPDATE_NAME') {
+                if (msg.payload.player === 'p1') state.p1Name = msg.payload.name;
+                if (msg.payload.player === 'p2') state.p2Name = msg.payload.name;
+            }
+            else if (msg.action === 'RESET') {
+                const currentP1Name = state.p1Name || "[CAOK] LIGHT";
+                const currentP2Name = state.p2Name || "[CAOK] PAIN";
+                state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [], p1Name: currentP1Name, p2Name: currentP2Name };
+                document.getElementById('logContainer').innerHTML = '';
+                updatePlayerNames();
+            }
+            broadcastState();
+        }
+
+        function broadcastState() {
+            render();
+            saveSnapshot(); 
+            if(!isOfflineMode) connections.forEach(function(c) { c.send({ type: 'STATE', state: state }); });
+        }
+
+        function clickSlot(player, type, index) {
+            if (state.phaseIndex === -1) return; 
+            let slotId = (player === 'map') ? ('map-' + index) : (player + '-' + type + '-' + index);
+            if (myRole === 'spec') return;
+            const currentPhase = TIMELINE[state.phaseIndex];
+            if (!currentPhase || currentPhase.type.includes("REVEAL") || currentPhase.type === "DECIDER") return;
+
+            let owner = null;
+            if (slotId === currentPhase.p1) owner = 'p1';
+            if (slotId === currentPhase.p2) owner = 'p2';
+            if (!owner) return;
+
+            let hasPermission = false;
+            if (isOfflineMode) hasPermission = true; 
+            else {
+                if (myRole === 'host' && owner === 'p1') hasPermission = true;
+                if (myRole === 'p2' && owner === 'p2') hasPermission = true;
+                if (myRole === 'host' && owner === 'p2' && connections.length === 0) hasPermission = true;
+            }
+
+            if (owner === 'p1' && state.p1Ready) hasPermission = false;
+            if (owner === 'p2' && state.p2Ready) hasPermission = false;
+
+            if (hasPermission) openModal(slotId, type, owner);
+        }
+
+        function openModal(slotId, type, activePlayer) {
+            currentModalTarget = slotId;
+            const grid = document.getElementById('modalGrid'); 
+            grid.innerHTML = '';
+            const list = (type === 'map' || type === 'banmap') ? mapsData : godsData;
+            
+            let bannedNames = [];
+            let myUsedNames = [];
+            let globalUsedMaps = [];
+            const opponentPrefix = (activePlayer === 'p1') ? 'p2-' : 'p1-';
+            let opponentPickedGods = [];
+
+            Object.keys(state.selections).forEach(function(key) {
+                const item = state.selections[key];
+                if (!item) return;
+                if (key.includes('ban')) bannedNames.push(item.n);
+                else {
+                    if (key.includes('god')) {
+                        if (key.startsWith(opponentPrefix)) opponentPickedGods.push(item.n);
+                        if (key.startsWith(activePlayer + '-god-')) myUsedNames.push(item.n);
+                    }
+                    if (key.startsWith('map-')) globalUsedMaps.push(item.n);
+                }
+            });
+
+            list.forEach(function(d) {
+                const c = document.createElement('div'); 
+                c.className = 'selectable-card';
+                if (type.includes('map')) c.classList.add('is-map-card');
+
+                let disabled = false;
+                if (bannedNames.includes(d.n)) { disabled = true; c.classList.add('banned-overlay'); }
+                if (type === 'bangod' && opponentPickedGods.includes(d.n)) { disabled = true; c.classList.add('protected-overlay'); }
+                if (type.includes('map') && globalUsedMaps.includes(d.n)) { disabled = true; c.classList.add('picked-overlay'); }
+                if (type === 'god' && myUsedNames.includes(d.n)) { disabled = true; c.classList.add('picked-overlay'); }
+
+                if (disabled) c.classList.add('card-disabled');
+                c.innerHTML = "<img src='" + d.img + "' onerror=\"this.style.display='none'; this.parentNode.innerHTML+='<span style=\\'color:red;font-size:0.7em\\'>IMG ERR</span>'\"><div class='card-name-overlay'>" + d.n + "</div>";
+                if (!disabled) c.onclick = function() { selectItem(d); };
+                grid.appendChild(c);
+            });
+            const modal = document.getElementById('selectionModal');
+            modal.style.display = 'flex';
+            setTimeout(function() { modal.classList.add('show'); }, 10);
+        }
+
+        function selectItem(data) {
+            closeModal();
+            if (isOfflineMode || (myRole === 'host' && connections.length === 0)) {
+                state.selections[currentModalTarget] = data;
+                render();
+                let currentPhase = TIMELINE[state.phaseIndex];
+                let p1Need = currentPhase.p1 && !state.p1Ready;
+                let p2Need = currentPhase.p2 && !state.p2Ready;
+                if(p1Need || p2Need) document.getElementById('confirmBtn').style.display = 'block';
+            } else {
+                sendAction('SELECT', { slot: currentModalTarget, data: data });
+            }
+        }
+
+        function confirmTurn() {
+            document.getElementById('confirmBtn').style.display = 'none';
+            if (isOfflineMode || (myRole === 'host' && connections.length === 0)) {
+                let currentPhase = TIMELINE[state.phaseIndex];
+                if(currentPhase.p1) state.p1Ready = true;
+                if(currentPhase.p2) state.p2Ready = true;
+                checkPhaseAdvance();
+                render();
+                saveSnapshot(); 
+            } else {
+                sendAction('CONFIRM', null);
+            }
+        }
+
+        function checkPhaseAdvance() {
+            let currentPhase = TIMELINE[state.phaseIndex];
+            let p1OK = !currentPhase.p1 || state.p1Ready;
+            let p2OK = !currentPhase.p2 || state.p2Ready;
+
+            if (p1OK && p2OK) {
+                clearInterval(timerInterval); 
+                isTransitioning = true; 
+                document.getElementById('timerDisplay').innerText = "--";
+
+                if (currentPhase.p1 && state.selections[currentPhase.p1]) {
+                    const item = state.selections[currentPhase.p1];
+                    addLogEntry('p1', (currentPhase.p1.includes('ban') ? 'ban' : 'pick'), item.n, item.isRandom || false);
+                }
+                if (currentPhase.p2 && state.selections[currentPhase.p2]) {
+                    const item = state.selections[currentPhase.p2];
+                    addLogEntry('p2', (currentPhase.p2.includes('ban') ? 'ban' : 'pick'), item.n, item.isRandom || false);
+                }
+                
+                renderLogs();
+
+                setTimeout(function() {
+                    state.phaseIndex++;
+                    state.p1Ready = false; 
+                    state.p2Ready = false;
+                    isTransitioning = false;
+                    
+                    if (TIMELINE[state.phaseIndex].type === "REVEAL_STEP") {
+                        if(isOfflineMode) render(); 
+                        else broadcastState();
+                        setTimeout(function() {
+                            state.phaseIndex++;
+                            if(isOfflineMode) { render(); startTimer(); } 
+                            else { broadcastState(); if(myRole==='host') startTimer(); } 
+                        }, 3000);
+                        return; 
+                    }
+
+                    if (TIMELINE[state.phaseIndex].type === "DECIDER") autoPickDecider();
+                    
+                    if (state.phaseIndex >= TIMELINE.length - 1) {
+                        saveDraftToStorage(); 
+                        console.log('Draft finalizado e salvo!');
+                        
+                        // Mostrar transição épica
+                        showEpicTransition();
+                        
+                        return; // Interrompe o fluxo aqui, a transição vai chamar a próxima etapa
+                    }
+                    
+                    if(isOfflineMode) { render(); startTimer(); } 
+                    else { broadcastState(); if(myRole==='host') startTimer(); }
+                }, 500);
+            }
+        }
+
+        function autoPickDecider() {
+            let forbidden = [];
+            Object.values(state.selections).forEach(function(s) { forbidden.push(s.n); });
+            let available = mapsData.filter(function(m) { return !forbidden.includes(m.n); });
+            if (available.length > 0) {
+                let picked = available[Math.floor(Math.random() * available.length)];
+                state.selections['map-2'] = picked;
+                setTimeout(function() { 
+                    state.phaseIndex++; 
+                    if(isOfflineMode) { render(); } 
+                    else { broadcastState(); }
+                }, 1500);
+            }
+        }
+
+        function render() {
+            const overlay = document.getElementById('readyOverlay');
+            if (state.phaseIndex === -1) {
+                overlay.style.display = 'flex'; 
+                overlay.style.opacity = '1';
+                const box1 = document.getElementById('p1ReadyBox');
+                const btn1 = document.getElementById('btnReadyP1');
+                if (state.p1Presence) { box1.classList.add('ready'); btn1.innerText = "PRONTO"; } 
+                else { box1.classList.remove('ready'); btn1.innerText = "CONFIRMAR"; }
+                const box2 = document.getElementById('p2ReadyBox');
+                const btn2 = document.getElementById('btnReadyP2');
+                if (state.p2Presence) { box2.classList.add('ready'); btn2.innerText = "PRONTO"; } 
+                else { box2.classList.remove('ready'); btn2.innerText = "CONFIRMAR"; }
+                return; 
+            } else {
+                overlay.style.opacity = '0'; 
+                setTimeout(function() { overlay.style.display = 'none'; }, 500);
+            }
+
+            updatePlayerNames();
+            
+            // Atualizar nomes nos grupos para mobile
+            const p1Group = document.querySelector('.god-group.p1-group');
+            const p2Group = document.querySelector('.god-group.p2-group');
+            if (p1Group) p1Group.setAttribute('data-player-name', state.p1Name);
+            if (p2Group) p2Group.setAttribute('data-player-name', state.p2Name);
+
+            renderTimeline();
+            renderLogs(); 
+
+            const currentPhase = TIMELINE[state.phaseIndex];
+            
+            if(currentPhase && !currentPhase.type.includes("REVEAL") && currentPhase.type !== "DECIDER") {
+                let show = false;
+                if(isOfflineMode || (myRole === 'host' && connections.length === 0)) {
+                    if((currentPhase.p1 && !state.p1Ready) || (currentPhase.p2 && !state.p2Ready)) show = true;
+                } else {
+                    if(myRole === 'host' && currentPhase.p1 && !state.p1Ready && state.selections[currentPhase.p1]) show = true;
+                    if(myRole === 'p2' && currentPhase.p2 && !state.p2Ready && state.selections[currentPhase.p2]) show = true;
+                }
+                document.getElementById('confirmBtn').style.display = show ? 'block' : 'none';
+            } else { 
+                document.getElementById('confirmBtn').style.display = 'none'; 
+            }
+
+            const allSlots = document.querySelectorAll('.god-slot, .ban-slot, .map-slot');
+            
+            allSlots.forEach(function(el) {
+                const id = el.id;
+                const data = state.selections[id];
+                el.classList.remove('slot-active', 'slot-locked', 'slot-pending-confirm', 'slot-blind-ready');
+                
+                if (id.includes('ban')) {
+                    if (!data) {
+                        el.innerHTML = '';
+                        el.classList.remove('filled');
+                    } else if (!el.classList.contains('filled')) {
+                        let randomMark = data.isRandom ? "<div class='random-mark'>❓</div>" : '';
+                        el.innerHTML = "<img src='" + data.img + "' onerror=\"this.style.display='none'; this.parentNode.innerHTML+='<span style=\\'color:red;font-size:0.7em\\'>IMG ERR</span>'\">" + randomMark;
+                        el.classList.add('filled');
+                        
+                        const img = el.querySelector('img');
+                        if (img) {
+                            setTimeout(function() {
+                                img.classList.add('animated');
+                            }, 500);
+                        }
+                    }
+                } 
+                else if (id.includes('map')) {
+                    if (!data) {
+                        el.innerHTML = '';
+                        el.classList.remove('filled');
+                    } else if (!el.classList.contains('filled')) {
+                        let randomMark = data.isRandom ? "<div class='random-mark'>❓</div>" : '';
+                        let htmlContent = "<img src='" + data.img + "' onerror=\"this.style.display='none'; this.parentNode.innerHTML+='<span style=\\'color:red;font-size:0.7em\\'>IMG ERR</span>'\">" + randomMark;
+                        htmlContent += "<div class='map-name-label'>" + data.n + "</div>";
                         el.innerHTML = htmlContent;
                         el.classList.add('filled');
                     }
                 }
-            }
-        }
+                else {
+                    if (!data) el.innerHTML = ''; 
+                    else if (!el.querySelector('img')) el.innerHTML = '';
 
-        // Renderizar estado
-        if (!phase) return;
+                    if (data) {
+                        let hideMe = false;
+                        if (currentPhase && currentPhase.type === "BLIND_PICK" && (id === currentPhase.p1 || id === currentPhase.p2)) {
+                            if(isOfflineMode) { 
+                                if ((id === currentPhase.p1 && state.p1Ready) || (id === currentPhase.p2 && state.p2Ready)) hideMe = true; 
+                            } 
+                            else { 
+                                if(myRole === 'host' && connections.length === 0) { 
+                                    if((id===currentPhase.p1 && state.p1Ready) || (id===currentPhase.p2 && state.p2Ready)) hideMe = true; 
+                                } else {
+                                    if (myRole === 'host' && id === currentPhase.p2) hideMe = true; 
+                                    if (myRole === 'p2' && id === currentPhase.p1) hideMe = true; 
+                                    if (myRole === 'spec') hideMe = true; 
+                                }
+                            }
+                        }
 
-        const isActive = (id === phase.p1 || id === phase.p2);
-
-        if (isActive) {
-            el.classList.add('slot-active');
-            
-            if (data) {
-                let pending = false;
-                
-                if (isOfflineMode || (myRole === 'host' && connections.length === 0)) {
-                    if ((id === phase.p1 && !state.p1Ready) || (id === phase.p2 && !state.p2Ready)) pending = true;
-                } else {
-                    if ((myRole === 'host' && id === phase.p1 && !state.p1Ready) || (myRole === 'p2' && id === phase.p2 && !state.p2Ready)) pending = true;
+                        if (hideMe) { 
+                            el.classList.add('slot-blind-ready'); 
+                            el.innerHTML = ''; 
+                        }
+                        else {
+                            let htmlContent = '';
+                            let randomMark = data.isRandom ? "<div class='random-mark'>❓</div>" : '';
+                            htmlContent = "<img src='" + data.img + "' onerror=\"this.style.display='none'; this.parentNode.innerHTML+='<span style=\\'color:red;font-size:0.7em\\'>IMG ERR</span>'\">" + randomMark;
+                            
+                            if (el.innerHTML !== htmlContent) {
+                                el.innerHTML = htmlContent;
+                            }
+                        }
+                    } else el.classList.remove('filled');
                 }
-                
-                if (pending) el.classList.add('slot-pending-confirm');
-            }
-        } else if (data) {
-            el.classList.add('slot-locked');
+
+                if (!currentPhase) return;
+
+                let isActive = false;
+                if (id === currentPhase.p1 || id === currentPhase.p2) isActive = true;
+
+                if (isActive) {
+                    el.classList.add('slot-active');
+                    let pending = false;
+                    if(data) {
+                        if(isOfflineMode || (myRole === 'host' && connections.length === 0)) { 
+                            if ((id === currentPhase.p1 && !state.p1Ready) || (id === currentPhase.p2 && !state.p2Ready)) pending = true; 
+                        }
+                        else { 
+                            if ((myRole==='host' && id===currentPhase.p1 && !state.p1Ready) || (myRole==='p2' && id===currentPhase.p2 && !state.p2Ready)) pending = true; 
+                        }
+                    }
+                    if (pending) el.classList.add('slot-pending-confirm');
+                } else if (data) el.classList.add('slot-locked');
+            });
         }
-    });
-}
 
-function renderConfirmButton() {
-    const btn = document.getElementById('confirmBtn');
-    const phase = TIMELINE[state.phaseIndex];
-    
-    if (!phase || phase.type.includes("REVEAL") || phase.type === "DECIDER") {
-        btn.style.display = 'none';
-        return;
-    }
-    
-    let show = false;
-    
-    if (isOfflineMode || (myRole === 'host' && connections.length === 0)) {
-        if ((phase.p1 && !state.p1Ready) || (phase.p2 && !state.p2Ready)) show = true;
-    } else {
-        if (myRole === 'host' && phase.p1 && !state.p1Ready && state.selections[phase.p1]) show = true;
-        if (myRole === 'p2' && phase.p2 && !state.p2Ready && state.selections[phase.p2]) show = true;
-    }
-    
-    btn.style.display = show ? 'block' : 'none';
-}
+        function setupHost() {
+            try {
+                let connectionTimeout = setTimeout(function() {
+                    if(!peer || !peer.id) {
+                        console.log("Tempo limite excedido. Forçando modo offline.");
+                        isOfflineMode = true;
+                        document.getElementById('linkP2').value = "MODO OFFLINE (Auto)";
+                        document.getElementById('linkP2Lobby').value = "MODO OFFLINE (Auto)";
+                        render();
+                    }
+                }, 3000);
 
-// ============================================================================
-// 11. INICIAR
-// ============================================================================
+                peer = new Peer({ debug: 1 });
+                peer.on('open', function(id) {
+                    clearTimeout(connectionTimeout);
+                    const u = window.location.href.split('?')[0];
+                    const p2Link = u + '?lobby=' + id + '&role=p2';
+                    const specLink = u + '?lobby=' + id + '&role=spec';
+                    
+                    // Preencher campos do painel host (canto inferior esquerdo)
+                    document.getElementById('linkP2').value = p2Link;
+                    document.getElementById('linkSpec').value = specLink;
+                    
+                    // Preencher campos do lobby (tela de espera)
+                    document.getElementById('linkP2Lobby').value = p2Link;
+                    document.getElementById('linkSpecLobby').value = specLink;
+                    
+                    // Mostrar seção de links no lobby
+                    document.getElementById('lobbyLinks').style.display = 'block';
+                });
+                peer.on('error', function(e) { 
+                    clearTimeout(connectionTimeout);
+                    isOfflineMode = true; 
+                    document.getElementById('linkP2').value = "MODO OFFLINE (Err)"; 
+                    document.getElementById('linkP2Lobby').value = "MODO OFFLINE (Err)";
+                    render();
+                });
+                peer.on('connection', function(c) {
+                    connections.push(c);
+                    c.on('open', function() { c.send({ type: 'STATE', state: state }); });
+                    c.on('data', function(d) { if(d.type === 'ACTION') processHostAction(d); });
+                });
+            } catch(e) { 
+                isOfflineMode = true; 
+                render();
+            }
+        }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
-}
+        function setupClient(h) {
+            try {
+                peer = new Peer();
+                peer.on('open', function(id) {
+                    const c = peer.connect(h);
+                    c.on('open', function() { connections.push(c); });
+                    c.on('data', function(d) { 
+                        if(d.type === 'STATE') { 
+                            const oldPhase = state.phaseIndex;
+                            state = d.state; 
+                            updatePlayerNames();
+                            render(); 
+                            saveSnapshot(); 
+                            if (state.phaseIndex !== oldPhase && state.phaseIndex < 27) {
+                                startTimer();
+                            }
+                        } 
+                    });
+                });
+            } catch(e) { console.error(e); }
+        }
+        
+        function copyLink(id, btnElement) { 
+            const i = document.getElementById(id); 
+            i.select(); 
+            document.execCommand('copy'); 
+            
+            const originalText = btnElement.innerText;
+            btnElement.innerText = "SUCESSO!";
+            btnElement.style.background = "#2ecc71";
+            btnElement.style.color = "#000";
+            
+            setTimeout(function() {
+                btnElement.innerText = originalText;
+                btnElement.style.background = "";
+                btnElement.style.color = "";
+            }, 2000);
+        }
 
-console.log('🎮 AoM Draft System carregado');
+        function copyLobbyLink(id, btnElement) { 
+            const i = document.getElementById(id); 
+            i.select(); 
+            document.execCommand('copy'); 
+            
+            const originalText = btnElement.innerText;
+            btnElement.innerText = "COPIADO!";
+            btnElement.classList.add('copied');
+            
+            setTimeout(function() {
+                btnElement.innerText = originalText;
+                btnElement.classList.remove('copied');
+            }, 2000);
+        }
 
-</script>
+        function closeModal(e) { 
+            if(e && e.target !== document.getElementById('selectionModal')) return; 
+            document.getElementById('selectionModal').classList.remove('show'); 
+            setTimeout(function() { document.getElementById('selectionModal').style.display='none'; }, 300); 
+        }
+        
+        function resetDraft() { 
+            if(confirm("Reset?")) { 
+                if(isOfflineMode) { 
+                    const currentP1Name = state.p1Name || "[CAOK] LIGHT";
+                    const currentP2Name = state.p2Name || "[CAOK] PAIN";
+                    state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [], p1Name: currentP1Name, p2Name: currentP2Name }; 
+                    document.getElementById('logContainer').innerHTML = '';
+                    updatePlayerNames();
+                    render(); 
+                } else sendAction('RESET', null); 
+            } 
+        }
+
+        
+        // ============================================
+        // TRANSIÇÃO ÉPICA E SELEÇÃO DE JOGOS
+        // ============================================
+        let gameSelections = {}; // {mapId: gameNumber}
+
+        function showEpicTransition() {
+            const epicScreen = document.getElementById('epicTransition');
+            
+            // Preencher nomes dos jogadores
+            document.getElementById('epicP1Name').innerText = state.p1Name;
+            document.getElementById('epicP2Name').innerText = state.p2Name;
+            
+            // Preencher deuses do P1
+            const p1Gods = document.getElementById('epicP1Gods');
+            p1Gods.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const godData = state.selections['p1-god-' + i];
+                if (godData) {
+                    const img = document.createElement('img');
+                    img.src = godData.img;
+                    img.style.setProperty('--i', i);
+                    p1Gods.appendChild(img);
+                }
+            }
+            
+            // Preencher deuses do P2
+            const p2Gods = document.getElementById('epicP2Gods');
+            p2Gods.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const godData = state.selections['p2-god-' + i];
+                if (godData) {
+                    const img = document.createElement('img');
+                    img.src = godData.img;
+                    img.style.setProperty('--i', i);
+                    p2Gods.appendChild(img);
+                }
+            }
+            
+            // Mostrar tela
+            epicScreen.classList.add('active');
+            
+            // Após 4 segundos, transição para seleção de jogos
+            setTimeout(function() {
+                epicScreen.classList.remove('active');
+                setTimeout(function() {
+                    showGameSelection();
+                }, 500);
+            }, 4000);
+        }
+
+        function showGameSelection() {
+            const gameScreen = document.getElementById('gameSelection');
+            const container = document.getElementById('mapsGameContainer');
+            container.innerHTML = '';
+            
+            // Pegar todos os mapas selecionados
+            const maps = [];
+            for (let i = 0; i < 7; i++) {
+                const mapData = state.selections['map-' + i];
+                if (mapData) {
+                    maps.push({ id: 'map-' + i, data: mapData, index: i });
+                }
+            }
+            
+            // Criar cards para cada mapa
+            maps.forEach(function(map, idx) {
+                const card = document.createElement('div');
+                card.className = 'map-game-card';
+                card.style.setProperty('--i', idx);
+                
+                card.innerHTML = `
+                    <div class="map-game-header">
+                        <img src="${map.data.img}" alt="${map.data.n}" class="map-game-image" onerror="this.style.display='none'">
+                        <div class="map-game-info">
+                            <div class="map-game-name">${map.data.n}</div>
+                            <div class="map-game-label">Mapa ${idx + 1} - Escolha o número do jogo</div>
+                        </div>
+                    </div>
+                    <div class="map-game-selector" data-map-id="${map.id}">
+                        ${generateGameButtons(map.id)}
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            // Adicionar event listeners nos botões
+            document.querySelectorAll('.game-number-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const mapId = this.getAttribute('data-map-id');
+                    const gameNum = parseInt(this.getAttribute('data-game'));
+                    selectGame(mapId, gameNum, this);
+                });
+            });
+            
+            gameScreen.classList.add('active');
+            updateFinalizeButton();
+        }
+
+        function generateGameButtons(mapId) {
+            let html = '';
+            for (let i = 1; i <= 7; i++) {
+                html += `<button class="game-number-btn" data-map-id="${mapId}" data-game="${i}">JOGO ${i}</button>`;
+            }
+            return html;
+        }
+
+        function selectGame(mapId, gameNum, btnElement) {
+            // Remover seleção anterior deste mapa
+            const selector = btnElement.closest('.map-game-selector');
+            selector.querySelectorAll('.game-number-btn').forEach(function(btn) {
+                btn.classList.remove('selected');
+            });
+            
+            // Adicionar seleção nova
+            btnElement.classList.add('selected');
+            gameSelections[mapId] = gameNum;
+            
+            updateFinalizeButton();
+        }
+
+        function updateFinalizeButton() {
+            const btn = document.getElementById('btnFinalizeGames');
+            const totalMaps = document.querySelectorAll('.map-game-card').length;
+            const selectedMaps = Object.keys(gameSelections).length;
+            
+            if (selectedMaps === totalMaps) {
+                btn.disabled = false;
+                btn.innerText = `FINALIZAR CONFIGURAÇÃO (${selectedMaps}/${totalMaps})`;
+            } else {
+                btn.disabled = true;
+                btn.innerText = `SELECIONE TODOS OS JOGOS (${selectedMaps}/${totalMaps})`;
+            }
+        }
+
+        function finalizeGameSelection() {
+            // Salvar as seleções de jogos no state
+            if (!state.gameNumbers) state.gameNumbers = {};
+            state.gameNumbers = gameSelections;
+            
+            // Fechar tela de seleção
+            const gameScreen = document.getElementById('gameSelection');
+            gameScreen.classList.remove('active');
+            
+            // Salvar novamente com as informações dos jogos
+            saveDraftToStorage();
+            
+            // Mostrar mensagem de compartilhamento (código original)
+            if (myRole === 'host' && currentDraftId) {
+                setTimeout(function() {
+                    const shareLink = generateShareableLink();
+                    if (shareLink) {
+                        if (confirm('Configuração completa! Deseja copiar o link de replay para compartilhar?')) {
+                            navigator.clipboard.writeText(shareLink).then(function() {
+                                alert('Link copiado! Compartilhe para que outros vejam o replay:\n\n' + shareLink);
+                            }).catch(function() {
+                                prompt('Copie este link para compartilhar o replay:', shareLink);
+                            });
+                        }
+                    }
+                }, 500);
+            }
+            
+            // Renderizar state final
+            if (isOfflineMode) render();
+            else broadcastState();
+        }
+
+        init();
+    </script>
+
+    <div class="credits">
+        Criado por <strong>[CaOK] PaiN</strong><br>
+        Propriedade de <a href="#" id="clanLink"><strong>Clan Age of Kings</strong></a>
+    </div>
+
 </body>
 </html>
