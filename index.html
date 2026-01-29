@@ -2430,7 +2430,15 @@
                 }, 3000);
 
                 console.log('Iniciando como host...');
-                peer = new Peer({ debug: 2 });
+                peer = new Peer({ 
+                    debug: 2,
+                    config: {
+                        iceServers: [
+                            { urls: 'stun:stun.l.google.com:19302' },
+                            { urls: 'stun:global.stun.twilio.com:3478' }
+                        ]
+                    }
+                });
                 
                 peer.on('error', function(e) { 
                     console.error('Erro PeerJS do host:', e);
@@ -2489,26 +2497,63 @@
         function setupClient(h) {
             try {
                 console.log('Tentando conectar ao lobby:', h);
-                peer = new Peer({ debug: 2 });
+                peer = new Peer({ 
+                    debug: 2,
+                    config: {
+                        iceServers: [
+                            { urls: 'stun:stun.l.google.com:19302' },
+                            { urls: 'stun:global.stun.twilio.com:3478' }
+                        ]
+                    }
+                });
+                
+                let connectionAttempts = 0;
+                const maxAttempts = 3;
                 
                 peer.on('error', function(err) {
                     console.error('Erro PeerJS:', err);
-                    alert('Erro ao conectar: ' + err.type + '. Tente recarregar a página.');
+                    if (err.type === 'peer-unavailable' && connectionAttempts < maxAttempts) {
+                        connectionAttempts++;
+                        console.log('Tentativa', connectionAttempts, 'de', maxAttempts);
+                        setTimeout(function() {
+                            tryConnect();
+                        }, 2000);
+                    } else {
+                        alert('Erro ao conectar: ' + err.type + '. Verifique se o lobby ainda está ativo.\n\nTente:\n1. Recarregar a página do host\n2. Gerar um novo link\n3. Usar outro navegador');
+                    }
                 });
                 
-                peer.on('open', function(id) {
-                    console.log('Peer aberto com ID:', id);
+                function tryConnect() {
                     console.log('Conectando ao host:', h);
-                    const c = peer.connect(h);
+                    const c = peer.connect(h, { reliable: true });
+                    
+                    let connectTimeout = setTimeout(function() {
+                        console.error('Timeout na conexão');
+                        c.close();
+                        if (connectionAttempts < maxAttempts) {
+                            connectionAttempts++;
+                            console.log('Tentando novamente... Tentativa', connectionAttempts);
+                            tryConnect();
+                        } else {
+                            alert('Não foi possível conectar ao host após ' + maxAttempts + ' tentativas.\n\nPossíveis causas:\n- Host fechou a aba\n- Firewall bloqueando WebRTC\n- Rede corporativa bloqueando P2P\n\nTente em uma rede diferente ou peça ao host para gerar novo link.');
+                        }
+                    }, 10000); // 10 segundos de timeout
                     
                     c.on('open', function() { 
+                        clearTimeout(connectTimeout);
                         console.log('Conexão estabelecida com o host!');
+                        connectionAttempts = 0; // Reset counter
                         connections.push(c);
                     });
                     
                     c.on('error', function(err) {
+                        clearTimeout(connectTimeout);
                         console.error('Erro na conexão:', err);
-                        alert('Erro ao conectar com o host. Verifique se o lobby ainda está ativo.');
+                    });
+                    
+                    c.on('close', function() {
+                        console.warn('Conexão fechada pelo host');
+                        alert('Conexão perdida com o host.');
                     });
                     
                     c.on('data', function(d) { 
@@ -2544,7 +2589,13 @@
                             }
                         } 
                     });
+                }
+                
+                peer.on('open', function(id) {
+                    console.log('Peer aberto com ID:', id);
+                    tryConnect();
                 });
+                
             } catch(e) { 
                 console.error('Erro no setupClient:', e);
                 alert('Erro ao inicializar conexão: ' + e.message);
