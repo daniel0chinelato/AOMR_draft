@@ -1939,6 +1939,7 @@
         }
 
         function toggleReady(player) {
+            console.log('toggleReady chamado. Player:', player, 'MyRole:', myRole, 'isOfflineMode:', isOfflineMode);
             let allowed = false;
             
             if(isOfflineMode) {
@@ -1951,6 +1952,8 @@
                 if (myRole === 'p2' && player === 'p2') allowed = true;
             }
 
+            console.log('Allowed:', allowed);
+            
             if (allowed) {
                 if (isOfflineMode) {
                     if (player === 'p1') state.p1Presence = !state.p1Presence;
@@ -1958,8 +1961,11 @@
                     checkReadyStart();
                     render();
                 } else {
+                    console.log('Enviando TOGGLE_READY para o host');
                     sendAction('TOGGLE_READY', { player: player });
                 }
+            } else {
+                console.log('Não tem permissão para toggle ready');
             }
         }
 
@@ -2029,8 +2035,11 @@
                 checkPhaseAdvance();
             }
             else if (msg.action === 'TOGGLE_READY') {
+                console.log('Processando TOGGLE_READY. Player:', msg.payload.player);
+                console.log('State antes:', 'p1Presence:', state.p1Presence, 'p2Presence:', state.p2Presence);
                 if (msg.payload.player === 'p1') state.p1Presence = !state.p1Presence;
                 if (msg.payload.player === 'p2') state.p2Presence = !state.p2Presence;
+                console.log('State depois:', 'p1Presence:', state.p1Presence, 'p2Presence:', state.p2Presence);
                 checkReadyStart();
             }
             else if (msg.action === 'UPDATE_NAME') {
@@ -2040,7 +2049,7 @@
             else if (msg.action === 'RESET') {
                 const currentP1Name = state.p1Name || "[CAOK] LIGHT";
                 const currentP2Name = state.p2Name || "[CAOK] PAIN";
-                state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [], p1Name: currentP1Name, p2Name: currentP2Name };
+                state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [], p1Name: currentP1Name, p2Name: currentP2Name, draftCompleted: false, gameNumbers: {} };
                 document.getElementById('logContainer').innerHTML = '';
                 updatePlayerNames();
             }
