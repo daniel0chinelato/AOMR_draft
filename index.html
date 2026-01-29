@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AoM Retold - Draft V63 (Mobile Fixed)</title>
-    
+    <title>AoM Retold - Draft System</title>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700;900&display=swap" rel="stylesheet">
-    
     <style>
+
         :root {
             --bg-body: #050505;
             --text-gold: #f1c40f;
@@ -1218,9 +1216,11 @@
             }
         }
 
+    
     </style>
 </head>
 <body>
+
 
     <div id="hostPanel" class="host-panel">
         <div class="host-container">
@@ -1387,1484 +1387,954 @@
         </div>
     </div>
 
-    <script>
-        const godsData = [
-            {n:"Zeus", img:"zeus_portrait.png"}, {n:"Poseidon", img:"poseidon_portrait.png"}, {n:"Hades", img:"hades_portrait.png"},
-            {n:"Isis", img:"isis_portrait.png"}, {n:"Ra", img:"ra_portrait.png"}, {n:"Set", img:"set_portrait.png"},
-            {n:"Odin", img:"odin_portrait.png"}, {n:"Thor", img:"thor_portrait.png"}, {n:"Loki", img:"loki_portrait.png"}, {n:"Freyr", img:"freyr_portrait.png"},
-            {n:"Kronos", img:"kronos_portrait.png"}, {n:"Gaia", img:"gaia_portrait.png"}, {n:"Oranos", img:"oranos_portrait.png"},
-            {n:"Fu Xi", img:"fuxi_portrait.png"}, {n:"Nu Wa", img:"nuwa_portrait.png"}, {n:"Shennong", img:"shennong_portrait.png"},
-            {n:"Amaterasu", img:"amaterasu_portrait.png"}, {n:"Tsukuyomi", img:"tsukuyomi_portrait.png"}, {n:"Susanoo", img:"susanoo_portrait.png"}
-        ];
+    
+<script>
+// ============================================================================
+// AOM RETOLD DRAFT SYSTEM - CLEAN VERSION
+// ============================================================================
 
-        const mapsData = [
-            {n:"Air", img:"https://i.ibb.co/nsmbmGX9/air.png"}, {n:"Alfheim", img:"https://i.ibb.co/8gLtp62y/alfheim.png"},
-            {n:"Blue Lagoon", img:"https://i.ibb.co/RpYKNMK7/blue-lagoon.png"}, {n:"Elysium", img:"https://i.ibb.co/JW3DNSC2/elysium.png"},
-            {n:"Ghost Lake", img:"https://i.ibb.co/7ttqfhXs/ghost-lake.png"}, {n:"Giza", img:"https://i.ibb.co/s9nc4qyq/giza.png"},
-            {n:"Kii", img:"https://i.ibb.co/VWZwbrvJ/kii.png"}, {n:"Marsh", img:"https://i.ibb.co/rKV4bTYq/marsh.png"},
-            {n:"Mediterranean", img:"https://i.ibb.co/MDN5Qynb/mediterranean.png"}, {n:"Megalopolis", img:"https://i.ibb.co/b5b9XhQ2/megalopolis.png"},
-            {n:"Nile Shallows", img:"https://i.ibb.co/dsRLZMQ9/nile-shallows.png"}, {n:"Oasis", img:"https://i.ibb.co/vRfNt3N/oasis.png"},
-            {n:"Savannah", img:"https://i.ibb.co/rG5mywpB/savannah.png"}, {n:"Steppe", img:"https://i.ibb.co/fG1Hc99D/steppe.png"},
-            {n:"Tundra", img:"https://i.ibb.co/k2yfvvvQ/tundra.png"}, {n:"Valley of Kings", img:"https://i.ibb.co/C33ZV2Qp/valley-of-kings.png"},
-            {n:"Watering Hole", img:"https://i.ibb.co/N6WMy1xr/watering-hole.png"}
-        ];
+'use strict';
 
-        const GOD_BLOCKS = [
-            { label: "PICK", type: "PICK", phases: [0] }, 
-            { label: "REVEAL", type: "REVEAL", phases: [] }, 
-            { label: "BAN 1", type: "BAN", phases: [2, 3] }, 
-            { label: "BAN 2", type: "BAN", phases: [4, 5] }, 
-            { label: "BAN 3", type: "BAN", phases: [6, 7] }, 
-            { label: "PICK", type: "PICK", phases: [8,9,10,11,12,13,14,15] }, 
-            { label: "REVEAL", type: "REVEAL", phases: [] }
-        ];
-        
-        const MAP_BLOCKS = [
-            { label: "BAN 1", type: "BAN", phases: [16, 17] }, 
-            { label: "BAN 2", type: "BAN", phases: [18, 19] }, 
-            { label: "BAN 3", type: "BAN", phases: [20, 21] }, 
-            { label: "PICK", type: "PICK", phases: [22] }, 
-            { label: "PICK", type: "PICK", phases: [23] }, 
-            { label: "PICK", type: "PICK", phases: [24] }, 
-            { label: "PICK", type: "PICK", phases: [25] }, 
-            { label: "REVEAL", type: "REVEAL", phases: [26] }
-        ];
+// ============================================================================
+// 1. DADOS E CONFIGURAÇÃO
+// ============================================================================
 
-        function getTimelineState(phase) {
-            let context = 'GODS';
-            let index = 0;
-            if (phase < 16) { 
-                context = 'GODS';
-                if (phase === 0) index = 0; 
-                else if (phase === 1) index = 1; 
-                else if (phase <= 3) index = 2; 
-                else if (phase <= 5) index = 3; 
-                else if (phase <= 7) index = 4; 
-                else if (phase <= 14) index = 5; 
-                else if (phase === 15) index = 6;
-            } else { 
-                context = 'MAPS';
-                if (phase <= 17) index = 0; 
-                else if (phase <= 19) index = 1; 
-                else if (phase <= 21) index = 2; 
-                else if (phase === 22) index = 3; 
-                else if (phase === 23) index = 4; 
-                else if (phase === 24) index = 5; 
-                else if (phase === 25) index = 6; 
-                else if (phase >= 26) index = 7;
-            }
-            return { context, index };
+const GODS = [
+    {n:"Zeus", img:"zeus_portrait.png"}, {n:"Poseidon", img:"poseidon_portrait.png"}, {n:"Hades", img:"hades_portrait.png"},
+    {n:"Isis", img:"isis_portrait.png"}, {n:"Ra", img:"ra_portrait.png"}, {n:"Set", img:"set_portrait.png"},
+    {n:"Odin", img:"odin_portrait.png"}, {n:"Thor", img:"thor_portrait.png"}, {n:"Loki", img:"loki_portrait.png"}, {n:"Freyr", img:"freyr_portrait.png"},
+    {n:"Kronos", img:"kronos_portrait.png"}, {n:"Gaia", img:"gaia_portrait.png"}, {n:"Oranos", img:"oranos_portrait.png"},
+    {n:"Fu Xi", img:"fuxi_portrait.png"}, {n:"Nu Wa", img:"nuwa_portrait.png"}, {n:"Shennong", img:"shennong_portrait.png"},
+    {n:"Amaterasu", img:"amaterasu_portrait.png"}, {n:"Tsukuyomi", img:"tsukuyomi_portrait.png"}, {n:"Susanoo", img:"susanoo_portrait.png"}
+];
+
+const MAPS = [
+    {n:"Air", img:"https://i.ibb.co/nsmbmGX9/air.png"}, {n:"Alfheim", img:"https://i.ibb.co/8gLtp62y/alfheim.png"},
+    {n:"Blue Lagoon", img:"https://i.ibb.co/RpYKNMK7/blue-lagoon.png"}, {n:"Elysium", img:"https://i.ibb.co/JW3DNSC2/elysium.png"},
+    {n:"Ghost Lake", img:"https://i.ibb.co/7ttqfhXs/ghost-lake.png"}, {n:"Giza", img:"https://i.ibb.co/s9nc4qyq/giza.png"},
+    {n:"Kii", img:"https://i.ibb.co/VWZwbrvJ/kii.png"}, {n:"Marsh", img:"https://i.ibb.co/rKV4bTYq/marsh.png"},
+    {n:"Mediterranean", img:"https://i.ibb.co/MDN5Qynb/mediterranean.png"}, {n:"Megalopolis", img:"https://i.ibb.co/b5b9XhQ2/megalopolis.png"},
+    {n:"Nile Shallows", img:"https://i.ibb.co/dsRLZMQ9/nile-shallows.png"}, {n:"Oasis", img:"https://i.ibb.co/vRfNt3N/oasis.png"},
+    {n:"Savannah", img:"https://i.ibb.co/rG5mywpB/savannah.png"}, {n:"Steppe", img:"https://i.ibb.co/fG1Hc99D/steppe.png"},
+    {n:"Tundra", img:"https://i.ibb.co/k2yfvvvQ/tundra.png"}, {n:"Valley of Kings", img:"https://i.ibb.co/C33ZV2Qp/valley-of-kings.png"},
+    {n:"Watering Hole", img:"https://i.ibb.co/N6WMy1xr/watering-hole.png"}
+];
+
+const TIMELINE = [
+    {label:"G1 PICK", p1:"p1-god-0", p2:"p2-god-0", type:"BLIND_PICK"}, {label:"G1 REVEAL", type:"REVEAL_STEP"},
+    {label:"P1 BAN GOD 1", p1:"p1-bangod-0", p2:null, type:"BAN"}, {label:"P2 BAN GOD 1", p1:null, p2:"p2-bangod-0", type:"BAN"},
+    {label:"P2 BAN GOD 2", p1:null, p2:"p2-bangod-1", type:"BAN"}, {label:"P1 BAN GOD 2", p1:"p1-bangod-1", p2:null, type:"BAN"},
+    {label:"P1 BAN GOD 3", p1:"p1-bangod-2", p2:null, type:"BAN"}, {label:"P2 BAN GOD 3", p1:null, p2:"p2-bangod-2", type:"BAN"},
+    {label:"G2 PICK", p1:"p1-god-1", p2:"p2-god-1", type:"BLIND_PICK"}, {label:"G2 REVEAL", type:"REVEAL_STEP"},
+    {label:"G3 PICK", p1:"p1-god-2", p2:"p2-god-2", type:"BLIND_PICK"}, {label:"G3 REVEAL", type:"REVEAL_STEP"},
+    {label:"G4 PICK", p1:"p1-god-3", p2:"p2-god-3", type:"BLIND_PICK"}, {label:"G4 REVEAL", type:"REVEAL_STEP"},
+    {label:"G5 PICK", p1:"p1-god-4", p2:"p2-god-4", type:"BLIND_PICK"}, {label:"G5 REVEAL", type:"REVEAL_STEP"},
+    {label:"P1 BAN MAP 1", p1:"p1-banmap-0", p2:null, type:"BAN"}, {label:"P2 BAN MAP 1", p1:null, p2:"p2-banmap-0", type:"BAN"},
+    {label:"P2 BAN MAP 2", p1:null, p2:"p2-banmap-1", type:"BAN"}, {label:"P1 BAN MAP 2", p1:"p1-banmap-1", p2:null, type:"BAN"},
+    {label:"P1 BAN MAP 3", p1:"p1-banmap-2", p2:null, type:"BAN"}, {label:"P2 BAN MAP 3", p1:null, p2:"p2-banmap-2", type:"BAN"},
+    {label:"PICK MAP 1", p1:"map-0", p2:null, type:"PICK_MAP"}, {label:"PICK MAP 2", p1:null, p2:"map-3", type:"PICK_MAP"},
+    {label:"PICK MAP 3", p1:"map-1", p2:null, type:"PICK_MAP"}, {label:"PICK MAP 4", p1:null, p2:"map-4", type:"PICK_MAP"},
+    {label:"DECIDER", p1:"DECIDER", p2:"DECIDER", type:"DECIDER"}, {label:"FINAL", p1:null, p2:null}
+];
+
+const GOD_BLOCKS = [
+    {label:"PICK", type:"PICK", phases:[0]}, {label:"REVEAL", type:"REVEAL", phases:[]},
+    {label:"BAN 1", type:"BAN", phases:[2,3]}, {label:"BAN 2", type:"BAN", phases:[4,5]}, {label:"BAN 3", type:"BAN", phases:[6,7]},
+    {label:"PICK", type:"PICK", phases:[8,9,10,11,12,13,14,15]}, {label:"REVEAL", type:"REVEAL", phases:[]}
+];
+
+const MAP_BLOCKS = [
+    {label:"BAN 1", type:"BAN", phases:[16,17]}, {label:"BAN 2", type:"BAN", phases:[18,19]}, {label:"BAN 3", type:"BAN", phases:[20,21]},
+    {label:"PICK", type:"PICK", phases:[22]}, {label:"PICK", type:"PICK", phases:[23]},
+    {label:"PICK", type:"PICK", phases:[24]}, {label:"PICK", type:"PICK", phases:[25]}, {label:"REVEAL", type:"REVEAL", phases:[26]}
+];
+
+// ============================================================================
+// 2. ESTADO GLOBAL
+// ============================================================================
+
+const state = {
+    phaseIndex: -1,
+    p1Ready: false,
+    p2Ready: false,
+    p1Presence: false,
+    p2Presence: false,
+    p1Name: "[CAOK] LIGHT",
+    p2Name: "[CAOK] PAIN",
+    selections: {},
+    logs: []
+};
+
+let myRole = 'host';
+let peer = null;
+let connections = [];
+let isOfflineMode = false;
+let currentModalTarget = null;
+let currentContext = 'GODS';
+
+let timerInterval = null;
+let timeLeft = 45;
+let isTransitioning = false;
+
+// ============================================================================
+// 3. INICIALIZAÇÃO
+// ============================================================================
+
+function init() {
+    const params = new URLSearchParams(window.location.search);
+    const lobbyID = params.get('lobby');
+    const roleParam = params.get('role');
+
+    if (!lobbyID) {
+        myRole = 'host';
+        document.getElementById('hostPanel').style.display = 'block';
+        setupHost();
+    } else {
+        myRole = roleParam || 'spec';
+        setupClient(lobbyID);
+        if (myRole === 'spec') {
+            document.getElementById('specBanner').style.display = 'block';
+            document.body.classList.add('spectator-mode');
         }
+    }
+    render();
+}
 
-        const TIMELINE = [
-            { label: "G1 PICK", p1: "p1-god-0", p2: "p2-god-0", type: "BLIND_PICK" }, 
-            { label: "G1 REVEAL", type: "REVEAL_STEP" },
-            { label: "P1 BAN GOD 1", p1: "p1-bangod-0", p2: null, type: "BAN" }, 
-            { label: "P2 BAN GOD 1", p1: null, p2: "p2-bangod-0", type: "BAN" },
-            { label: "P2 BAN GOD 2", p1: null, p2: "p2-bangod-1", type: "BAN" }, 
-            { label: "P1 BAN GOD 2", p1: "p1-bangod-1", p2: null, type: "BAN" },
-            { label: "P1 BAN GOD 3", p1: "p1-bangod-2", p2: null, type: "BAN" }, 
-            { label: "P2 BAN GOD 3", p1: null, p2: "p2-bangod-2", type: "BAN" },
-            { label: "G2 PICK", p1: "p1-god-1", p2: "p2-god-1", type: "BLIND_PICK" }, 
-            { label: "G2 REVEAL", type: "REVEAL_STEP" },
-            { label: "G3 PICK", p1: "p1-god-2", p2: "p2-god-2", type: "BLIND_PICK" }, 
-            { label: "G3 REVEAL", type: "REVEAL_STEP" },
-            { label: "G4 PICK", p1: "p1-god-3", p2: "p2-god-3", type: "BLIND_PICK" }, 
-            { label: "G4 REVEAL", type: "REVEAL_STEP" },
-            { label: "G5 PICK", p1: "p1-god-4", p2: "p2-god-4", type: "BLIND_PICK" }, 
-            { label: "G5 REVEAL", type: "REVEAL_STEP" },
-            { label: "P1 BAN MAP 1", p1: "p1-banmap-0", p2: null, type: "BAN" }, 
-            { label: "P2 BAN MAP 1", p1: null, p2: "p2-banmap-0", type: "BAN" },
-            { label: "P2 BAN MAP 2", p1: null, p2: "p2-banmap-1", type: "BAN" }, 
-            { label: "P1 BAN MAP 2", p1: "p1-banmap-1", p2: null, type: "BAN" },
-            { label: "P1 BAN MAP 3", p1: "p1-banmap-2", p2: null, type: "BAN" }, 
-            { label: "P2 BAN MAP 3", p1: null, p2: "p2-banmap-2", type: "BAN" },
-            { label: "PICK MAP 1", p1: "map-0", p2: null, type: "PICK_MAP" }, 
-            { label: "PICK MAP 2", p1: null, p2: "map-3", type: "PICK_MAP" },
-            { label: "PICK MAP 3", p1: "map-1", p2: null, type: "PICK_MAP" }, 
-            { label: "PICK MAP 4", p1: null, p2: "map-4", type: "PICK_MAP" },
-            { label: "DECIDER", p1: "DECIDER", p2: "DECIDER", type: "DECIDER" }, 
-            { label: "FINAL", p1: null, p2: null }
-        ];
-
-        let state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [], p1Name: "[CAOK] LIGHT", p2Name: "[CAOK] PAIN" };
-        let myRole = 'host'; 
-        let peer = null; 
-        let connections = []; 
-        let currentModalTarget = null;
-        let isOfflineMode = false;
-        let currentContext = 'GODS';
-        
-        let timerInterval = null;
-        let timeLeft = 45;
-        let isTransitioning = false;
-
-        let replayHistory = []; 
-        let replayIndex = -1; 
-        let isReplayMode = false; 
-        let replayInterval = null; 
-        let replaySpeed = 1; 
-        let isRecording = false; 
-        let recordingStartTime = 0;
-        let currentDraftId = null; 
-
-        function syncPlayerName(player, value) {
-            if (player === 'p1') {
-                state.p1Name = value;
-            } else if (player === 'p2') {
-                state.p2Name = value;
-            }
-            
-            if (!isOfflineMode && myRole === 'host') {
-                broadcastState();
-            } else if (!isOfflineMode && myRole === 'p2' && player === 'p2') {
-                sendAction('UPDATE_NAME', { player: player, name: value });
-            } else if (isOfflineMode) {
-                render();
-            }
+function setupHost() {
+    const timeout = setTimeout(() => {
+        if (!peer || !peer.id) {
+            console.log('⚠️ Timeout - entrando em modo offline');
+            isOfflineMode = true;
+            updateLinkFields('MODO OFFLINE');
+            render();
         }
+    }, 5000);
 
-        function updatePlayerNames() {
-            if (document.getElementById('p1NameInput').value !== state.p1Name) {
-                document.getElementById('p1NameInput').value = state.p1Name;
-            }
-            if (document.getElementById('p2NameInput').value !== state.p2Name) {
-                document.getElementById('p2NameInput').value = state.p2Name;
-            }
-        }
+    try {
+        peer = new Peer({
+            debug: 1,
+            config: { iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:global.stun.twilio.com:3478' }
+            ]}
+        });
 
-        function generateDraftId() {
-            return 'draft_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        }
+        peer.on('error', (err) => {
+            console.error('❌ Erro PeerJS:', err);
+            clearTimeout(timeout);
+            isOfflineMode = true;
+            updateLinkFields('MODO OFFLINE (Erro)');
+            render();
+        });
 
-        function saveDraftToStorage() {
-            if (replayHistory.length === 0) return;
-            
-            const draftData = {
-                id: currentDraftId,
-                timestamp: Date.now(),
-                date: new Date().toLocaleString('pt-BR'),
-                p1Name: state.p1Name,
-                p2Name: state.p2Name,
-                snapshots: replayHistory,
-                totalActions: replayHistory.length
-            };
-            
-            localStorage.setItem('currentDraft', JSON.stringify(draftData));
-            
-            let savedDrafts = JSON.parse(localStorage.getItem('savedDrafts') || '[]');
-            
-            const existingIndex = savedDrafts.findIndex(d => d.id === currentDraftId);
-            if (existingIndex >= 0) {
-                savedDrafts[existingIndex] = draftData;
-            } else {
-                savedDrafts.push(draftData);
-            }
-            
-            if (savedDrafts.length > 20) {
-                savedDrafts = savedDrafts.slice(-20);
-            }
-            
-            localStorage.setItem('savedDrafts', JSON.stringify(savedDrafts));
-            
-            console.log('Draft salvo: ' + draftData.totalActions + ' acoes');
-        }
-
-        function loadDraftFromStorage(draftId) {
-            const savedDrafts = JSON.parse(localStorage.getItem('savedDrafts') || '[]');
-            const draft = savedDrafts.find(d => d.id === draftId);
-            
-            if (!draft) {
-                alert('Draft não encontrado!');
-                return false;
-            }
-            
-            replayHistory = draft.snapshots;
-            currentDraftId = draft.id;
-            state.p1Name = draft.p1Name;
-            state.p2Name = draft.p2Name;
-            updatePlayerNames();
-            
-            console.log('Draft carregado: ' + draft.totalActions + ' acoes');
-            enterReplayMode();
-            return true;
-        }
-
-        function loadLastDraft() {
-            const currentDraft = localStorage.getItem('currentDraft');
-            if (!currentDraft) return false;
-            
-            const draft = JSON.parse(currentDraft);
-            replayHistory = draft.snapshots;
-            currentDraftId = draft.id;
-            state.p1Name = draft.p1Name;
-            state.p2Name = draft.p2Name;
-            updatePlayerNames();
-            
-            console.log('Ultimo draft carregado: ' + draft.totalActions + ' acoes');
-            return true;
-        }
-
-        const params = new URLSearchParams(window.location.search);
-        const lobbyID = params.get('lobby');
-        const roleParam = params.get('role');
-        const draftParam = params.get('draft'); 
-        
-        function saveSnapshot() {
-            if (!isRecording && myRole !== 'spec') return;
-            
-            const snapshot = {
-                timestamp: Date.now(),
-                state: JSON.parse(JSON.stringify(state)),
-                p1Name: state.p1Name,
-                p2Name: state.p2Name
-            };
-            
-            replayHistory.push(snapshot);
-            updateReplayUI();
-            
-            if (replayHistory.length % 3 === 0) {
-                saveDraftToStorage();
-            }
-        }
-
-        function generateShareableLink() {
-            if (!currentDraftId) return null;
+        peer.on('open', (id) => {
+            console.log('✅ Host ID:', id);
+            clearTimeout(timeout);
             
             const baseUrl = window.location.href.split('?')[0];
-            return baseUrl + '?role=spec&draft=' + currentDraftId;
-        }
+            const p2Link = `${baseUrl}?lobby=${id}&role=p2`;
+            const specLink = `${baseUrl}?lobby=${id}&role=spec`;
 
-        function enterReplayMode() {
-            if (replayHistory.length === 0) return;
+            setTimeout(() => {
+                const els = {
+                    linkP2: document.getElementById('linkP2'),
+                    linkSpec: document.getElementById('linkSpec'),
+                    linkP2Lobby: document.getElementById('linkP2Lobby'),
+                    linkSpecLobby: document.getElementById('linkSpecLobby'),
+                    lobbyLinks: document.getElementById('lobbyLinks')
+                };
+
+                if (els.linkP2) els.linkP2.value = p2Link;
+                if (els.linkSpec) els.linkSpec.value = specLink;
+                if (els.linkP2Lobby) els.linkP2Lobby.value = p2Link;
+                if (els.linkSpecLobby) els.linkSpecLobby.value = specLink;
+                if (els.lobbyLinks) els.lobbyLinks.style.display = 'block';
+
+                console.log('✅ Links atualizados');
+            }, 100);
+        });
+
+        peer.on('connection', (conn) => {
+            console.log('🔗 Nova conexão');
+            connections.push(conn);
             
-            isReplayMode = true;
-            replayIndex = 0;
-            loadReplaySnapshot(0);
-            updateReplayUI();
-        }
-
-        function exitReplayMode() {
-            isReplayMode = false;
-            stopReplayPlay();
-            replayIndex = -1;
-            updateReplayUI();
-        }
-
-        function loadReplaySnapshot(index) {
-            if (index < 0 || index >= replayHistory.length) return;
-            
-            const snapshot = replayHistory[index];
-            state = JSON.parse(JSON.stringify(snapshot.state)); 
-            state.p1Name = snapshot.p1Name;
-            state.p2Name = snapshot.p2Name;
-            updatePlayerNames();
-            
-            document.getElementById('logContainer').innerHTML = '';
-            
-            replayIndex = index;
-            render();
-            updateReplayUI();
-        }
-
-        function replayRewind() {
-            if (replayHistory.length === 0) {
-                alert('Nenhuma gravação disponível. Clique em "Gravar" durante um draft.');
-                return;
-            }
-            
-            stopReplayPlay();
-            if (!isReplayMode) enterReplayMode();
-            loadReplaySnapshot(0);
-        }
-
-        function replayTogglePlay() {
-            if (replayHistory.length === 0) {
-                alert('Nenhuma gravação disponível. Clique em "Gravar" durante um draft.');
-                return;
-            }
-
-            if (!isReplayMode) enterReplayMode();
-            
-            const btn = document.getElementById('btnPlayPause');
-            
-            if (replayInterval) {
-                stopReplayPlay();
-            } else {
-                startReplayPlay();
-            }
-        }
-
-        function startReplayPlay() {
-            const btn = document.getElementById('btnPlayPause');
-            btn.innerHTML = '⏸️ Pausar';
-            btn.classList.add('playing');
-            
-            const baseInterval = 1000; 
-            const interval = baseInterval / replaySpeed;
-            
-            replayInterval = setInterval(function() {
-                if (replayIndex >= replayHistory.length - 1) {
-                    stopReplayPlay();
-                    return;
-                }
-                loadReplaySnapshot(replayIndex + 1);
-            }, interval);
-        }
-
-        function stopReplayPlay() {
-            if (replayInterval) {
-                clearInterval(replayInterval);
-                replayInterval = null;
-            }
-            
-            const btn = document.getElementById('btnPlayPause');
-            btn.innerHTML = '▶️ Play';
-            btn.classList.remove('playing');
-        }
-
-        function updateReplaySpeed() {
-            replaySpeed = parseFloat(document.getElementById('replaySpeed').value);
-            
-            if (replayInterval) {
-                stopReplayPlay();
-                startReplayPlay();
-            }
-        }
-
-        function seekReplay(event) {
-            if (replayHistory.length === 0) return;
-            
-            const rect = event.currentTarget.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const percent = x / rect.width;
-            const targetIndex = Math.floor(percent * replayHistory.length);
-            
-            stopReplayPlay();
-            if (!isReplayMode) enterReplayMode();
-            loadReplaySnapshot(Math.max(0, Math.min(targetIndex, replayHistory.length - 1)));
-        }
-
-        function updateReplayUI() {
-            if (myRole !== 'spec') return;
-            
-            const progressBar = document.getElementById('replayProgressBar');
-            const timeDisplay = document.getElementById('replayTime');
-            
-            if (replayHistory.length > 0 && isReplayMode) {
-                const percent = (replayIndex / (replayHistory.length - 1)) * 100;
-                progressBar.style.width = percent + '%';
-                timeDisplay.innerText = (replayIndex + 1) + ' / ' + replayHistory.length;
-            } else {
-                progressBar.style.width = '0%';
-                timeDisplay.innerText = '0 / ' + replayHistory.length;
-            }
-        }
-
-        function init() {
-            updatePlayerNames();
-            if (!lobbyID) {
-                myRole = 'host'; 
-                document.getElementById('hostPanel').style.display = 'block'; 
-                render(); 
-                setupHost();
-            } else {
-                myRole = roleParam || 'spec'; 
-                
-                if (draftParam && myRole === 'spec') {
-                    if (loadDraftFromStorage(draftParam)) {
-                        document.getElementById('specBanner').style.display='block';
-                        document.getElementById('replayControls').classList.add('active');
-                        document.body.classList.add('spectator-mode');
-                        console.log('Draft carregado do URL');
-                        return; 
-                    }
-                }
-                
-                setupClient(lobbyID); 
-                
-                if(myRole==='spec') {
-                    document.getElementById('specBanner').style.display='block';
-                    document.getElementById('replayControls').classList.add('active');
-                    document.body.classList.add('spectator-mode');
-                    
-                    isRecording = true;
-                    currentDraftId = generateDraftId();
-                    
-                    if (loadLastDraft()) {
-                        enterReplayMode();
-                        console.log('Ultimo draft carregado automaticamente');
-                    }
-                }
-            }
-            render();
-        }
-
-        function startTimer() {
-            clearInterval(timerInterval); 
-            timeLeft = 45; 
-            
-            const el = document.getElementById('timerDisplay');
-            el.innerText = "45";
-            el.classList.remove('timer-urgent');
-            el.classList.add('timer-resetting');
-            setTimeout(function() { el.classList.remove('timer-resetting'); }, 500);
-            
-            const currentPhase = TIMELINE[state.phaseIndex];
-            if (!currentPhase || currentPhase.type.includes("REVEAL") || currentPhase.type === "DECIDER" || state.phaseIndex >= 27) {
-                el.style.display = 'none';
-                return;
-            }
-            
-            el.style.display = 'block';
-            
-            timerInterval = setInterval(function() {
-                timeLeft--;
-                updateTimerDisplay();
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    handleTimeout();
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const el = document.getElementById('timerDisplay');
-            el.innerText = timeLeft;
-            if (timeLeft <= 10) el.classList.add('timer-urgent'); 
-            else el.classList.remove('timer-urgent');
-        }
-
-        function handleTimeout() {
-            if (isTransitioning) return; 
-
-            const currentPhase = TIMELINE[state.phaseIndex];
-            if (!currentPhase) return;
-
-            if (isOfflineMode) {
-                const p1Data = (currentPhase.p1 && !state.p1Ready) ? getRandomFor(currentPhase.p1) : null;
-                const p2Data = (currentPhase.p2 && !state.p2Ready) ? getRandomFor(currentPhase.p2, (p1Data ? [p1Data.n] : [])) : null;
-
-                if(p1Data) state.selections[currentPhase.p1] = { n: p1Data.n, img: p1Data.img, isRandom: true };
-                if(p2Data) state.selections[currentPhase.p2] = { n: p2Data.n, img: p2Data.img, isRandom: true };
-
-                if (currentPhase.p1) state.p1Ready = true;
-                if (currentPhase.p2) state.p2Ready = true;
-
-                checkPhaseAdvance();
-                render();
-            } 
-            else {
-                if (myRole === 'host') {
-                    const p1Data = (currentPhase.p1 && !state.p1Ready) ? getRandomFor(currentPhase.p1) : null;
-                    const p2Data = (currentPhase.p2 && !state.p2Ready) ? getRandomFor(currentPhase.p2, (p1Data ? [p1Data.n] : [])) : null;
-                    
-                    if(p1Data) processHostAction({ action: 'SELECT_RANDOM', payload: { slot: currentPhase.p1, data: p1Data } });
-                    if(p2Data) processHostAction({ action: 'SELECT_RANDOM', payload: { slot: currentPhase.p2, data: p2Data } });
-                }
-                else if (myRole === 'p2') {
-                     if (currentPhase.p2 && !state.p2Ready) {
-                         const d = getRandomFor(currentPhase.p2);
-                         if(d) sendAction('SELECT_RANDOM', { slot: currentPhase.p2, data: d });
-                     }
-                }
-            }
-        }
-
-        function getRandomFor(slotId, tempExclusions) {
-            if (!tempExclusions) tempExclusions = [];
-            if (!slotId) return null;
-            let type = slotId.includes('god') ? 'god' : 'map';
-            let activePlayer = slotId.startsWith('p1') ? 'p1' : (slotId.startsWith('p2') ? 'p2' : null);
-            if(!activePlayer) { 
-                 const ph = TIMELINE[state.phaseIndex];
-                 if(ph.p1 === slotId) activePlayer = 'p1'; 
-                 else if(ph.p2 === slotId) activePlayer = 'p2';
-            }
-
-            const list = (type === 'map' || type === 'banmap') ? mapsData : godsData;
-            let bannedNames = tempExclusions.slice();
-            let myUsedNames = [];
-            let globalUsedMaps = [];
-            let opponentPickedGods = [];
-            const opponentPrefix = (activePlayer === 'p1') ? 'p2-' : 'p1-';
-
-            Object.keys(state.selections).forEach(function(key) {
-                const item = state.selections[key];
-                if (!item) return;
-                if (key.includes('ban')) bannedNames.push(item.n);
-                else {
-                    if (key.includes('god')) {
-                        if (key.startsWith(opponentPrefix)) opponentPickedGods.push(item.n);
-                        if (key.startsWith(activePlayer + '-god-')) myUsedNames.push(item.n);
-                    }
-                    if (key.startsWith('map-')) globalUsedMaps.push(item.n);
-                }
-            });
-
-            let validItems = list.filter(function(d) {
-                if (bannedNames.includes(d.n)) return false;
-                if (slotId.includes('ban') && opponentPickedGods.includes(d.n)) return false; 
-                if (type === 'map' && globalUsedMaps.includes(d.n)) return false;
-                if (type === 'god' && !slotId.includes('ban') && myUsedNames.includes(d.n)) return false;
-                return true;
-            });
-
-            if (validItems.length > 0) return validItems[Math.floor(Math.random() * validItems.length)];
-            return null;
-        }
-
-        function addLogEntry(player, type, itemName, isRandom) {
-            const pName = player === 'p1' ? state.p1Name : state.p2Name;
-            const logEntry = { player: player, name: pName, action: type === 'ban' ? 'baniu' : 'escolheu', item: itemName, isRandom: isRandom };
-            state.logs.push(logEntry);
-        }
-
-        function renderLogs() {
-            const container = document.getElementById('logContainer');
-            
-            const currentLogCount = container.querySelectorAll('.log-entry').length;
-            const newLogs = state.logs.slice(currentLogCount);
-            
-            newLogs.forEach(function(log) {
-                const entry = document.createElement('div');
-                entry.className = 'log-entry';
-                let playerClass = log.player === 'p1' ? 'p1' : 'p2';
-                let randomText = log.isRandom ? " <span class='random'>(Aleatório ❓)</span>" : "";
-                entry.innerHTML = "<span class='" + playerClass + "'>" + log.name + "</span> " + log.action + " <strong>" + log.item + "</strong>" + randomText;
-                container.appendChild(entry);
+            conn.on('open', () => {
+                console.log('✅ Conexão aberta');
+                conn.send({type:'STATE', state:state});
             });
             
-            setTimeout(function() { container.scrollTop = container.scrollHeight; }, 10);
-        }
-
-        function toggleReady(player) {
-            // Prevenir múltiplas chamadas
-            if (window.toggleReadyLock) {
-                console.log('⚠️ toggleReady bloqueado temporariamente');
-                return;
-            }
-            
-            window.toggleReadyLock = true;
-            setTimeout(function() {
-                window.toggleReadyLock = false;
-            }, 500);
-            
-            console.log('✅ toggleReady chamado. Player:', player, 'MyRole:', myRole, 'isOfflineMode:', isOfflineMode);
-            let allowed = false;
-            
-            if(isOfflineMode) {
-                allowed = true;
-            } else {
-                if (myRole === 'host') {
-                    if (player === 'p1') allowed = true;
-                    if (player === 'p2' && connections.length === 0) allowed = true;
-                }
-                if (myRole === 'p2' && player === 'p2') allowed = true;
-            }
-
-            console.log('Allowed:', allowed);
-            
-            if (allowed) {
-                if (isOfflineMode) {
-                    if (player === 'p1') state.p1Presence = !state.p1Presence;
-                    if (player === 'p2') state.p2Presence = !state.p2Presence;
-                    checkReadyStart();
-                    render();
-                } else {
-                    console.log('📤 Enviando TOGGLE_READY para o host');
-                    sendAction('TOGGLE_READY', { player: player });
-                }
-            } else {
-                console.log('❌ Não tem permissão para toggle ready');
-            }
-        }
-
-
-        function checkReadyStart() {
-            if (state.p1Presence && state.p2Presence) {
-                setTimeout(function() {
-                    state.phaseIndex = 0; 
-                    if (!isOfflineMode) {
-                        broadcastState();
-                        if (myRole === 'host') startTimer();
-                    } else {
-                        startTimer(); 
-                        render();
-                    }
-                }, 500);
-            }
-        }
-
-        function renderTimeline() {
-            if (state.phaseIndex === -1) return;
-            const tlState = getTimelineState(state.phaseIndex);
-            
-            if (currentContext !== tlState.context || document.getElementById('timelineSteps').children.length === 0) {
-                currentContext = tlState.context;
-                const container = document.getElementById('timelineSteps');
-                container.innerHTML = '';
-                const blocks = (currentContext === 'GODS') ? GOD_BLOCKS : MAP_BLOCKS;
-                blocks.forEach(function(block, i) {
-                    const el = document.createElement('div');
-                    el.className = 't-pill';
-                    el.innerText = block.label;
-                    el.setAttribute('data-type', block.type);
-                    el.id = 'tpill-' + i;
-                    container.appendChild(el);
-                });
-            }
-            const total = (currentContext === 'GODS') ? GOD_BLOCKS.length : MAP_BLOCKS.length;
-            for(let i=0; i<total; i++) {
-                const el = document.getElementById('tpill-' + i);
-                if(!el) continue;
-                el.className = 't-pill'; 
-                if (i < tlState.index) el.classList.add('done');
-                else if (i === tlState.index) el.classList.add('active');
-            }
-        }
-
-        function sendAction(actionType, payload) {
-            const msg = { type: 'ACTION', action: actionType, payload: payload, role: myRole };
-            if (myRole === 'host') processHostAction(msg);
-            else if (connections[0]) connections[0].send(msg);
-        }
-
-        function processHostAction(msg) {
-            if (msg.action === 'SELECT') {
-                state.selections[msg.payload.slot] = msg.payload.data;
-            } 
-            else if (msg.action === 'SELECT_RANDOM') {
-                state.selections[msg.payload.slot] = { n: msg.payload.data.n, img: msg.payload.data.img, isRandom: true };
-                let current = TIMELINE[state.phaseIndex];
-                if (current.p1 === msg.payload.slot) state.p1Ready = true;
-                if (current.p2 === msg.payload.slot) state.p2Ready = true;
-                checkPhaseAdvance();
-            }
-            else if (msg.action === 'CONFIRM') {
-                if (msg.role === 'host' || msg.role === 'p1') state.p1Ready = true;
-                if (msg.role === 'p2') state.p2Ready = true;
-                checkPhaseAdvance();
-            }
-            else if (msg.action === 'TOGGLE_READY') {
-                console.log('📥 Recebido TOGGLE_READY:', msg.payload.player);
-                if (msg.payload.player === 'p1') {
-                    const oldValue = state.p1Presence;
-                    state.p1Presence = !state.p1Presence;
-                    console.log('P1 Presence:', oldValue, '->', state.p1Presence);
-                }
-                if (msg.payload.player === 'p2') {
-                    const oldValue = state.p2Presence;
-                    state.p2Presence = !state.p2Presence;
-                    console.log('P2 Presence:', oldValue, '->', state.p2Presence);
-                }
-                checkReadyStart();
-            }
-            else if (msg.action === 'UPDATE_NAME') {
-                if (msg.payload.player === 'p1') state.p1Name = msg.payload.name;
-                if (msg.payload.player === 'p2') state.p2Name = msg.payload.name;
-            }
-            else if (msg.action === 'RESET') {
-                const currentP1Name = state.p1Name || "[CAOK] LIGHT";
-                const currentP2Name = state.p2Name || "[CAOK] PAIN";
-                state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [], p1Name: currentP1Name, p2Name: currentP2Name, draftCompleted: false, gameNumbers: {} };
-                document.getElementById('logContainer').innerHTML = '';
-                updatePlayerNames();
-            }
-            broadcastState();
-        }
-
-        function broadcastState() {
-            render();
-            saveSnapshot(); 
-            if(!isOfflineMode) connections.forEach(function(c) { c.send({ type: 'STATE', state: state }); });
-        }
-
-        function clickSlot(player, type, index) {
-            if (state.phaseIndex === -1) return; 
-            let slotId = (player === 'map') ? ('map-' + index) : (player + '-' + type + '-' + index);
-            if (myRole === 'spec') return;
-            const currentPhase = TIMELINE[state.phaseIndex];
-            if (!currentPhase || currentPhase.type.includes("REVEAL") || currentPhase.type === "DECIDER") return;
-
-            let owner = null;
-            if (slotId === currentPhase.p1) owner = 'p1';
-            if (slotId === currentPhase.p2) owner = 'p2';
-            if (!owner) return;
-
-            let hasPermission = false;
-            if (isOfflineMode) hasPermission = true; 
-            else {
-                if (myRole === 'host' && owner === 'p1') hasPermission = true;
-                if (myRole === 'p2' && owner === 'p2') hasPermission = true;
-                if (myRole === 'host' && owner === 'p2' && connections.length === 0) hasPermission = true;
-            }
-
-            if (owner === 'p1' && state.p1Ready) hasPermission = false;
-            if (owner === 'p2' && state.p2Ready) hasPermission = false;
-
-            if (hasPermission) openModal(slotId, type, owner);
-        }
-
-        function openModal(slotId, type, activePlayer) {
-            currentModalTarget = slotId;
-            const grid = document.getElementById('modalGrid'); 
-            grid.innerHTML = '';
-            const list = (type === 'map' || type === 'banmap') ? mapsData : godsData;
-            
-            let bannedNames = [];
-            let myUsedNames = [];
-            let globalUsedMaps = [];
-            const opponentPrefix = (activePlayer === 'p1') ? 'p2-' : 'p1-';
-            let opponentPickedGods = [];
-
-            Object.keys(state.selections).forEach(function(key) {
-                const item = state.selections[key];
-                if (!item) return;
-                if (key.includes('ban')) bannedNames.push(item.n);
-                else {
-                    if (key.includes('god')) {
-                        if (key.startsWith(opponentPrefix)) opponentPickedGods.push(item.n);
-                        if (key.startsWith(activePlayer + '-god-')) myUsedNames.push(item.n);
-                    }
-                    if (key.startsWith('map-')) globalUsedMaps.push(item.n);
-                }
-            });
-
-            list.forEach(function(d) {
-                const c = document.createElement('div'); 
-                c.className = 'selectable-card';
-                if (type.includes('map')) c.classList.add('is-map-card');
-
-                let disabled = false;
-                if (bannedNames.includes(d.n)) { disabled = true; c.classList.add('banned-overlay'); }
-                if (type === 'bangod' && opponentPickedGods.includes(d.n)) { disabled = true; c.classList.add('protected-overlay'); }
-                if (type.includes('map') && globalUsedMaps.includes(d.n)) { disabled = true; c.classList.add('picked-overlay'); }
-                if (type === 'god' && myUsedNames.includes(d.n)) { disabled = true; c.classList.add('picked-overlay'); }
-
-                if (disabled) c.classList.add('card-disabled');
-                c.innerHTML = "<img src='" + d.img + "' onerror=\"this.style.display='none'; this.parentNode.innerHTML+='<span style=\\'color:red;font-size:0.7em\\'>IMG ERR</span>'\"><div class='card-name-overlay'>" + d.n + "</div>";
-                if (!disabled) {
-                    c.onclick = function(event) { 
-                        selectItem(d, event.currentTarget); 
-                    };
-                }
-                grid.appendChild(c);
+            conn.on('data', (data) => {
+                if (data.type === 'ACTION') processHostAction(data);
             });
             
-            const modal = document.getElementById('selectionModal');
-            modal.style.display = 'flex';
-            setTimeout(function() { modal.classList.add('show'); }, 10);
-        }
+            conn.on('error', (err) => console.error('❌ Erro conexão:', err));
+        });
+    } catch (err) {
+        console.error('❌ Erro setupHost:', err);
+        clearTimeout(timeout);
+        isOfflineMode = true;
+        render();
+    }
+}
 
-        function selectItem(data, cardElement) {
-            // No mobile, fecha modal e mostra botão de confirmar (comportamento original mantido)
-            if (window.innerWidth <= 768) {
-                // Remover seleção anterior
-                document.querySelectorAll('.selectable-card.selected').forEach(function(card) {
-                    card.classList.remove('selected');
-                });
-                
-                // Adicionar classe selected no card clicado (feedback visual antes de fechar)
-                if (cardElement) {
-                    cardElement.classList.add('selected');
-                }
-                
-                // Aguardar animação de seleção antes de fechar
-                setTimeout(function() {
-                    closeModal();
-                    state.selections[currentModalTarget] = data;
+function setupClient(lobbyId) {
+    try {
+        peer = new Peer({
+            debug: 1,
+            config: { iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:global.stun.twilio.com:3478' }
+            ]}
+        });
+
+        peer.on('open', () => {
+            const conn = peer.connect(lobbyId);
+            connections.push(conn);
+            
+            conn.on('open', () => console.log('✅ Conectado ao host'));
+            
+            conn.on('data', (data) => {
+                if (data.type === 'STATE') {
+                    const oldPhase = state.phaseIndex;
+                    Object.assign(state, data.state);
                     render();
                     
-                    // Mostrar botão de confirmar embaixo (comportamento original)
-                    let currentPhase = TIMELINE[state.phaseIndex];
-                    let p1Need = currentPhase.p1 && !state.p1Ready;
-                    let p2Need = currentPhase.p2 && !state.p2Ready;
-                    if(p1Need || p2Need) document.getElementById('confirmBtn').style.display = 'block';
-                }, 400);
-                
-                return;
-            }
+                    if (oldPhase !== state.phaseIndex && state.phaseIndex < TIMELINE.length - 1) {
+                        startTimer();
+                    }
+                }
+            });
             
-            // Desktop - comportamento original
-            closeModal();
-            if (isOfflineMode || (myRole === 'host' && connections.length === 0)) {
-                state.selections[currentModalTarget] = data;
-                render();
-                let currentPhase = TIMELINE[state.phaseIndex];
-                let p1Need = currentPhase.p1 && !state.p1Ready;
-                let p2Need = currentPhase.p2 && !state.p2Ready;
-                if(p1Need || p2Need) document.getElementById('confirmBtn').style.display = 'block';
-            } else {
-                sendAction('SELECT', { slot: currentModalTarget, data: data });
-            }
-        }
+            conn.on('error', (err) => console.error('❌ Erro cliente:', err));
+        });
+
+        peer.on('error', (err) => {
+            console.error('❌ Erro conexão:', err);
+            alert('Falha ao conectar');
+        });
+    } catch (err) {
+        console.error('❌ Erro setupClient:', err);
+    }
+}
+
+function updateLinkFields(message) {
+    ['linkP2', 'linkSpec', 'linkP2Lobby', 'linkSpecLobby'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = message;
+    });
+}
+
+// ============================================================================
+// 4. TIMER
+// ============================================================================
+
+function startTimer() {
+    clearInterval(timerInterval);
+    timeLeft = 45;
+
+    const el = document.getElementById('timerDisplay');
+    if (!el) return;
+    
+    el.textContent = "45";
+    el.classList.remove('timer-urgent');
+    el.classList.add('timer-resetting');
+    setTimeout(() => el.classList.remove('timer-resetting'), 500);
+
+    const phase = TIMELINE[state.phaseIndex];
+    if (!phase || phase.type.includes("REVEAL") || phase.type === "DECIDER" || state.phaseIndex >= 27) {
+        el.style.display = 'none';
+        return;
+    }
+
+    el.style.display = 'block';
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        el.textContent = timeLeft;
         
+        if (timeLeft <= 10) el.classList.add('timer-urgent');
+        else el.classList.remove('timer-urgent');
 
-        function confirmTurn() {
-            document.getElementById('confirmBtn').style.display = 'none';
-            if (isOfflineMode || (myRole === 'host' && connections.length === 0)) {
-                let currentPhase = TIMELINE[state.phaseIndex];
-                if(currentPhase.p1) state.p1Ready = true;
-                if(currentPhase.p2) state.p2Ready = true;
-                checkPhaseAdvance();
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            handleTimeout();
+        }
+    }, 1000);
+}
+
+function handleTimeout() {
+    if (isTransitioning) return;
+    
+    const phase = TIMELINE[state.phaseIndex];
+    if (!phase) return;
+
+    if (isOfflineMode || myRole === 'host') {
+        if (phase.p1 && !state.p1Ready) {
+            const data = getRandomFor(phase.p1);
+            if (data) processHostAction({action:'SELECT_RANDOM', payload:{slot:phase.p1, data:data}});
+        }
+        if (phase.p2 && !state.p2Ready) {
+            const data = getRandomFor(phase.p2);
+            if (data) processHostAction({action:'SELECT_RANDOM', payload:{slot:phase.p2, data:data}});
+        }
+    }
+}
+
+// ============================================================================
+// 5. AÇÕES DO USUÁRIO
+// ============================================================================
+
+function toggleReady(player) {
+    if (window.toggleReadyLock) return;
+    
+    window.toggleReadyLock = true;
+    setTimeout(() => { window.toggleReadyLock = false; }, 500);
+
+    let allowed = false;
+
+    if (isOfflineMode) {
+        allowed = true;
+    } else {
+        if (myRole === 'host') {
+            if (player === 'p1') allowed = true;
+            if (player === 'p2' && connections.length === 0) allowed = true;
+        }
+        if (myRole === 'p2' && player === 'p2') allowed = true;
+    }
+
+    if (allowed) {
+        if (isOfflineMode) {
+            if (player === 'p1') state.p1Presence = !state.p1Presence;
+            if (player === 'p2') state.p2Presence = !state.p2Presence;
+            checkReadyStart();
+            render();
+        } else {
+            sendAction('TOGGLE_READY', {player:player});
+        }
+    }
+}
+
+function checkReadyStart() {
+    if (state.p1Presence && state.p2Presence) {
+        setTimeout(() => {
+            state.phaseIndex = 0;
+            if (!isOfflineMode) {
+                broadcastState();
+                if (myRole === 'host') startTimer();
+            } else {
+                startTimer();
                 render();
-                saveSnapshot(); 
-            } else {
-                sendAction('CONFIRM', null);
             }
+        }, 500);
+    }
+}
+
+function clickSlot(player, type, index) {
+    if (state.phaseIndex === -1) return;
+    
+    const slotId = (player === 'map') ? `map-${index}` : `${player}-${type}-${index}`;
+    const phase = TIMELINE[state.phaseIndex];
+    
+    if (!phase || phase.type.includes("REVEAL") || phase.type === "DECIDER") return;
+
+    let owner = null;
+    if (slotId === phase.p1) owner = 'p1';
+    if (slotId === phase.p2) owner = 'p2';
+    if (!owner) return;
+
+    let hasPermission = false;
+    if (isOfflineMode) hasPermission = true;
+    else {
+        if (myRole === 'host' && owner === 'p1') hasPermission = true;
+        if (myRole === 'p2' && owner === 'p2') hasPermission = true;
+        if (myRole === 'host' && owner === 'p2' && connections.length === 0) hasPermission = true;
+    }
+
+    if (owner === 'p1' && state.p1Ready) hasPermission = false;
+    if (owner === 'p2' && state.p2Ready) hasPermission = false;
+
+    if (hasPermission) openModal(slotId, type, owner);
+}
+
+function confirmTurn() {
+    document.getElementById('confirmBtn').style.display = 'none';
+    
+    if (isOfflineMode || (myRole === 'host' && connections.length === 0)) {
+        const phase = TIMELINE[state.phaseIndex];
+        if (phase.p1) state.p1Ready = true;
+        if (phase.p2) state.p2Ready = true;
+        checkPhaseAdvance();
+        render();
+    } else {
+        sendAction('CONFIRM', null);
+    }
+}
+
+function syncPlayerName(player, value) {
+    if (player === 'p1') state.p1Name = value;
+    else if (player === 'p2') state.p2Name = value;
+
+    if (!isOfflineMode && myRole === 'host') {
+        broadcastState();
+    } else if (!isOfflineMode && myRole === 'p2') {
+        sendAction('UPDATE_NAME', {player:player, name:value});
+    }
+}
+
+function resetDraft() {
+    if (!confirm('Resetar?')) return;
+
+    if (isOfflineMode) {
+        Object.assign(state, {
+            phaseIndex: -1, p1Ready: false, p2Ready: false,
+            p1Presence: false, p2Presence: false,
+            p1Name: "[CAOK] LIGHT", p2Name: "[CAOK] PAIN",
+            selections: {}, logs: []
+        });
+        document.getElementById('logContainer').innerHTML = '';
+        render();
+    } else {
+        sendAction('RESET', null);
+    }
+}
+
+// ============================================================================
+// 6. LÓGICA DE FASE
+// ============================================================================
+
+function checkPhaseAdvance() {
+    const phase = TIMELINE[state.phaseIndex];
+    const p1OK = !phase.p1 || state.p1Ready;
+    const p2OK = !phase.p2 || state.p2Ready;
+
+    if (p1OK && p2OK) {
+        clearInterval(timerInterval);
+        isTransitioning = true;
+        document.getElementById('timerDisplay').textContent = "--";
+
+        if (phase.p1 && state.selections[phase.p1]) {
+            const item = state.selections[phase.p1];
+            addLogEntry('p1', phase.p1.includes('ban') ? 'baniu' : 'escolheu', item.n, item.isRandom || false);
+        }
+        if (phase.p2 && state.selections[phase.p2]) {
+            const item = state.selections[phase.p2];
+            addLogEntry('p2', phase.p2.includes('ban') ? 'baniu' : 'escolheu', item.n, item.isRandom || false);
         }
 
-        function checkPhaseAdvance() {
-            let currentPhase = TIMELINE[state.phaseIndex];
-            let p1OK = !currentPhase.p1 || state.p1Ready;
-            let p2OK = !currentPhase.p2 || state.p2Ready;
+        renderLogs();
 
-            if (p1OK && p2OK) {
-                clearInterval(timerInterval); 
-                isTransitioning = true; 
-                document.getElementById('timerDisplay').innerText = "--";
+        setTimeout(() => {
+            state.phaseIndex++;
+            state.p1Ready = false;
+            state.p2Ready = false;
+            isTransitioning = false;
 
-                if (currentPhase.p1 && state.selections[currentPhase.p1]) {
-                    const item = state.selections[currentPhase.p1];
-                    addLogEntry('p1', (currentPhase.p1.includes('ban') ? 'ban' : 'pick'), item.n, item.isRandom || false);
-                }
-                if (currentPhase.p2 && state.selections[currentPhase.p2]) {
-                    const item = state.selections[currentPhase.p2];
-                    addLogEntry('p2', (currentPhase.p2.includes('ban') ? 'ban' : 'pick'), item.n, item.isRandom || false);
-                }
+            if (TIMELINE[state.phaseIndex].type === "REVEAL_STEP") {
+                if (isOfflineMode) render();
+                else broadcastState();
                 
-                renderLogs();
-
-                setTimeout(function() {
+                setTimeout(() => {
                     state.phaseIndex++;
-                    state.p1Ready = false; 
-                    state.p2Ready = false;
-                    isTransitioning = false;
-                    
-                    if (TIMELINE[state.phaseIndex].type === "REVEAL_STEP") {
-                        if(isOfflineMode) render(); 
-                        else broadcastState();
-                        setTimeout(function() {
-                            state.phaseIndex++;
-                            if(isOfflineMode) { render(); startTimer(); } 
-                            else { broadcastState(); if(myRole==='host') startTimer(); } 
-                        }, 3000);
-                        return; 
-                    }
-
-                    if (TIMELINE[state.phaseIndex].type === "DECIDER") autoPickDecider();
-                    
-                    if (state.phaseIndex >= TIMELINE.length - 1) {
-                        saveDraftToStorage(); 
-                        console.log('Draft finalizado e salvo!');
-                        
-                        if (myRole === 'host' && currentDraftId) {
-                            setTimeout(function() {
-                                const shareLink = generateShareableLink();
-                                if (shareLink) {
-                                    if (confirm('Draft finalizado! Deseja copiar o link de replay para compartilhar?')) {
-                                        navigator.clipboard.writeText(shareLink).then(function() {
-                                            alert('Link copiado! Compartilhe para que outros vejam o replay:\n\n' + shareLink);
-                                        }).catch(function() {
-                                            prompt('Copie este link para compartilhar o replay:', shareLink);
-                                        });
-                                    }
-                                }
-                            }, 2000);
-                        }
-                    }
-                    
-                    if(isOfflineMode) { render(); startTimer(); } 
-                    else { broadcastState(); if(myRole==='host') startTimer(); }
-                }, 500);
+                    if (isOfflineMode) { render(); startTimer(); }
+                    else { broadcastState(); if (myRole === 'host') startTimer(); }
+                }, 3000);
+                return;
             }
+
+            if (TIMELINE[state.phaseIndex].type === "DECIDER") autoPickDecider();
+
+            if (state.phaseIndex >= TIMELINE.length - 1) {
+                console.log('🎉 Draft finalizado');
+            }
+
+            if (isOfflineMode) { render(); startTimer(); }
+            else { broadcastState(); if (myRole === 'host') startTimer(); }
+        }, 500);
+    }
+}
+
+function autoPickDecider() {
+    const forbidden = Object.values(state.selections).map(s => s.n);
+    const available = MAPS.filter(m => !forbidden.includes(m.n));
+    
+    if (available.length > 0) {
+        const picked = available[Math.floor(Math.random() * available.length)];
+        state.selections['map-2'] = picked;
+        
+        setTimeout(() => {
+            state.phaseIndex++;
+            if (isOfflineMode) render();
+            else broadcastState();
+        }, 1500);
+    }
+}
+
+function addLogEntry(player, action, itemName, isRandom) {
+    const pName = player === 'p1' ? state.p1Name : state.p2Name;
+    state.logs.push({player:player, name:pName, action:action, item:itemName, isRandom:isRandom});
+}
+
+// ============================================================================
+// 7. REDE P2P
+// ============================================================================
+
+function sendAction(action, payload) {
+    const msg = {type:'ACTION', action:action, payload:payload, role:myRole};
+    if (myRole === 'host') processHostAction(msg);
+    else if (connections[0]) connections[0].send(msg);
+}
+
+function processHostAction(msg) {
+    if (msg.action === 'SELECT') {
+        state.selections[msg.payload.slot] = msg.payload.data;
+    } else if (msg.action === 'SELECT_RANDOM') {
+        state.selections[msg.payload.slot] = {...msg.payload.data, isRandom:true};
+        const phase = TIMELINE[state.phaseIndex];
+        if (phase.p1 === msg.payload.slot) state.p1Ready = true;
+        if (phase.p2 === msg.payload.slot) state.p2Ready = true;
+        checkPhaseAdvance();
+    } else if (msg.action === 'CONFIRM') {
+        if (msg.role === 'host' || msg.role === 'p1') state.p1Ready = true;
+        if (msg.role === 'p2') state.p2Ready = true;
+        checkPhaseAdvance();
+    } else if (msg.action === 'TOGGLE_READY') {
+        if (msg.payload.player === 'p1') state.p1Presence = !state.p1Presence;
+        if (msg.payload.player === 'p2') state.p2Presence = !state.p2Presence;
+        checkReadyStart();
+    } else if (msg.action === 'UPDATE_NAME') {
+        if (msg.payload.player === 'p1') state.p1Name = msg.payload.name;
+        if (msg.payload.player === 'p2') state.p2Name = msg.payload.name;
+    } else if (msg.action === 'RESET') {
+        Object.assign(state, {
+            phaseIndex: -1, p1Ready: false, p2Ready: false,
+            p1Presence: false, p2Presence: false,
+            p1Name: "[CAOK] LIGHT", p2Name: "[CAOK] PAIN",
+            selections: {}, logs: []
+        });
+        document.getElementById('logContainer').innerHTML = '';
+    }
+    broadcastState();
+}
+
+function broadcastState() {
+    render();
+    connections.forEach(c => c.send({type:'STATE', state:state}));
+}
+
+// ============================================================================
+// 8. MODAL DE SELEÇÃO
+// ============================================================================
+
+function openModal(slotId, type, activePlayer) {
+    currentModalTarget = slotId;
+    const grid = document.getElementById('modalGrid');
+    grid.innerHTML = '';
+    
+    const list = (type === 'map' || type === 'banmap') ? MAPS : GODS;
+    
+    let bannedNames = [];
+    let myUsedNames = [];
+    let globalUsedMaps = [];
+    let opponentPickedGods = [];
+    const opponentPrefix = (activePlayer === 'p1') ? 'p2-' : 'p1-';
+
+    Object.keys(state.selections).forEach(key => {
+        const item = state.selections[key];
+        if (!item) return;
+        if (key.includes('ban')) bannedNames.push(item.n);
+        else {
+            if (key.includes('god')) {
+                if (key.startsWith(opponentPrefix)) opponentPickedGods.push(item.n);
+                if (key.startsWith(activePlayer + '-god-')) myUsedNames.push(item.n);
+            }
+            if (key.startsWith('map-')) globalUsedMaps.push(item.n);
         }
+    });
 
-        function autoPickDecider() {
-            let forbidden = [];
-            Object.values(state.selections).forEach(function(s) { forbidden.push(s.n); });
-            let available = mapsData.filter(function(m) { return !forbidden.includes(m.n); });
-            if (available.length > 0) {
-                let picked = available[Math.floor(Math.random() * available.length)];
-                state.selections['map-2'] = picked;
-                setTimeout(function() { 
-                    state.phaseIndex++; 
-                    if(isOfflineMode) { render(); } 
-                    else { broadcastState(); }
-                }, 1500);
+    list.forEach(d => {
+        const c = document.createElement('div');
+        c.className = 'selectable-card';
+        if (type.includes('map')) c.classList.add('is-map-card');
+
+        let disabled = false;
+        if (bannedNames.includes(d.n)) { disabled = true; c.classList.add('banned-overlay'); }
+        if (type === 'bangod' && opponentPickedGods.includes(d.n)) { disabled = true; c.classList.add('protected-overlay'); }
+        if (type.includes('map') && globalUsedMaps.includes(d.n)) { disabled = true; c.classList.add('picked-overlay'); }
+        if (type === 'god' && myUsedNames.includes(d.n)) { disabled = true; c.classList.add('picked-overlay'); }
+
+        if (disabled) c.classList.add('card-disabled');
+        
+        c.innerHTML = `<img src="${d.img}" onerror="this.style.display='none'"><div class="card-name-overlay">${d.n}</div>`;
+        if (!disabled) c.onclick = () => selectItem(d);
+        grid.appendChild(c);
+    });
+
+    const modal = document.getElementById('selectionModal');
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('show'), 10);
+}
+
+function selectItem(data) {
+    closeModal();
+    
+    if (isOfflineMode || (myRole === 'host' && connections.length === 0)) {
+        state.selections[currentModalTarget] = data;
+        render();
+        
+        const phase = TIMELINE[state.phaseIndex];
+        const p1Need = phase.p1 && !state.p1Ready;
+        const p2Need = phase.p2 && !state.p2Ready;
+        if (p1Need || p2Need) document.getElementById('confirmBtn').style.display = 'block';
+    } else {
+        sendAction('SELECT', {slot:currentModalTarget, data:data});
+    }
+}
+
+function closeModal(event) {
+    if (event && event.target !== document.getElementById('selectionModal')) return;
+    const modal = document.getElementById('selectionModal');
+    modal.classList.remove('show');
+    setTimeout(() => modal.style.display = 'none', 300);
+}
+
+// ============================================================================
+// 9. HELPERS
+// ============================================================================
+
+function getRandomFor(slotId, tempExclusions) {
+    if (!tempExclusions) tempExclusions = [];
+    if (!slotId) return null;
+    
+    const type = slotId.includes('god') ? 'god' : 'map';
+    let activePlayer = slotId.startsWith('p1') ? 'p1' : (slotId.startsWith('p2') ? 'p2' : null);
+    if (!activePlayer) {
+        const ph = TIMELINE[state.phaseIndex];
+        if (ph.p1 === slotId) activePlayer = 'p1';
+        else if (ph.p2 === slotId) activePlayer = 'p2';
+    }
+
+    const list = (type === 'map' || type === 'banmap') ? MAPS : GODS;
+    let bannedNames = tempExclusions.slice();
+    let myUsedNames = [];
+    let globalUsedMaps = [];
+    let opponentPickedGods = [];
+    const opponentPrefix = (activePlayer === 'p1') ? 'p2-' : 'p1-';
+
+    Object.keys(state.selections).forEach(key => {
+        const item = state.selections[key];
+        if (!item) return;
+        if (key.includes('ban')) bannedNames.push(item.n);
+        else {
+            if (key.includes('god')) {
+                if (key.startsWith(opponentPrefix)) opponentPickedGods.push(item.n);
+                if (key.startsWith(activePlayer + '-god-')) myUsedNames.push(item.n);
             }
+            if (key.startsWith('map-')) globalUsedMaps.push(item.n);
         }
+    });
 
-        function render() {
-            const overlay = document.getElementById('readyOverlay');
-            if (state.phaseIndex === -1) {
-                overlay.style.display = 'flex'; 
-                overlay.style.opacity = '1';
-                const box1 = document.getElementById('p1ReadyBox');
-                const btn1 = document.getElementById('btnReadyP1');
-                if (state.p1Presence) { box1.classList.add('ready'); btn1.innerText = "PRONTO"; } 
-                else { box1.classList.remove('ready'); btn1.innerText = "CONFIRMAR"; }
-                const box2 = document.getElementById('p2ReadyBox');
-                const btn2 = document.getElementById('btnReadyP2');
-                if (state.p2Presence) { box2.classList.add('ready'); btn2.innerText = "PRONTO"; } 
-                else { box2.classList.remove('ready'); btn2.innerText = "CONFIRMAR"; }
-                return; 
-            } else {
-                overlay.style.opacity = '0'; 
-                setTimeout(function() { overlay.style.display = 'none'; }, 500);
-            }
+    const validItems = list.filter(d => {
+        if (bannedNames.includes(d.n)) return false;
+        if (slotId.includes('ban') && opponentPickedGods.includes(d.n)) return false;
+        if (type === 'map' && globalUsedMaps.includes(d.n)) return false;
+        if (type === 'god' && !slotId.includes('ban') && myUsedNames.includes(d.n)) return false;
+        return true;
+    });
 
-            updatePlayerNames();
-            
-            // Atualizar nomes nos grupos para mobile
-            const p1Group = document.querySelector('.god-group.p1-group');
-            const p2Group = document.querySelector('.god-group.p2-group');
-            if (p1Group) p1Group.setAttribute('data-player-name', state.p1Name);
-            if (p2Group) p2Group.setAttribute('data-player-name', state.p2Name);
+    if (validItems.length > 0) return validItems[Math.floor(Math.random() * validItems.length)];
+    return null;
+}
 
-            renderTimeline();
-            renderLogs(); 
+function getTimelineState(phase) {
+    let context = 'GODS';
+    let index = 0;
+    
+    if (phase < 16) {
+        context = 'GODS';
+        if (phase === 0) index = 0;
+        else if (phase === 1) index = 1;
+        else if (phase <= 3) index = 2;
+        else if (phase <= 5) index = 3;
+        else if (phase <= 7) index = 4;
+        else if (phase <= 14) index = 5;
+        else if (phase === 15) index = 6;
+    } else {
+        context = 'MAPS';
+        if (phase <= 17) index = 0;
+        else if (phase <= 19) index = 1;
+        else if (phase <= 21) index = 2;
+        else if (phase === 22) index = 3;
+        else if (phase === 23) index = 4;
+        else if (phase === 24) index = 5;
+        else if (phase === 25) index = 6;
+        else if (phase >= 26) index = 7;
+    }
+    
+    return {context, index};
+}
 
-            const currentPhase = TIMELINE[state.phaseIndex];
-            
-            if(currentPhase && !currentPhase.type.includes("REVEAL") && currentPhase.type !== "DECIDER") {
-                let show = false;
-                if(isOfflineMode || (myRole === 'host' && connections.length === 0)) {
-                    if((currentPhase.p1 && !state.p1Ready) || (currentPhase.p2 && !state.p2Ready)) show = true;
-                } else {
-                    if(myRole === 'host' && currentPhase.p1 && !state.p1Ready && state.selections[currentPhase.p1]) show = true;
-                    if(myRole === 'p2' && currentPhase.p2 && !state.p2Ready && state.selections[currentPhase.p2]) show = true;
-                }
-                document.getElementById('confirmBtn').style.display = show ? 'block' : 'none';
-            } else { 
-                document.getElementById('confirmBtn').style.display = 'none'; 
-            }
+function copyLink(id, btnElement) {
+    const input = document.getElementById(id);
+    if (!input) return;
+    
+    input.select();
+    document.execCommand('copy');
+    
+    const originalText = btnElement.textContent;
+    btnElement.textContent = 'COPIADO!';
+    btnElement.style.background = '#2ecc71';
+    btnElement.style.color = '#000';
+    
+    setTimeout(() => {
+        btnElement.textContent = originalText;
+        btnElement.style.background = '';
+        btnElement.style.color = '';
+    }, 2000);
+}
 
-            const allSlots = document.querySelectorAll('.god-slot, .ban-slot, .map-slot');
-            
-            allSlots.forEach(function(el) {
-                const id = el.id;
-                const data = state.selections[id];
-                el.classList.remove('slot-active', 'slot-locked', 'slot-pending-confirm', 'slot-blind-ready');
+function copyLobbyLink(id, btnElement) {
+    copyLink(id, btnElement);
+}
+
+// ============================================================================
+// 10. RENDERIZAÇÃO
+// ============================================================================
+
+function render() {
+    const overlay = document.getElementById('readyOverlay');
+    
+    if (state.phaseIndex === -1) {
+        overlay.style.display = 'flex';
+        overlay.style.opacity = '1';
+        
+        const box1 = document.getElementById('p1ReadyBox');
+        const btn1 = document.getElementById('btnReadyP1');
+        if (state.p1Presence) { box1.classList.add('ready'); btn1.textContent = "PRONTO"; }
+        else { box1.classList.remove('ready'); btn1.textContent = "CONFIRMAR"; }
+        
+        const box2 = document.getElementById('p2ReadyBox');
+        const btn2 = document.getElementById('btnReadyP2');
+        if (state.p2Presence) { box2.classList.add('ready'); btn2.textContent = "PRONTO"; }
+        else { box2.classList.remove('ready'); btn2.textContent = "CONFIRMAR"; }
+        return;
+    } else {
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.style.display = 'none', 500);
+    }
+
+    updatePlayerNames();
+    updateTurnIndicators();
+    renderTimeline();
+    renderLogs();
+    renderSlots();
+    renderConfirmButton();
+}
+
+function updatePlayerNames() {
+    const p1Input = document.getElementById('p1NameInput');
+    const p2Input = document.getElementById('p2NameInput');
+    
+    if (p1Input && p1Input.value !== state.p1Name) p1Input.value = state.p1Name;
+    if (p2Input && p2Input.value !== state.p2Name) p2Input.value = state.p2Name;
+    
+    const p1Group = document.querySelector('.god-group.p1-group');
+    const p2Group = document.querySelector('.god-group.p2-group');
+    if (p1Group) p1Group.setAttribute('data-player-name', state.p1Name);
+    if (p2Group) p2Group.setAttribute('data-player-name', state.p2Name);
+}
+
+function updateTurnIndicators() {
+    const p1Arrow = document.getElementById('p1Arrow');
+    const p2Arrow = document.getElementById('p2Arrow');
+    
+    if (!p1Arrow || !p2Arrow) return;
+    
+    p1Arrow.classList.remove('active', 'p1-turn', 'p2-turn');
+    p2Arrow.classList.remove('active', 'p1-turn', 'p2-turn');
+    p1Arrow.innerHTML = '&lt;';
+    p2Arrow.innerHTML = '&gt;';
+    
+    if (state.phaseIndex === -1) return;
+    
+    const phase = TIMELINE[state.phaseIndex];
+    if (!phase || phase.type.includes('REVEAL') || phase.type === 'DECIDER') return;
+    
+    if (phase.p1 && !state.p1Ready) p1Arrow.classList.add('active', 'p1-turn');
+    if (phase.p2 && !state.p2Ready) p2Arrow.classList.add('active', 'p2-turn');
+}
+
+function renderTimeline() {
+    if (state.phaseIndex === -1) return;
+    
+    const tlState = getTimelineState(state.phaseIndex);
+    
+    if (currentContext !== tlState.context || document.getElementById('timelineSteps').children.length === 0) {
+        currentContext = tlState.context;
+        const container = document.getElementById('timelineSteps');
+        container.innerHTML = '';
+        const blocks = (currentContext === 'GODS') ? GOD_BLOCKS : MAP_BLOCKS;
+        
+        blocks.forEach((block, i) => {
+            const el = document.createElement('div');
+            el.className = 't-pill';
+            el.textContent = block.label;
+            el.setAttribute('data-type', block.type);
+            el.id = `tpill-${i}`;
+            container.appendChild(el);
+        });
+    }
+    
+    const total = (currentContext === 'GODS') ? GOD_BLOCKS.length : MAP_BLOCKS.length;
+    for (let i = 0; i < total; i++) {
+        const el = document.getElementById(`tpill-${i}`);
+        if (!el) continue;
+        el.className = 't-pill';
+        if (i < tlState.index) el.classList.add('done');
+        else if (i === tlState.index) el.classList.add('active');
+    }
+}
+
+function renderLogs() {
+    const container = document.getElementById('logContainer');
+    const currentLogCount = container.querySelectorAll('.log-entry').length;
+    const newLogs = state.logs.slice(currentLogCount);
+    
+    newLogs.forEach(log => {
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        const playerClass = log.player === 'p1' ? 'p1' : 'p2';
+        const randomText = log.isRandom ? " <span class='random'>(Aleatório ❓)</span>" : "";
+        entry.innerHTML = `<span class="${playerClass}">${log.name}</span> ${log.action} <strong>${log.item}</strong>${randomText}`;
+        container.appendChild(entry);
+    });
+    
+    setTimeout(() => container.scrollTop = container.scrollHeight, 10);
+}
+
+function renderSlots() {
+    const allSlots = document.querySelectorAll('.god-slot, .ban-slot, .map-slot');
+    const phase = TIMELINE[state.phaseIndex];
+    
+    allSlots.forEach(el => {
+        const id = el.id;
+        const data = state.selections[id];
+        
+        el.classList.remove('slot-active', 'slot-locked', 'slot-pending-confirm', 'slot-blind-ready');
+        
+        // Renderizar conteúdo
+        if (id.includes('ban')) {
+            if (!data) {
+                el.innerHTML = '';
+                el.classList.remove('filled');
+            } else if (!el.classList.contains('filled')) {
+                const randomMark = data.isRandom ? '<div class="random-mark">❓</div>' : '';
+                el.innerHTML = `<img src="${data.img}">${randomMark}`;
+                el.classList.add('filled');
                 
-                if (id.includes('ban')) {
-                    if (!data) {
-                        el.innerHTML = '';
-                        el.classList.remove('filled');
-                    } else if (!el.classList.contains('filled')) {
-                        let randomMark = data.isRandom ? "<div class='random-mark'>❓</div>" : '';
-                        el.innerHTML = "<img src='" + data.img + "' onerror=\"this.style.display='none'; this.parentNode.innerHTML+='<span style=\\'color:red;font-size:0.7em\\'>IMG ERR</span>'\">" + randomMark;
-                        el.classList.add('filled');
-                        
-                        const img = el.querySelector('img');
-                        if (img) {
-                            setTimeout(function() {
-                                img.classList.add('animated');
-                            }, 500);
+                const img = el.querySelector('img');
+                if (img) setTimeout(() => img.classList.add('animated'), 500);
+            }
+        } else if (id.includes('map')) {
+            if (!data) {
+                el.innerHTML = '';
+                el.classList.remove('filled');
+            } else if (!el.classList.contains('filled')) {
+                const randomMark = data.isRandom ? '<div class="random-mark">❓</div>' : '';
+                el.innerHTML = `<img src="${data.img}">${randomMark}<div class="map-name-label">${data.n}</div>`;
+                el.classList.add('filled');
+            }
+        } else {
+            if (!data) {
+                el.innerHTML = '';
+                el.classList.remove('filled');
+            } else {
+                let hideMe = false;
+                if (phase && phase.type === "BLIND_PICK" && (id === phase.p1 || id === phase.p2)) {
+                    if (isOfflineMode) {
+                        if ((id === phase.p1 && state.p1Ready) || (id === phase.p2 && state.p2Ready)) hideMe = true;
+                    } else {
+                        if (myRole === 'host' && connections.length === 0) {
+                            if ((id === phase.p1 && state.p1Ready) || (id === phase.p2 && state.p2Ready)) hideMe = true;
+                        } else {
+                            if (myRole === 'host' && id === phase.p2) hideMe = true;
+                            if (myRole === 'p2' && id === phase.p1) hideMe = true;
+                            if (myRole === 'spec') hideMe = true;
                         }
                     }
-                } 
-                else if (id.includes('map')) {
-                    if (!data) {
-                        el.innerHTML = '';
-                        el.classList.remove('filled');
-                    } else if (!el.classList.contains('filled')) {
-                        let randomMark = data.isRandom ? "<div class='random-mark'>❓</div>" : '';
-                        let htmlContent = "<img src='" + data.img + "' onerror=\"this.style.display='none'; this.parentNode.innerHTML+='<span style=\\'color:red;font-size:0.7em\\'>IMG ERR</span>'\">" + randomMark;
-                        htmlContent += "<div class='map-name-label'>" + data.n + "</div>";
+                }
+
+                if (hideMe) {
+                    el.classList.add('slot-blind-ready');
+                    el.innerHTML = '';
+                } else {
+                    const randomMark = data.isRandom ? '<div class="random-mark">❓</div>' : '';
+                    const htmlContent = `<img src="${data.img}">${randomMark}`;
+                    if (el.innerHTML !== htmlContent) {
                         el.innerHTML = htmlContent;
                         el.classList.add('filled');
                     }
                 }
-                else {
-                    if (!data) el.innerHTML = ''; 
-                    else if (!el.querySelector('img')) el.innerHTML = '';
-
-                    if (data) {
-                        let hideMe = false;
-                        if (currentPhase && currentPhase.type === "BLIND_PICK" && (id === currentPhase.p1 || id === currentPhase.p2)) {
-                            if(isOfflineMode) { 
-                                if ((id === currentPhase.p1 && state.p1Ready) || (id === currentPhase.p2 && state.p2Ready)) hideMe = true; 
-                            } 
-                            else { 
-                                if(myRole === 'host' && connections.length === 0) { 
-                                    if((id===currentPhase.p1 && state.p1Ready) || (id===currentPhase.p2 && state.p2Ready)) hideMe = true; 
-                                } else {
-                                    if (myRole === 'host' && id === currentPhase.p2) hideMe = true; 
-                                    if (myRole === 'p2' && id === currentPhase.p1) hideMe = true; 
-                                    if (myRole === 'spec') hideMe = true; 
-                                }
-                            }
-                        }
-
-                        if (hideMe) { 
-                            el.classList.add('slot-blind-ready'); 
-                            el.innerHTML = ''; 
-                        }
-                        else {
-                            let htmlContent = '';
-                            let randomMark = data.isRandom ? "<div class='random-mark'>❓</div>" : '';
-                            htmlContent = "<img src='" + data.img + "' onerror=\"this.style.display='none'; this.parentNode.innerHTML+='<span style=\\'color:red;font-size:0.7em\\'>IMG ERR</span>'\">" + randomMark;
-                            
-                            if (el.innerHTML !== htmlContent) {
-                                el.innerHTML = htmlContent;
-                            }
-                        }
-                    } else el.classList.remove('filled');
-                }
-
-                if (!currentPhase) return;
-
-                let isActive = false;
-                if (id === currentPhase.p1 || id === currentPhase.p2) isActive = true;
-
-                if (isActive) {
-                    el.classList.add('slot-active');
-                    let pending = false;
-                    if(data) {
-                        if(isOfflineMode || (myRole === 'host' && connections.length === 0)) { 
-                            if ((id === currentPhase.p1 && !state.p1Ready) || (id === currentPhase.p2 && !state.p2Ready)) pending = true; 
-                        }
-                        else { 
-                            if ((myRole==='host' && id===currentPhase.p1 && !state.p1Ready) || (myRole==='p2' && id===currentPhase.p2 && !state.p2Ready)) pending = true; 
-                        }
-                    }
-                    if (pending) el.classList.add('slot-pending-confirm');
-                } else if (data) el.classList.add('slot-locked');
-            });
-        }
-
-        function setupHost() {
-            try {
-                let connectionTimeout = setTimeout(function() {
-                    if(!peer || !peer.id) {
-                        console.log("Tempo limite excedido. Forçando modo offline.");
-                        isOfflineMode = true;
-                        document.getElementById('linkP2').value = "MODO OFFLINE (Auto)";
-                        document.getElementById('linkP2Lobby').value = "MODO OFFLINE (Auto)";
-                        render();
-                    }
-                }, 3000);
-
-                console.log('Iniciando como host...');
-                peer = new Peer({ 
-                    debug: 2,
-                    config: {
-                        iceServers: [
-                            { urls: 'stun:stun.l.google.com:19302' },
-                            { urls: 'stun:global.stun.twilio.com:3478' }
-                        ]
-                    }
-                });
-                
-                peer.on('error', function(e) { 
-                    console.error('Erro PeerJS do host:', e);
-                    clearTimeout(connectionTimeout);
-                    isOfflineMode = true; 
-                    document.getElementById('linkP2').value = "MODO OFFLINE (Err: " + e.type + ")"; 
-                    document.getElementById('linkP2Lobby').value = "MODO OFFLINE (Err: " + e.type + ")";
-                    render();
-                });
-                
-                peer.on('open', function(id) {
-                    console.log('Host iniciado com ID:', id);
-                    clearTimeout(connectionTimeout);
-                    const u = window.location.href.split('?')[0];
-                    const p2Link = u + '?lobby=' + id + '&role=p2';
-                    const specLink = u + '?lobby=' + id + '&role=spec';
-                    
-                    console.log('Links gerados:');
-                    console.log('P2:', p2Link);
-                    console.log('Spec:', specLink);
-                    
-                    // Preencher campos do painel host (canto inferior esquerdo)
-                    document.getElementById('linkP2').value = p2Link;
-                    document.getElementById('linkSpec').value = specLink;
-                    
-                    // Preencher campos do lobby (tela de espera)
-                    document.getElementById('linkP2Lobby').value = p2Link;
-                    document.getElementById('linkSpecLobby').value = specLink;
-                    
-                    // Mostrar seção de links no lobby
-                    document.getElementById('lobbyLinks').style.display = 'block';
-                });
-                
-                peer.on('connection', function(c) {
-                    console.log('Nova conexão recebida!');
-                    connections.push(c);
-                    c.on('open', function() { 
-                        console.log('Conexão aberta, enviando estado inicial...');
-                        c.send({ type: 'STATE', state: state });
-                    });
-                    c.on('data', function(d) { 
-                        console.log('Ação recebida do cliente:', d.action);
-                        if(d.type === 'ACTION') processHostAction(d); 
-                    });
-                    c.on('error', function(err) {
-                        console.error('Erro na conexão com cliente:', err);
-                    });
-                });
-            } catch(e) { 
-                console.error('Erro no setupHost:', e);
-                isOfflineMode = true; 
-                render();
             }
         }
 
-        function setupClient(h) {
-            try {
-                console.log('Tentando conectar ao lobby:', h);
-                peer = new Peer({ 
-                    debug: 2,
-                    config: {
-                        iceServers: [
-                            { urls: 'stun:stun.l.google.com:19302' },
-                            { urls: 'stun:global.stun.twilio.com:3478' }
-                        ]
-                    }
-                });
+        // Renderizar estado
+        if (!phase) return;
+
+        const isActive = (id === phase.p1 || id === phase.p2);
+
+        if (isActive) {
+            el.classList.add('slot-active');
+            
+            if (data) {
+                let pending = false;
                 
-                let connectionAttempts = 0;
-                const maxAttempts = 3;
-                
-                peer.on('error', function(err) {
-                    console.error('Erro PeerJS:', err);
-                    if (err.type === 'peer-unavailable' && connectionAttempts < maxAttempts) {
-                        connectionAttempts++;
-                        console.log('Tentativa', connectionAttempts, 'de', maxAttempts);
-                        setTimeout(function() {
-                            tryConnect();
-                        }, 2000);
-                    } else {
-                        alert('Erro ao conectar: ' + err.type + '. Verifique se o lobby ainda está ativo.\n\nTente:\n1. Recarregar a página do host\n2. Gerar um novo link\n3. Usar outro navegador');
-                    }
-                });
-                
-                function tryConnect() {
-                    console.log('Conectando ao host:', h);
-                    const c = peer.connect(h, { reliable: true });
-                    
-                    let connectTimeout = setTimeout(function() {
-                        console.error('Timeout na conexão');
-                        c.close();
-                        if (connectionAttempts < maxAttempts) {
-                            connectionAttempts++;
-                            console.log('Tentando novamente... Tentativa', connectionAttempts);
-                            tryConnect();
-                        } else {
-                            alert('Não foi possível conectar ao host após ' + maxAttempts + ' tentativas.\n\nPossíveis causas:\n- Host fechou a aba\n- Firewall bloqueando WebRTC\n- Rede corporativa bloqueando P2P\n\nTente em uma rede diferente ou peça ao host para gerar novo link.');
-                        }
-                    }, 10000); // 10 segundos de timeout
-                    
-                    c.on('open', function() { 
-                        clearTimeout(connectTimeout);
-                        console.log('Conexão estabelecida com o host!');
-                        connectionAttempts = 0; // Reset counter
-                        connections.push(c);
-                    });
-                    
-                    c.on('error', function(err) {
-                        clearTimeout(connectTimeout);
-                        console.error('Erro na conexão:', err);
-                    });
-                    
-                    c.on('close', function() {
-                        console.warn('Conexão fechada pelo host');
-                        alert('Conexão perdida com o host.');
-                    });
-                    
-                    c.on('data', function(d) { 
-                        console.log('Dados recebidos:', d.type);
-                        if(d.type === 'STATE') { 
-                            const oldPhase = state.phaseIndex;
-                            const wasDraftCompleted = state.draftCompleted;
-                            const hadGameNumbers = state.gameNumbers && Object.keys(state.gameNumbers).length > 0;
-                            
-                            state = d.state; 
-                            console.log('State atualizado. PhaseIndex:', state.phaseIndex);
-                            updatePlayerNames();
-                            render(); 
-                            saveSnapshot(); 
-                            
-                            // Detectar quando draft é finalizado
-                            if (!wasDraftCompleted && state.draftCompleted) {
-                                console.log('Draft finalizado detectado pelo cliente!');
-                                showEpicTransition();
-                            }
-                            
-                            // Detectar quando números de jogo são definidos
-                            if (!hadGameNumbers && state.gameNumbers && Object.keys(state.gameNumbers).length > 0) {
-                                console.log('Números de jogo definidos pelo host!');
-                                const gameScreen = document.getElementById('gameSelection');
-                                if (gameScreen.classList.contains('active')) {
-                                    gameScreen.classList.remove('active');
-                                }
-                            }
-                            
-                            if (state.phaseIndex !== oldPhase && state.phaseIndex < 27) {
-                                startTimer();
-                            }
-                        } 
-                    });
+                if (isOfflineMode || (myRole === 'host' && connections.length === 0)) {
+                    if ((id === phase.p1 && !state.p1Ready) || (id === phase.p2 && !state.p2Ready)) pending = true;
+                } else {
+                    if ((myRole === 'host' && id === phase.p1 && !state.p1Ready) || (myRole === 'p2' && id === phase.p2 && !state.p2Ready)) pending = true;
                 }
                 
-                peer.on('open', function(id) {
-                    console.log('Peer aberto com ID:', id);
-                    tryConnect();
-                });
-                
-            } catch(e) { 
-                console.error('Erro no setupClient:', e);
-                alert('Erro ao inicializar conexão: ' + e.message);
+                if (pending) el.classList.add('slot-pending-confirm');
             }
+        } else if (data) {
+            el.classList.add('slot-locked');
         }
-        
-        function copyLink(id, btnElement) { 
-            const i = document.getElementById(id); 
-            i.select(); 
-            document.execCommand('copy'); 
-            
-            const originalText = btnElement.innerText;
-            btnElement.innerText = "SUCESSO!";
-            btnElement.style.background = "#2ecc71";
-            btnElement.style.color = "#000";
-            
-            setTimeout(function() {
-                btnElement.innerText = originalText;
-                btnElement.style.background = "";
-                btnElement.style.color = "";
-            }, 2000);
-        }
+    });
+}
 
-        function copyLobbyLink(id, btnElement) { 
-            const i = document.getElementById(id); 
-            i.select(); 
-            document.execCommand('copy'); 
-            
-            const originalText = btnElement.innerText;
-            btnElement.innerText = "COPIADO!";
-            btnElement.classList.add('copied');
-            
-            setTimeout(function() {
-                btnElement.innerText = originalText;
-                btnElement.classList.remove('copied');
-            }, 2000);
-        }
+function renderConfirmButton() {
+    const btn = document.getElementById('confirmBtn');
+    const phase = TIMELINE[state.phaseIndex];
+    
+    if (!phase || phase.type.includes("REVEAL") || phase.type === "DECIDER") {
+        btn.style.display = 'none';
+        return;
+    }
+    
+    let show = false;
+    
+    if (isOfflineMode || (myRole === 'host' && connections.length === 0)) {
+        if ((phase.p1 && !state.p1Ready) || (phase.p2 && !state.p2Ready)) show = true;
+    } else {
+        if (myRole === 'host' && phase.p1 && !state.p1Ready && state.selections[phase.p1]) show = true;
+        if (myRole === 'p2' && phase.p2 && !state.p2Ready && state.selections[phase.p2]) show = true;
+    }
+    
+    btn.style.display = show ? 'block' : 'none';
+}
 
-        function closeModal(e) { 
-            if(e && e.target !== document.getElementById('selectionModal')) return; 
-            document.getElementById('selectionModal').classList.remove('show'); 
-            setTimeout(function() { document.getElementById('selectionModal').style.display='none'; }, 300); 
-        }
-        
-        function resetDraft() { 
-            if(confirm("Reset?")) { 
-                if(isOfflineMode) { 
-                    const currentP1Name = state.p1Name || "[CAOK] LIGHT";
-                    const currentP2Name = state.p2Name || "[CAOK] PAIN";
-                    state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [], p1Name: currentP1Name, p2Name: currentP2Name }; 
-                    document.getElementById('logContainer').innerHTML = '';
-                    updatePlayerNames();
-                    render(); 
-                } else sendAction('RESET', null); 
-            } 
-        }
+// ============================================================================
+// 11. INICIAR
+// ============================================================================
 
-        // ============================================
-        // TRANSIÇÃO ÉPICA E SELEÇÃO DE JOGOS
-        // ============================================
-        let gameSelections = {}; // {mapId: gameNumber}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
 
-        function showEpicTransition() {
-            const epicScreen = document.getElementById('epicTransition');
-            
-            // Preencher nomes dos jogadores
-            document.getElementById('epicP1Name').innerText = state.p1Name;
-            document.getElementById('epicP2Name').innerText = state.p2Name;
-            
-            // Preencher deuses do P1
-            const p1Gods = document.getElementById('epicP1Gods');
-            p1Gods.innerHTML = '';
-            for (let i = 0; i < 5; i++) {
-                const godData = state.selections['p1-god-' + i];
-                if (godData) {
-                    const img = document.createElement('img');
-                    img.src = godData.img;
-                    img.style.setProperty('--i', i);
-                    p1Gods.appendChild(img);
-                }
-            }
-            
-            // Preencher deuses do P2
-            const p2Gods = document.getElementById('epicP2Gods');
-            p2Gods.innerHTML = '';
-            for (let i = 0; i < 5; i++) {
-                const godData = state.selections['p2-god-' + i];
-                if (godData) {
-                    const img = document.createElement('img');
-                    img.src = godData.img;
-                    img.style.setProperty('--i', i);
-                    p2Gods.appendChild(img);
-                }
-            }
-            
-            // Mostrar tela
-            epicScreen.classList.add('active');
-            
-            // Após 4 segundos, transição para seleção de jogos
-            setTimeout(function() {
-                epicScreen.classList.remove('active');
-                setTimeout(function() {
-                    showGameSelection();
-                }, 500);
-            }, 4000);
-        }
+console.log('🎮 AoM Draft System carregado');
 
-        function showGameSelection() {
-            const gameScreen = document.getElementById('gameSelection');
-            const container = document.getElementById('mapsGameContainer');
-            container.innerHTML = '';
-            
-            // Pegar todos os mapas selecionados
-            const maps = [];
-            for (let i = 0; i < 7; i++) {
-                const mapData = state.selections['map-' + i];
-                if (mapData) {
-                    maps.push({ id: 'map-' + i, data: mapData, index: i });
-                }
-            }
-            
-            // Criar cards para cada mapa
-            maps.forEach(function(map, idx) {
-                const card = document.createElement('div');
-                card.className = 'map-game-card';
-                card.style.setProperty('--i', idx);
-                
-                card.innerHTML = `
-                    <div class="map-game-header">
-                        <img src="${map.data.img}" alt="${map.data.n}" class="map-game-image" onerror="this.style.display='none'">
-                        <div class="map-game-info">
-                            <div class="map-game-name">${map.data.n}</div>
-                            <div class="map-game-label">Mapa ${idx + 1} - Escolha o número do jogo</div>
-                        </div>
-                    </div>
-                    <div class="map-game-selector" data-map-id="${map.id}">
-                        ${generateGameButtons(map.id)}
-                    </div>
-                `;
-                
-                container.appendChild(card);
-            });
-            
-            // Apenas o host pode selecionar
-            if (myRole === 'host' || isOfflineMode) {
-                document.querySelectorAll('.game-number-btn').forEach(function(btn) {
-                    btn.addEventListener('click', function() {
-                        const mapId = this.getAttribute('data-map-id');
-                        const gameNum = parseInt(this.getAttribute('data-game'));
-                        selectGame(mapId, gameNum, this);
-                    });
-                });
-            } else {
-                // Desabilitar botões para não-hosts
-                document.querySelectorAll('.game-number-btn').forEach(function(btn) {
-                    btn.disabled = true;
-                    btn.style.cursor = 'not-allowed';
-                    btn.style.opacity = '0.5';
-                });
-                
-                // Esconder botão de finalizar para não-hosts
-                document.getElementById('btnFinalizeGames').style.display = 'none';
-                
-                // Adicionar mensagem
-                const footer = document.querySelector('.game-selection-footer');
-                const msg = document.createElement('div');
-                msg.style.cssText = 'color: #fff; font-size: 1.2em; letter-spacing: 2px; text-align: center;';
-                msg.innerText = 'Aguardando o host configurar os jogos...';
-                footer.insertBefore(msg, footer.firstChild);
-            }
-            
-            gameScreen.classList.add('active');
-            updateFinalizeButton();
-        }
-
-        function generateGameButtons(mapId) {
-            let html = '';
-            for (let i = 1; i <= 7; i++) {
-                html += `<button class="game-number-btn" data-map-id="${mapId}" data-game="${i}">JOGO ${i}</button>`;
-            }
-            return html;
-        }
-
-        function selectGame(mapId, gameNum, btnElement) {
-            // Remover seleção anterior deste mapa
-            const selector = btnElement.closest('.map-game-selector');
-            selector.querySelectorAll('.game-number-btn').forEach(function(btn) {
-                btn.classList.remove('selected');
-            });
-            
-            // Adicionar seleção nova
-            btnElement.classList.add('selected');
-            gameSelections[mapId] = gameNum;
-            
-            updateFinalizeButton();
-        }
-
-        function updateFinalizeButton() {
-            const btn = document.getElementById('btnFinalizeGames');
-            const totalMaps = document.querySelectorAll('.map-game-card').length;
-            const selectedMaps = Object.keys(gameSelections).length;
-            
-            if (selectedMaps === totalMaps) {
-                btn.disabled = false;
-                btn.innerText = `FINALIZAR CONFIGURAÇÃO (${selectedMaps}/${totalMaps})`;
-            } else {
-                btn.disabled = true;
-                btn.innerText = `SELECIONE TODOS OS JOGOS (${selectedMaps}/${totalMaps})`;
-            }
-        }
-
-        function finalizeGameSelection() {
-            // Salvar as seleções de jogos no state
-            if (!state.gameNumbers) state.gameNumbers = {};
-            state.gameNumbers = gameSelections;
-            
-            // Fechar tela de seleção
-            const gameScreen = document.getElementById('gameSelection');
-            gameScreen.classList.remove('active');
-            
-            // Salvar novamente com as informações dos jogos
-            saveDraftToStorage();
-            
-            // Mostrar mensagem de compartilhamento (código original)
-            if (myRole === 'host' && currentDraftId) {
-                setTimeout(function() {
-                    const shareLink = generateShareableLink();
-                    if (shareLink) {
-                        if (confirm('Configuração completa! Deseja copiar o link de replay para compartilhar?')) {
-                            navigator.clipboard.writeText(shareLink).then(function() {
-                                alert('Link copiado! Compartilhe para que outros vejam o replay:\n\n' + shareLink);
-                            }).catch(function() {
-                                prompt('Copie este link para compartilhar o replay:', shareLink);
-                            });
-                        }
-                    }
-                }, 500);
-            }
-            
-            // Renderizar state final
-            if (isOfflineMode) render();
-            else broadcastState();
-        }
-
-        init();
-    </script>
-
-    <div class="credits">
-        Criado por <strong>[CaOK] PaiN</strong><br>
-        Propriedade de <a href="#" id="clanLink"><strong>Clan Age of Kings</strong></a>
-    </div>
-
+</script>
 </body>
 </html>
