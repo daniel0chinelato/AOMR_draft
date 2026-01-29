@@ -2420,12 +2420,28 @@
                     }
                 }, 3000);
 
-                peer = new Peer({ debug: 1 });
+                console.log('Iniciando como host...');
+                peer = new Peer({ debug: 2 });
+                
+                peer.on('error', function(e) { 
+                    console.error('Erro PeerJS do host:', e);
+                    clearTimeout(connectionTimeout);
+                    isOfflineMode = true; 
+                    document.getElementById('linkP2').value = "MODO OFFLINE (Err: " + e.type + ")"; 
+                    document.getElementById('linkP2Lobby').value = "MODO OFFLINE (Err: " + e.type + ")";
+                    render();
+                });
+                
                 peer.on('open', function(id) {
+                    console.log('Host iniciado com ID:', id);
                     clearTimeout(connectionTimeout);
                     const u = window.location.href.split('?')[0];
                     const p2Link = u + '?lobby=' + id + '&role=p2';
                     const specLink = u + '?lobby=' + id + '&role=spec';
+                    
+                    console.log('Links gerados:');
+                    console.log('P2:', p2Link);
+                    console.log('Spec:', specLink);
                     
                     // Preencher campos do painel host (canto inferior esquerdo)
                     document.getElementById('linkP2').value = p2Link;
@@ -2438,19 +2454,24 @@
                     // Mostrar seção de links no lobby
                     document.getElementById('lobbyLinks').style.display = 'block';
                 });
-                peer.on('error', function(e) { 
-                    clearTimeout(connectionTimeout);
-                    isOfflineMode = true; 
-                    document.getElementById('linkP2').value = "MODO OFFLINE (Err)"; 
-                    document.getElementById('linkP2Lobby').value = "MODO OFFLINE (Err)";
-                    render();
-                });
+                
                 peer.on('connection', function(c) {
+                    console.log('Nova conexão recebida!');
                     connections.push(c);
-                    c.on('open', function() { c.send({ type: 'STATE', state: state }); });
-                    c.on('data', function(d) { if(d.type === 'ACTION') processHostAction(d); });
+                    c.on('open', function() { 
+                        console.log('Conexão aberta, enviando estado inicial...');
+                        c.send({ type: 'STATE', state: state });
+                    });
+                    c.on('data', function(d) { 
+                        console.log('Ação recebida do cliente:', d.action);
+                        if(d.type === 'ACTION') processHostAction(d); 
+                    });
+                    c.on('error', function(err) {
+                        console.error('Erro na conexão com cliente:', err);
+                    });
                 });
             } catch(e) { 
+                console.error('Erro no setupHost:', e);
                 isOfflineMode = true; 
                 render();
             }
@@ -2458,17 +2479,38 @@
 
         function setupClient(h) {
             try {
-                peer = new Peer();
+                console.log('Tentando conectar ao lobby:', h);
+                peer = new Peer({ debug: 2 });
+                
+                peer.on('error', function(err) {
+                    console.error('Erro PeerJS:', err);
+                    alert('Erro ao conectar: ' + err.type + '. Tente recarregar a página.');
+                });
+                
                 peer.on('open', function(id) {
+                    console.log('Peer aberto com ID:', id);
+                    console.log('Conectando ao host:', h);
                     const c = peer.connect(h);
-                    c.on('open', function() { connections.push(c); });
+                    
+                    c.on('open', function() { 
+                        console.log('Conexão estabelecida com o host!');
+                        connections.push(c);
+                    });
+                    
+                    c.on('error', function(err) {
+                        console.error('Erro na conexão:', err);
+                        alert('Erro ao conectar com o host. Verifique se o lobby ainda está ativo.');
+                    });
+                    
                     c.on('data', function(d) { 
+                        console.log('Dados recebidos:', d.type);
                         if(d.type === 'STATE') { 
                             const oldPhase = state.phaseIndex;
                             const wasDraftCompleted = state.draftCompleted;
                             const hadGameNumbers = state.gameNumbers && Object.keys(state.gameNumbers).length > 0;
                             
                             state = d.state; 
+                            console.log('State atualizado. PhaseIndex:', state.phaseIndex);
                             updatePlayerNames();
                             render(); 
                             saveSnapshot(); 
@@ -2494,7 +2536,10 @@
                         } 
                     });
                 });
-            } catch(e) { console.error(e); }
+            } catch(e) { 
+                console.error('Erro no setupClient:', e);
+                alert('Erro ao inicializar conexão: ' + e.message);
+            }
         }
         
         function copyLink(id, btnElement) { 
