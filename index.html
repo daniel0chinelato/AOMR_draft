@@ -1475,7 +1475,22 @@
                 // Limpar container de logs
                 document.getElementById('logContainer').innerHTML = '';
             }
-            broadcastState();
+            
+            // CORREÇÃO: Qualquer um pode atualizar Firebase (não só host)
+            if (roomRef && isFirebaseConnected) {
+                roomRef.update({
+                    state: state,
+                    p1Name: document.getElementById('p1NameInput').value,
+                    p2Name: document.getElementById('p2NameInput').value,
+                    lastUpdate: firebase.database.ServerValue.TIMESTAMP
+                }).then(() => {
+                    console.log('✅ Estado sincronizado no Firebase por', myRole);
+                }).catch((error) => {
+                    console.error('❌ Erro ao sincronizar:', error);
+                });
+            }
+            
+            render();
         }
 
         function broadcastState() {
@@ -1891,6 +1906,7 @@
                 
                 // Carregar estado inicial
                 const data = snapshot.val();
+                console.log('📦 Dados iniciais:', data);
                 state = data.state;
                 document.getElementById('p1NameInput').value = data.p1Name;
                 document.getElementById('p2NameInput').value = data.p2Name;
@@ -1899,10 +1915,14 @@
                 saveSnapshot();
                 
                 // Escutar atualizações em tempo real
+                console.log('👂 Iniciando listener de atualizações...');
                 roomRef.on('value', (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
-                        console.log('📥 Recebendo atualização do Firebase');
+                        console.log('📥 Atualização recebida do Firebase!', {
+                            phaseIndex: data.state.phaseIndex,
+                            selections: Object.keys(data.state.selections).length
+                        });
                         
                         const oldPhase = state.phaseIndex;
                         state = data.state;
