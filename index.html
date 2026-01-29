@@ -2465,10 +2465,29 @@
                     c.on('data', function(d) { 
                         if(d.type === 'STATE') { 
                             const oldPhase = state.phaseIndex;
+                            const wasDraftCompleted = state.draftCompleted;
+                            const hadGameNumbers = state.gameNumbers && Object.keys(state.gameNumbers).length > 0;
+                            
                             state = d.state; 
                             updatePlayerNames();
                             render(); 
                             saveSnapshot(); 
+                            
+                            // Detectar quando draft é finalizado
+                            if (!wasDraftCompleted && state.draftCompleted) {
+                                console.log('Draft finalizado detectado pelo cliente!');
+                                showEpicTransition();
+                            }
+                            
+                            // Detectar quando números de jogo são definidos
+                            if (!hadGameNumbers && state.gameNumbers && Object.keys(state.gameNumbers).length > 0) {
+                                console.log('Números de jogo definidos pelo host!');
+                                const gameScreen = document.getElementById('gameSelection');
+                                if (gameScreen.classList.contains('active')) {
+                                    gameScreen.classList.remove('active');
+                                }
+                            }
+                            
                             if (state.phaseIndex !== oldPhase && state.phaseIndex < 27) {
                                 startTimer();
                             }
@@ -2527,6 +2546,193 @@
                     render(); 
                 } else sendAction('RESET', null); 
             } 
+        }
+
+        // ============================================
+        // TRANSIÇÃO ÉPICA E SELEÇÃO DE JOGOS
+        // ============================================
+        let gameSelections = {}; // {mapId: gameNumber}
+
+        function showEpicTransition() {
+            const epicScreen = document.getElementById('epicTransition');
+            
+            // Preencher nomes dos jogadores
+            document.getElementById('epicP1Name').innerText = state.p1Name;
+            document.getElementById('epicP2Name').innerText = state.p2Name;
+            
+            // Preencher deuses do P1
+            const p1Gods = document.getElementById('epicP1Gods');
+            p1Gods.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const godData = state.selections['p1-god-' + i];
+                if (godData) {
+                    const img = document.createElement('img');
+                    img.src = godData.img;
+                    img.style.setProperty('--i', i);
+                    p1Gods.appendChild(img);
+                }
+            }
+            
+            // Preencher deuses do P2
+            const p2Gods = document.getElementById('epicP2Gods');
+            p2Gods.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const godData = state.selections['p2-god-' + i];
+                if (godData) {
+                    const img = document.createElement('img');
+                    img.src = godData.img;
+                    img.style.setProperty('--i', i);
+                    p2Gods.appendChild(img);
+                }
+            }
+            
+            // Mostrar tela
+            epicScreen.classList.add('active');
+            
+            // Após 4 segundos, transição para seleção de jogos
+            setTimeout(function() {
+                epicScreen.classList.remove('active');
+                setTimeout(function() {
+                    showGameSelection();
+                }, 500);
+            }, 4000);
+        }
+
+        function showGameSelection() {
+            const gameScreen = document.getElementById('gameSelection');
+            const container = document.getElementById('mapsGameContainer');
+            container.innerHTML = '';
+            
+            // Pegar todos os mapas selecionados
+            const maps = [];
+            for (let i = 0; i < 7; i++) {
+                const mapData = state.selections['map-' + i];
+                if (mapData) {
+                    maps.push({ id: 'map-' + i, data: mapData, index: i });
+                }
+            }
+            
+            // Criar cards para cada mapa
+            maps.forEach(function(map, idx) {
+                const card = document.createElement('div');
+                card.className = 'map-game-card';
+                card.style.setProperty('--i', idx);
+                
+                card.innerHTML = `
+                    <div class="map-game-header">
+                        <img src="${map.data.img}" alt="${map.data.n}" class="map-game-image" onerror="this.style.display='none'">
+                        <div class="map-game-info">
+                            <div class="map-game-name">${map.data.n}</div>
+                            <div class="map-game-label">Mapa ${idx + 1} - Escolha o número do jogo</div>
+                        </div>
+                    </div>
+                    <div class="map-game-selector" data-map-id="${map.id}">
+                        ${generateGameButtons(map.id)}
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            // Apenas o host pode selecionar
+            if (myRole === 'host' || isOfflineMode) {
+                document.querySelectorAll('.game-number-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        const mapId = this.getAttribute('data-map-id');
+                        const gameNum = parseInt(this.getAttribute('data-game'));
+                        selectGame(mapId, gameNum, this);
+                    });
+                });
+            } else {
+                // Desabilitar botões para não-hosts
+                document.querySelectorAll('.game-number-btn').forEach(function(btn) {
+                    btn.disabled = true;
+                    btn.style.cursor = 'not-allowed';
+                    btn.style.opacity = '0.5';
+                });
+                
+                // Esconder botão de finalizar para não-hosts
+                document.getElementById('btnFinalizeGames').style.display = 'none';
+                
+                // Adicionar mensagem
+                const footer = document.querySelector('.game-selection-footer');
+                const msg = document.createElement('div');
+                msg.style.cssText = 'color: #fff; font-size: 1.2em; letter-spacing: 2px; text-align: center;';
+                msg.innerText = 'Aguardando o host configurar os jogos...';
+                footer.insertBefore(msg, footer.firstChild);
+            }
+            
+            gameScreen.classList.add('active');
+            updateFinalizeButton();
+        }
+
+        function generateGameButtons(mapId) {
+            let html = '';
+            for (let i = 1; i <= 7; i++) {
+                html += `<button class="game-number-btn" data-map-id="${mapId}" data-game="${i}">JOGO ${i}</button>`;
+            }
+            return html;
+        }
+
+        function selectGame(mapId, gameNum, btnElement) {
+            // Remover seleção anterior deste mapa
+            const selector = btnElement.closest('.map-game-selector');
+            selector.querySelectorAll('.game-number-btn').forEach(function(btn) {
+                btn.classList.remove('selected');
+            });
+            
+            // Adicionar seleção nova
+            btnElement.classList.add('selected');
+            gameSelections[mapId] = gameNum;
+            
+            updateFinalizeButton();
+        }
+
+        function updateFinalizeButton() {
+            const btn = document.getElementById('btnFinalizeGames');
+            const totalMaps = document.querySelectorAll('.map-game-card').length;
+            const selectedMaps = Object.keys(gameSelections).length;
+            
+            if (selectedMaps === totalMaps) {
+                btn.disabled = false;
+                btn.innerText = `FINALIZAR CONFIGURAÇÃO (${selectedMaps}/${totalMaps})`;
+            } else {
+                btn.disabled = true;
+                btn.innerText = `SELECIONE TODOS OS JOGOS (${selectedMaps}/${totalMaps})`;
+            }
+        }
+
+        function finalizeGameSelection() {
+            // Salvar as seleções de jogos no state
+            if (!state.gameNumbers) state.gameNumbers = {};
+            state.gameNumbers = gameSelections;
+            
+            // Fechar tela de seleção
+            const gameScreen = document.getElementById('gameSelection');
+            gameScreen.classList.remove('active');
+            
+            // Salvar novamente com as informações dos jogos
+            saveDraftToStorage();
+            
+            // Mostrar mensagem de compartilhamento (código original)
+            if (myRole === 'host' && currentDraftId) {
+                setTimeout(function() {
+                    const shareLink = generateShareableLink();
+                    if (shareLink) {
+                        if (confirm('Configuração completa! Deseja copiar o link de replay para compartilhar?')) {
+                            navigator.clipboard.writeText(shareLink).then(function() {
+                                alert('Link copiado! Compartilhe para que outros vejam o replay:\n\n' + shareLink);
+                            }).catch(function() {
+                                prompt('Copie este link para compartilhar o replay:', shareLink);
+                            });
+                        }
+                    }
+                }, 500);
+            }
+            
+            // Renderizar state final
+            if (isOfflineMode) render();
+            else broadcastState();
         }
 
         init();
