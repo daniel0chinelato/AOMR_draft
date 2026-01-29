@@ -1939,7 +1939,18 @@
         }
 
         function toggleReady(player) {
-            console.log('toggleReady chamado. Player:', player, 'MyRole:', myRole, 'isOfflineMode:', isOfflineMode);
+            // Prevenir múltiplas chamadas
+            if (window.toggleReadyLock) {
+                console.log('⚠️ toggleReady bloqueado temporariamente');
+                return;
+            }
+            
+            window.toggleReadyLock = true;
+            setTimeout(function() {
+                window.toggleReadyLock = false;
+            }, 500);
+            
+            console.log('✅ toggleReady chamado. Player:', player, 'MyRole:', myRole, 'isOfflineMode:', isOfflineMode);
             let allowed = false;
             
             if(isOfflineMode) {
@@ -1961,13 +1972,14 @@
                     checkReadyStart();
                     render();
                 } else {
-                    console.log('Enviando TOGGLE_READY para o host');
+                    console.log('📤 Enviando TOGGLE_READY para o host');
                     sendAction('TOGGLE_READY', { player: player });
                 }
             } else {
-                console.log('Não tem permissão para toggle ready');
+                console.log('❌ Não tem permissão para toggle ready');
             }
         }
+
 
         function checkReadyStart() {
             if (state.p1Presence && state.p2Presence) {
@@ -2035,11 +2047,17 @@
                 checkPhaseAdvance();
             }
             else if (msg.action === 'TOGGLE_READY') {
-                console.log('Processando TOGGLE_READY. Player:', msg.payload.player);
-                console.log('State antes:', 'p1Presence:', state.p1Presence, 'p2Presence:', state.p2Presence);
-                if (msg.payload.player === 'p1') state.p1Presence = !state.p1Presence;
-                if (msg.payload.player === 'p2') state.p2Presence = !state.p2Presence;
-                console.log('State depois:', 'p1Presence:', state.p1Presence, 'p2Presence:', state.p2Presence);
+                console.log('📥 Recebido TOGGLE_READY:', msg.payload.player);
+                if (msg.payload.player === 'p1') {
+                    const oldValue = state.p1Presence;
+                    state.p1Presence = !state.p1Presence;
+                    console.log('P1 Presence:', oldValue, '->', state.p1Presence);
+                }
+                if (msg.payload.player === 'p2') {
+                    const oldValue = state.p2Presence;
+                    state.p2Presence = !state.p2Presence;
+                    console.log('P2 Presence:', oldValue, '->', state.p2Presence);
+                }
                 checkReadyStart();
             }
             else if (msg.action === 'UPDATE_NAME') {
@@ -2421,20 +2439,15 @@
             try {
                 let connectionTimeout = setTimeout(function() {
                     if(!peer || !peer.id) {
-                        console.log("⚠️ Tempo limite excedido. Forçando modo offline.");
+                        console.log("Tempo limite excedido. Forçando modo offline.");
                         isOfflineMode = true;
-                        
-                        const linkP2El = document.getElementById('linkP2');
-                        const linkP2LobbyEl = document.getElementById('linkP2Lobby');
-                        
-                        if (linkP2El) linkP2El.value = "MODO OFFLINE (Auto)";
-                        if (linkP2LobbyEl) linkP2LobbyEl.value = "MODO OFFLINE (Auto)";
-                        
+                        document.getElementById('linkP2').value = "MODO OFFLINE (Auto)";
+                        document.getElementById('linkP2Lobby').value = "MODO OFFLINE (Auto)";
                         render();
                     }
-                }, 5000);
+                }, 3000);
 
-                console.log('🚀 Iniciando como host...');
+                console.log('Iniciando como host...');
                 peer = new Peer({ 
                     debug: 2,
                     config: {
@@ -2446,107 +2459,58 @@
                 });
                 
                 peer.on('error', function(e) { 
-                    console.error('❌ Erro PeerJS do host:', e);
+                    console.error('Erro PeerJS do host:', e);
                     clearTimeout(connectionTimeout);
                     isOfflineMode = true; 
-                    
-                    const linkP2El = document.getElementById('linkP2');
-                    const linkP2LobbyEl = document.getElementById('linkP2Lobby');
-                    const linkSpecEl = document.getElementById('linkSpec');
-                    const linkSpecLobbyEl = document.getElementById('linkSpecLobby');
-                    
-                    const errorMsg = "MODO OFFLINE (Err: " + e.type + ")";
-                    if (linkP2El) linkP2El.value = errorMsg;
-                    if (linkP2LobbyEl) linkP2LobbyEl.value = errorMsg;
-                    if (linkSpecEl) linkSpecEl.value = errorMsg;
-                    if (linkSpecLobbyEl) linkSpecLobbyEl.value = errorMsg;
-                    
+                    document.getElementById('linkP2').value = "MODO OFFLINE (Err: " + e.type + ")"; 
+                    document.getElementById('linkP2Lobby').value = "MODO OFFLINE (Err: " + e.type + ")";
                     render();
                 });
                 
                 peer.on('open', function(id) {
-                    console.log('✅ Host iniciado com Peer ID:', id);
+                    console.log('Host iniciado com ID:', id);
                     clearTimeout(connectionTimeout);
-                    
                     const u = window.location.href.split('?')[0];
                     const p2Link = u + '?lobby=' + id + '&role=p2';
                     const specLink = u + '?lobby=' + id + '&role=spec';
                     
-                    console.log('📝 Links gerados:');
-                    console.log('   P2:', p2Link);
-                    console.log('   Spec:', specLink);
+                    console.log('Links gerados:');
+                    console.log('P2:', p2Link);
+                    console.log('Spec:', specLink);
                     
-                    // Usar setTimeout para garantir que elementos existam
-                    setTimeout(function() {
-                        // Preencher campos do painel host (canto inferior esquerdo)
-                        const linkP2El = document.getElementById('linkP2');
-                        const linkSpecEl = document.getElementById('linkSpec');
-                        
-                        if (linkP2El) {
-                            linkP2El.value = p2Link;
-                            console.log('✅ linkP2 preenchido');
-                        } else {
-                            console.error('❌ Elemento linkP2 não encontrado!');
-                        }
-                        
-                        if (linkSpecEl) {
-                            linkSpecEl.value = specLink;
-                            console.log('✅ linkSpec preenchido');
-                        } else {
-                            console.error('❌ Elemento linkSpec não encontrado!');
-                        }
-                        
-                        // Preencher campos do lobby (tela de espera)
-                        const linkP2LobbyEl = document.getElementById('linkP2Lobby');
-                        const linkSpecLobbyEl = document.getElementById('linkSpecLobby');
-                        const lobbyLinksEl = document.getElementById('lobbyLinks');
-                        
-                        if (linkP2LobbyEl) {
-                            linkP2LobbyEl.value = p2Link;
-                            console.log('✅ linkP2Lobby preenchido');
-                        } else {
-                            console.error('❌ Elemento linkP2Lobby não encontrado!');
-                        }
-                        
-                        if (linkSpecLobbyEl) {
-                            linkSpecLobbyEl.value = specLink;
-                            console.log('✅ linkSpecLobby preenchido');
-                        } else {
-                            console.error('❌ Elemento linkSpecLobby não encontrado!');
-                        }
-                        
-                        // Mostrar seção de links no lobby
-                        if (lobbyLinksEl) {
-                            lobbyLinksEl.style.display = 'block';
-                            console.log('✅ Seção lobbyLinks exibida');
-                        } else {
-                            console.error('❌ Elemento lobbyLinks não encontrado!');
-                        }
-                    }, 100);
+                    // Preencher campos do painel host (canto inferior esquerdo)
+                    document.getElementById('linkP2').value = p2Link;
+                    document.getElementById('linkSpec').value = specLink;
+                    
+                    // Preencher campos do lobby (tela de espera)
+                    document.getElementById('linkP2Lobby').value = p2Link;
+                    document.getElementById('linkSpecLobby').value = specLink;
+                    
+                    // Mostrar seção de links no lobby
+                    document.getElementById('lobbyLinks').style.display = 'block';
                 });
                 
                 peer.on('connection', function(c) {
-                    console.log('🔗 Nova conexão recebida!');
+                    console.log('Nova conexão recebida!');
                     connections.push(c);
                     c.on('open', function() { 
-                        console.log('✅ Conexão estabelecida, enviando estado inicial...');
+                        console.log('Conexão aberta, enviando estado inicial...');
                         c.send({ type: 'STATE', state: state });
                     });
                     c.on('data', function(d) { 
-                        console.log('📨 Ação recebida do cliente:', d.action);
+                        console.log('Ação recebida do cliente:', d.action);
                         if(d.type === 'ACTION') processHostAction(d); 
                     });
                     c.on('error', function(err) {
-                        console.error('❌ Erro na conexão com cliente:', err);
+                        console.error('Erro na conexão com cliente:', err);
                     });
                 });
             } catch(e) { 
-                console.error('❌ Erro fatal no setupHost:', e);
+                console.error('Erro no setupHost:', e);
                 isOfflineMode = true; 
                 render();
             }
         }
-
 
         function setupClient(h) {
             try {
