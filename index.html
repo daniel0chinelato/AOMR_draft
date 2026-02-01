@@ -249,8 +249,8 @@
         </div>
     </div>
 
-    <script>
-        // ============ CONFIG ============
+   <script>
+        // ============ CONFIGURAÇÃO FIREBASE ============
         const firebaseConfig = {
             apiKey: "AIzaSyAgliUKQCUlKrAlRbBwRQQpRO5sBjwvOgo",
             authDomain: "aom-draft.firebaseapp.com",
@@ -260,80 +260,75 @@
             messagingSenderId: "868281557350",
             appId: "1:868281557350:web:6813ba2322556e2e2768a7"
         };
-        firebase.initializeApp(firebaseConfig);
+        // Prevenção de erro se o Firebase já estiver rodando
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.database();
 
-        // Dados
+        // ============ DADOS (Gods & Maps) ============
         const godsData = [
             {n:"Zeus", img:"zeus_portrait.png"}, {n:"Poseidon", img:"poseidon_portrait.png"}, {n:"Hades", img:"hades_portrait.png"},
             {n:"Isis", img:"isis_portrait.png"}, {n:"Ra", img:"ra_portrait.png"}, {n:"Set", img:"set_portrait.png"},
             {n:"Odin", img:"odin_portrait.png"}, {n:"Thor", img:"thor_portrait.png"}, {n:"Loki", img:"loki_portrait.png"}, {n:"Freyr", img:"freyr_portrait.png"},
             {n:"Kronos", img:"kronos_portrait.png"}, {n:"Gaia", img:"gaia_portrait.png"}, {n:"Oranos", img:"oranos_portrait.png"},
-            {n:"Fu Xi", img:"fuxi_portrait.png"}, {n:"Nu Wa", img:"nuwa_portrait.png"}, {n:"Shennong", img:"shennong_portrait.png"}
+            {n:"Fu Xi", img:"fuxi_portrait.png"}, {n:"Nu Wa", img:"nuwa_portrait.png"}, {n:"Shennong", img:"shennong_portrait.png"},
+            {n:"Amaterasu", img:"amaterasu_portrait.png"}, {n:"Tsukuyomi", img:"tsukuyomi_portrait.png"}, {n:"Susanoo", img:"susanoo_portrait.png"}
         ];
+        
         const mapsData = [
-            {n:"Alfheim", img:"https://i.ibb.co/8gLtp62y/alfheim.png"},
-            {n:"Blue Lagoon", img:"https://i.ibb.co/RpYKNMK7/blue-lagoon.png"},
-            {n:"Mediterranean", img:"https://i.ibb.co/MDN5Qynb/mediterranean.png"},
-            {n:"Oasis", img:"https://i.ibb.co/vRfNt3N/oasis.png"},
-            {n:"Savannah", img:"https://i.ibb.co/rG5mywpB/savannah.png"},
-            {n:"Tundra", img:"https://i.ibb.co/k2yfvvvQ/tundra.png"},
+            {n:"Alfheim", img:"https://i.ibb.co/8gLtp62y/alfheim.png"}, {n:"Blue Lagoon", img:"https://i.ibb.co/RpYKNMK7/blue-lagoon.png"},
+            {n:"Mediterranean", img:"https://i.ibb.co/MDN5Qynb/mediterranean.png"}, {n:"Oasis", img:"https://i.ibb.co/vRfNt3N/oasis.png"},
+            {n:"Savannah", img:"https://i.ibb.co/rG5mywpB/savannah.png"}, {n:"Tundra", img:"https://i.ibb.co/k2yfvvvQ/tundra.png"},
             {n:"Watering Hole", img:"https://i.ibb.co/N6WMy1xr/watering-hole.png"}
         ];
 
-        // Timeline simplificada para exemplo
+        // ============ TIMELINE ============
         const TIMELINE = [
-            { type: "BLIND_PICK", p1: "p1-god-0", p2: "p2-god-0" },
-            { type: "REVEAL" },
-            { type: "BAN", p1: "p1-bangod-0", p2: "p2-bangod-0" }, // Simultâneo
-            { type: "PICK", p1: "p1-god-1", p2: "p2-god-1" },
-            { type: "REVEAL" },
-            { type: "PICK_MAP", p1: "map-0", p2: "map-4" },
-            { type: "DECIDER" }
+            { type: "BLIND_PICK", p1: "p1-god-0", p2: "p2-god-0" }, { type: "REVEAL" },
+            { type: "BAN", p1: "p1-bangod-0", p2: "p2-bangod-0" }, // Ban simultâneo
+            { type: "PICK", p1: "p1-god-1", p2: "p2-god-1" }, { type: "REVEAL" },
+            { type: "PICK_MAP", p1: "map-0", p2: "map-4" }, { type: "DECIDER" }
         ];
 
-        // Estado Global
+        // ============ ESTADO GLOBAL ============
         let state = { phaseIndex: 0, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [] };
         let myRole = null;
         let roomCode = null;
         let roomRef = null;
         let isHost = false;
-        let timerInterval = null;
-        let timeLeft = 45;
 
-        // ============ LOBBY FUNCTIONS ============
+        // ============ LÓGICA DE INICIALIZAÇÃO ============
         function initCheck() {
-            // Verifica se ja tem codigo na URL (para facilitar F5)
             const params = new URLSearchParams(window.location.search);
             const urlRoom = params.get('room');
             const urlRole = params.get('role');
 
             if (urlRoom && urlRole) {
-                // Auto-join se tiver na URL
+                // Modo Automático (Entrou pelo Link)
                 document.getElementById('initialLobby').style.display = 'none';
                 roomCode = urlRoom;
                 myRole = urlRole;
                 isHost = (myRole === 'host');
                 setupConnection();
             } else {
-                // Mostra menu
+                // Modo Manual (Tela de Lobby)
                 document.getElementById('initialLobby').style.display = 'flex';
             }
         }
 
         function createRoom() {
-            // Gera codigo aleatorio
             roomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
             myRole = 'host';
             isHost = true;
             
-            // Salva estado inicial no firebase
+            // Cria a sala no Firebase
             db.ref('rooms/' + roomCode).set({
                 state: state,
                 created: Date.now()
+            }).then(() => {
+                enterGame();
             });
-
-            enterGame();
         }
 
         function joinRoom() {
@@ -356,77 +351,74 @@
 
         function enterGame() {
             document.getElementById('initialLobby').style.display = 'none';
-            // Atualiza URL sem recarregar pagina
+            // Atualiza URL visualmente
             const newUrl = `${window.location.pathname}?room=${roomCode}&role=${myRole}`;
             window.history.pushState({path:newUrl},'',newUrl);
-            
             setupConnection();
         }
 
-        // ============ CONNECTION LOGIC ============
+        // ============ CONEXÃO FIREBASE (CORRIGIDA) ============
         function setupConnection() {
             document.getElementById('displayRoomCode').innerText = roomCode;
             roomRef = db.ref('rooms/' + roomCode);
 
-            // Ouvir atualizacoes
+            // Listener: Ocorre sempre que o Firebase muda
             roomRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    // Atualiza estado local se mudou no servidor
-                    // Pequena protecao para nao sobrescrever enquanto digita nomes
-                    if (JSON.stringify(state) !== JSON.stringify(data.state)) {
+                    // Atualiza o estado local com o que veio do servidor
+                    if (data.state) {
                         state = data.state;
-                        render();
+                        render(); // Atualiza a tela
                     }
                     if(data.p1Name) document.getElementById('p1NameInput').value = data.p1Name;
                     if(data.p2Name) document.getElementById('p2NameInput').value = data.p2Name;
                 }
             });
-
-            render(); // Primeira renderizacao
         }
 
-        function syncState() {
-            if (!roomRef) return;
-            roomRef.update({
-                state: state,
-                p1Name: document.getElementById('p1NameInput').value,
-                p2Name: document.getElementById('p2NameInput').value
-            });
-        }
-
-        // ============ GAME LOGIC (SIMPLIFICADA) ============
-        
+        // ============ READY CHECK (CORRIGIDO) ============
         function toggleReady(player) {
-            // Logica de Ready Check (bloqueia ate os dois estarem prontos)
-            if (myRole === 'host' && player === 'p1') {
-                state.p1Presence = !state.p1Presence;
-                syncState();
+            if (!roomRef) return;
+
+            // Validação de quem pode clicar
+            let allowed = false;
+            if (myRole === 'host' && player === 'p1') allowed = true;
+            if (myRole === 'p2' && player === 'p2') allowed = true;
+            
+            // Trava de segurança para não clicar no inimigo
+            if (!allowed) {
+                console.log("Clique bloqueado: Você é " + myRole + " tentando mudar " + player);
+                return;
             }
-            if (myRole === 'p2' && player === 'p2') {
-                state.p2Presence = !state.p2Presence;
-                syncState();
-            }
-            // Host pode forcar P2 em testes
-            if (myRole === 'host' && player === 'p2') {
-                state.p2Presence = !state.p2Presence;
-                syncState();
+
+            console.log("Enviando Ready para: " + player);
+
+            // ATUALIZAÇÃO GRANULAR (O Segredo para corrigir o bug)
+            // Ao invés de enviar o objeto 'state' inteiro, enviamos só o campo booleano
+            if (player === 'p1') {
+                roomRef.child('state').update({ p1Presence: !state.p1Presence });
+            } else {
+                roomRef.child('state').update({ p2Presence: !state.p2Presence });
             }
         }
 
+        // ============ GAMEPLAY LOGIC ============
         function clickSlot(player, type, index) {
-            if (!state.p1Presence || !state.p2Presence) return; // Nao comecou
-            
+            // Só permite clicar se ambos estiverem presentes (Ready Check passou)
+            if (!state.p1Presence || !state.p2Presence) return; 
+
+            if (myRole === 'spec') return; // Espectador não clica
+
             const slotId = (player==='map') ? `map-${index}` : `${player}-${type}-${index}`;
             const currentPhase = TIMELINE[state.phaseIndex];
             if (!currentPhase) return;
 
-            // Verificacao basica de turno
+            // Regras de Turno
             let canClick = false;
-            
-            // Se sou P1/Host e eh minha vez no timeline
+            // Host pode clicar nos slots do P1
             if (myRole === 'host' && (currentPhase.p1 === slotId)) canClick = true;
-            // Se sou P2 e eh minha vez
+            // P2 pode clicar nos slots do P2
             if (myRole === 'p2' && (currentPhase.p2 === slotId)) canClick = true;
 
             if (canClick) openModal(slotId, type);
@@ -449,106 +441,146 @@
 
         function selectItem(slotId, data) {
             document.getElementById('selectionModal').style.display = 'none';
-            // Atualiza selecao localmente
-            state.selections[slotId] = data;
             
-            // Marca flag de pronto para a fase
-            if (myRole === 'host') state.p1Ready = true;
-            if (myRole === 'p2') state.p2Ready = true;
+            // Prepara a atualização
+            const updates = {};
+            // Salva a seleção
+            updates[`state/selections/${slotId}`] = data;
+            
+            // Marca flag de "Turno Terminado"
+            if (myRole === 'host') updates['state/p1Ready'] = true;
+            if (myRole === 'p2') updates['state/p2Ready'] = true;
 
-            syncState();
-            checkPhase();
+            // Envia para o Firebase (Merge)
+            roomRef.update(updates).then(() => {
+                // Host verifica se a fase acabou
+                if (isHost) checkPhaseAdvance();
+            });
         }
 
-        function checkPhase() {
-            // Apenas host calcula avanco de fase para evitar conflito
-            if (!isHost) return;
+        function checkPhaseAdvance() {
+            // Pequeno delay para garantir que os dados chegaram
+            setTimeout(() => {
+                const current = TIMELINE[state.phaseIndex];
+                if (!current) return;
 
-            const current = TIMELINE[state.phaseIndex];
-            if (!current) return;
+                // Verifica se precisa avançar
+                let readyToAdvance = false;
 
-            let readyToAdvance = false;
+                if (current.type === 'BLIND_PICK' || current.type === 'PICK' || current.type === 'BAN' || current.type === 'PICK_MAP') {
+                    // Verifica se os slots necessários foram preenchidos
+                    const p1Needed = current.p1;
+                    const p2Needed = current.p2;
+                    
+                    const p1Done = !p1Needed || (state.selections && state.selections[p1Needed]);
+                    const p2Done = !p2Needed || (state.selections && state.selections[p2Needed]);
 
-            if (current.type === 'BLIND_PICK' || current.type === 'PICK' || current.type === 'BAN') {
-                // Precisa ter as duas selecoes (se existirem na fase)
-                const p1Done = !current.p1 || state.selections[current.p1];
-                const p2Done = !current.p2 || state.selections[current.p2];
-                if (p1Done && p2Done) readyToAdvance = true;
-            } else if (current.type === 'REVEAL') {
-                readyToAdvance = true; // Avanca automatico visualmente apos delay
-            } else if (current.type === 'DECIDER') {
-                 // Logica decider
-                 state.selections['map-2'] = mapsData[0]; // Exemplo
-                 readyToAdvance = true;
-            }
-
-            if (readyToAdvance) {
-                setTimeout(() => {
-                    state.phaseIndex++;
-                    state.p1Ready = false; 
-                    state.p2Ready = false;
-                    syncState();
-                }, 1000);
-            }
-        }
-
-        function render() {
-            // 1. Ready Overlay
-            const overlay = document.getElementById('readyOverlay');
-            if (!state.p1Presence || !state.p2Presence) {
-                if (document.getElementById('initialLobby').style.display === 'none') {
-                    overlay.style.display = 'flex';
-                    document.getElementById('btnP1Ready').className = state.p1Presence ? 'ready-btn ready' : 'ready-btn';
-                    document.getElementById('btnP2Ready').className = state.p2Presence ? 'ready-btn ready' : 'ready-btn';
+                    if (p1Done && p2Done) readyToAdvance = true;
+                } 
+                else if (current.type === 'REVEAL') {
+                    readyToAdvance = true; 
+                } 
+                else if (current.type === 'DECIDER') {
+                    // Lógica automática para decider (simulada)
+                    roomRef.child('state/selections/map-2').set(mapsData[0]); 
+                    readyToAdvance = true;
                 }
+
+                if (readyToAdvance) {
+                    // Reseta flags e avança fase
+                    const nextUpdates = {};
+                    nextUpdates['state/phaseIndex'] = state.phaseIndex + 1;
+                    nextUpdates['state/p1Ready'] = false;
+                    nextUpdates['state/p2Ready'] = false;
+                    
+                    // Delay visual para Reveal
+                    let delay = (current.type === 'REVEAL') ? 3000 : 500;
+                    
+                    setTimeout(() => {
+                        roomRef.update(nextUpdates);
+                    }, delay);
+                }
+            }, 500);
+        }
+
+        function confirmTurn() {
+            // Função caso queira um botão de confirmação manual
+            // Por enquanto está automático no click da carta
+        }
+
+        // ============ RENDERIZAÇÃO ============
+        function render() {
+            // 1. Controle do Overlay de Ready
+            const overlay = document.getElementById('readyOverlay');
+            // Se o jogo ainda não começou (presença falsa) e o lobby já sumiu
+            if ((!state.p1Presence || !state.p2Presence) && document.getElementById('initialLobby').style.display === 'none') {
+                overlay.style.display = 'flex';
+                
+                // Atualiza visual dos botões
+                const btn1 = document.getElementById('btnP1Ready');
+                const btn2 = document.getElementById('btnP2Ready');
+                
+                btn1.className = state.p1Presence ? 'ready-btn ready' : 'ready-btn';
+                btn1.innerText = state.p1Presence ? 'P1: PRONTO' : 'P1: CONFIRMAR';
+                
+                btn2.className = state.p2Presence ? 'ready-btn ready' : 'ready-btn';
+                btn2.innerText = state.p2Presence ? 'P2: PRONTO' : 'P2: CONFIRMAR';
+
             } else {
                 overlay.style.display = 'none';
             }
 
-            // 2. Render Slots
+            // 2. Renderiza Slots
             const slots = document.querySelectorAll('.god-slot, .ban-slot, .map-slot');
             slots.forEach(el => {
                 const id = el.id;
-                const sel = state.selections[id];
+                const sel = state.selections ? state.selections[id] : null;
                 const current = TIMELINE[state.phaseIndex];
                 
-                // Limpa
-                if (!sel) {
-                    el.innerHTML = ''; el.classList.remove('filled', 'slot-active');
-                    return;
-                }
+                el.classList.remove('slot-active');
 
-                // Blind Pick Logic (Esconder do oponente)
+                // Lógica de Blind Pick (Esconde do inimigo)
                 let hide = false;
-                if (current && current.type === 'BLIND_PICK') {
+                if (sel && current && current.type === 'BLIND_PICK') {
                     if (myRole === 'p2' && id.includes('p1')) hide = true;
                     if (myRole === 'host' && id.includes('p2')) hide = true;
+                    if (myRole === 'spec') hide = true;
                 }
                 
                 if (hide) {
-                    el.innerHTML = '<div style="font-size:2em; color:#333;">?</div>';
+                    el.innerHTML = '<div style="font-size:2em; color:#333; font-weight:bold;">?</div>';
                     el.style.background = '#111';
+                    el.style.border = '2px solid #d4af37';
                 } else {
-                    if (el.innerHTML === '' || el.innerHTML.includes('?')) {
-                        el.innerHTML = `<img src="${sel.img}">`;
-                        el.classList.add('filled');
+                    if (sel) {
+                        if (!el.innerHTML.includes(sel.img)) {
+                            el.innerHTML = `<img src="${sel.img}">`;
+                            el.classList.add('filled');
+                            el.style.background = ''; // Reseta background do blind
+                        }
+                    } else {
+                        el.innerHTML = '';
+                        el.classList.remove('filled');
+                        el.style.background = '';
+                        el.style.border = '';
                     }
                 }
+                
+                // Highlight de quem é a vez
+                if (current) {
+                    if (myRole === 'host' && current.p1 === id) el.classList.add('slot-active');
+                    if (myRole === 'p2' && current.p2 === id) el.classList.add('slot-active');
+                }
             });
-
-            // Highlight Active Slots
-            const current = TIMELINE[state.phaseIndex];
-            if(current) {
-                if(current.p1) document.getElementById(current.p1)?.classList.add('slot-active');
-                if(current.p2) document.getElementById(current.p2)?.classList.add('slot-active');
-            }
         }
         
-        function closeModal(e) { if(e.target.id === 'selectionModal') e.target.style.display='none'; }
+        function closeModal(e) { 
+            if(e.target.id === 'selectionModal') e.target.style.display='none'; 
+        }
         
-        // Inicializa checkando URL
+        // Inicializa
         initCheck();
-
     </script>
 </body>
 </html>
+
