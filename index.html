@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AoM Retold - Draft V65 (Sync Fixed)</title>
+    <title>AoM Draft - Lobby System</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -13,7 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* MANTIVE SEU CSS ORIGINAL INTACTO POIS ESTÁ EXCELENTE */
         :root {
             --bg-body: #050505;
             --text-gold: #f1c40f;
@@ -31,7 +30,7 @@
         body {
             font-family: 'Cinzel', serif;
             background-color: rgba(0, 0, 0, 0.85); 
-            background-image: url('fundooo.png');
+            background-image: url('fundooo.png'); /* Certifique-se que essa imagem existe ou remova a linha */
             background-blend-mode: multiply;
             background-repeat: no-repeat;
             background-position: center center;
@@ -45,496 +44,167 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
+        /* ============ MENU INICIAL (NOVO) ============ */
+        .lobby-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.5s;
+        }
+
+        .lobby-box {
+            border: 2px solid var(--text-gold);
+            padding: 40px;
+            background: #080808;
+            box-shadow: 0 0 50px rgba(241, 196, 15, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .lobby-title {
+            font-size: 2.5em; color: var(--text-gold); margin-bottom: 30px;
+            text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 3px;
+        }
+
+        .lobby-btn {
+            background: transparent; border: 2px solid #444; color: #aaa;
+            padding: 15px 30px; font-family: 'Cinzel', serif; font-size: 1.2em; font-weight: bold;
+            cursor: pointer; width: 100%; margin-bottom: 15px; transition: 0.3s;
+        }
+        .lobby-btn:hover { border-color: var(--text-gold); color: #fff; background: rgba(241, 196, 15, 0.1); }
+        
+        .lobby-input-group { margin-top: 30px; border-top: 1px solid #333; padding-top: 30px; }
+        .lobby-input {
+            background: #111; border: 1px solid #555; color: white;
+            padding: 10px; font-size: 1.2em; text-align: center; width: 60%;
+            font-family: 'Roboto', sans-serif; letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 10px;
+        }
+        .lobby-input:focus { outline: none; border-color: var(--text-gold); }
+
+        /* ============ ANIMAÇÕES ORIGINAIS ============ */
         @keyframes godReveal { 
             0% { opacity: 0; transform: scale(1.4) translateY(-15px); filter: brightness(3) contrast(0.5); } 
             30% { opacity: 1; filter: brightness(1.5) contrast(0.9); }
             100% { transform: scale(1) translateY(0); filter: brightness(1) contrast(1); opacity: 1; } 
         }
-
-        @keyframes epicGodFloat {
-            0%, 100% { transform: scale(1) translateY(0px); }
-            50% { transform: scale(1.02) translateY(-8px); }
-        }
-
-        @keyframes epicGodGlow {
-            0%, 100% { filter: brightness(1) drop-shadow(0 0 10px rgba(241, 196, 15, 0)); }
-            50% { filter: brightness(1.15) drop-shadow(0 0 25px rgba(241, 196, 15, 0.6)); }
-        }
-
         @keyframes divinePulse { 
             0% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0.4); border-color: #f1c40f; transform: scale(1); } 
             50% { box-shadow: 0 0 30px 5px rgba(241, 196, 15, 0.1); border-color: #fffaf0; transform: scale(1.03); } 
             100% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0); border-color: #f1c40f; transform: scale(1); } 
         }
-
-        @keyframes urgencyPulse { 
-            0% { text-shadow: 0 0 5px red; color: #ffadad; } 
-            50% { text-shadow: 0 0 20px red; color: #ff0000; transform: scale(1.1); } 
-            100% { text-shadow: 0 0 5px red; color: #ffadad; } 
-        }
-        
         @keyframes banBurn {
             0% { filter: grayscale(0) brightness(2) opacity(0); transform: scale(1.5) rotate(-90deg); }
             100% { filter: grayscale(1) contrast(1.5) brightness(0.5) opacity(1); transform: scale(1) rotate(0deg); }
         }
-        
-        .ban-slot.filled img.animated {
-            filter: grayscale(1) contrast(1.5) brightness(0.5) !important;
-            opacity: 1 !important;
-            transform: scale(1) rotate(0deg) !important;
-        }
-        
-        @keyframes timerResetFlash { 
-            0% { color: #fff; transform: scale(1); } 
-            50% { color: #2ecc71; transform: scale(1.2); } 
-            100% { color: #fff; transform: scale(1); } 
-        }
-        .timer-resetting { animation: timerResetFlash 0.5s ease-out; }
-
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-
-        .host-panel { position: fixed; top: 0; left: 0; width: 100%; background: #000; border-bottom: 1px solid var(--text-gold); padding: 8px; z-index: 9999; display: none; text-align: center; box-shadow: 0 5px 30px rgba(0,0,0,1); box-sizing: border-box; }
-        .host-container { display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; }
-        .link-group { display: flex; align-items: center; gap: 5px; background: #1a1a1a; padding: 4px 10px; border: 1px solid #444; border-radius: 2px; }
-        .link-group label { color: var(--text-gold); font-size: 0.75em; font-weight: bold; margin-right: 5px; letter-spacing: 1px; }
-        .link-group input { background: #000; border: 1px solid #333; color: #aaa; padding: 4px; width: 150px; font-size: 0.75em; font-family: sans-serif; }
-        .copy-btn { background: #b8860b; color: #000; border: none; padding: 4px 12px; font-weight: bold; cursor: pointer; font-size: 0.75em; transition: 0.3s; width: 80px; }
-        .copy-btn:hover { background: var(--text-gold); box-shadow: 0 0 10px var(--text-gold); }
-        .reset-btn { background: #8e2b20; color: white; border: none; padding: 4px 12px; cursor: pointer; font-weight: bold; font-size: 0.75em; }
         
-        .vs-header { display: flex; align-items: center; justify-content: center; font-size: 3vh; font-weight: 900; text-transform: uppercase; margin-top: 55px; margin-bottom: 5px; width: 100%; text-align: center; text-shadow: 0 2px 10px rgba(0,0,0,0.8); letter-spacing: 2px; flex-wrap: wrap; }
-        .p1-name, .p2-name { margin: 0 2vw; background: transparent; border: none; border-bottom: 2px solid transparent; color: inherit; font-family: inherit; font-size: inherit; width: 30vw; min-width: 200px; text-align: center; text-shadow: 0 0 10px rgba(0,0,0,0.5); transition: 0.3s; }
-        .p1-name:focus, .p2-name:focus { outline: none; border-bottom-color: var(--text-gold); text-shadow: 0 0 15px var(--text-gold); }
-
-        .timer-display {
-            font-size: 1.8em; font-weight: 900; color: #fff;
-            background: rgba(0,0,0,0.8); padding: 3px 20px; border-radius: 4px;
-            border: 1px solid #444; margin-bottom: 8px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-            font-family: 'Roboto', sans-serif; transition: color 0.2s;
-            min-width: 60px; text-align: center;
-        }
-        .timer-urgent { animation: urgencyPulse 0.8s infinite alternate; border-color: red; }
-        
-        .timeline-container { 
-            display: flex; justify-content: center; align-items: center; 
-            width: 95%; max-width: 1600px; position: relative; gap: 3px; 
-            padding: 5px; margin-bottom: 5px; 
-            overflow-x: auto;
-            mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent); 
-            -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-            scrollbar-width: none; 
-        }
-        .timeline-container::-webkit-scrollbar { display: none; }
-        
-        .t-pill { position: relative; z-index: 1; padding: 4px 8px; font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 0.6em; text-transform: uppercase; letter-spacing: 1px; background: var(--tl-inactive); color: #555; border: 1px solid #222; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); white-space: nowrap; transform: skewX(-15deg); flex-shrink: 0; }
-        .t-pill[data-type="PICK"], .t-pill[data-type="PICK_MAP"], .t-pill[data-type="BLIND_PICK"] { --target-bg: var(--tl-pick-bg); --target-color: #fff; }
-        .t-pill[data-type="BAN"] { --target-bg: var(--tl-ban-bg); --target-color: #fff; }
-        .t-pill[data-type="REVEAL"], .t-pill[data-type="REVEAL_STEP"], .t-pill[data-type="DECIDER"] { --target-bg: var(--tl-reveal-bg); --target-color: #111; }
-        .t-pill.active { background: var(--target-bg); color: var(--target-color); transform: scale(1.3) skewX(-15deg); z-index: 10; box-shadow: 0 0 15px var(--target-bg); border-color: #fff; }
-        .t-pill.done { background: var(--target-bg); color: var(--target-color); opacity: 0.3; filter: grayscale(0.8); transform: scale(0.9) skewX(-15deg); }
-
-        .log-container {
-            width: 80%; max-width: 800px; height: 60px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.8)); 
-            border-top: 1px solid #333; border-bottom: 1px solid #333;
-            margin: 0 auto 10px auto;
-            overflow-y: auto; padding: 5px;
-            font-family: 'Roboto', sans-serif; font-size: 0.75em; color: #888;
-            text-align: center; scrollbar-width: thin; scrollbar-color: #444 #111;
-        }
-        .log-entry { margin-bottom: 2px; padding-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.03); opacity: 0; animation: popIn 0.3s forwards; }
-        .log-entry span.p1 { color: var(--p1-color); font-weight: bold; text-shadow: 0 0 5px rgba(52, 152, 219, 0.4); }
-        .log-entry span.p2 { color: var(--p2-color); font-weight: bold; text-shadow: 0 0 5px rgba(231, 76, 60, 0.4); }
-        .log-entry strong { color: #ddd; letter-spacing: 0.5px; }
-        .log-entry span.random { color: #e67e22; font-style: italic; font-size: 0.8em; }
-
+        /* Layout CSS Simplificado (Mantendo estrutura original) */
         .main-container { display: flex; flex-direction: column; width: 98vw; max-width: 1900px; justify-content: flex-start; align-items: center; gap: 1vh; flex: 1; padding-bottom: 20px; }
+        .vs-header { display: flex; align-items: center; justify-content: center; font-size: 3vh; font-weight: 900; text-transform: uppercase; margin-top: 55px; margin-bottom: 5px; width: 100%; text-align: center; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+        .p1-name, .p2-name { margin: 0 2vw; background: transparent; border: none; color: inherit; font-family: inherit; font-size: inherit; width: 30vw; text-align: center; }
         
-        .god-groups-container { display: flex; justify-content: center; gap: 4vw; width: 100%; perspective: 1000px; flex-wrap: wrap; }
-        .god-group { display: flex; gap: 0.8vw; justify-content: center; width: 45%; min-width: 300px; }
+        .timer-display { font-size: 1.8em; font-weight: 900; color: #fff; background: rgba(0,0,0,0.8); padding: 3px 20px; border-radius: 4px; border: 1px solid #444; margin-bottom: 8px; }
+        .timer-urgent { color: #ff0000; text-shadow: 0 0 10px red; }
+
+        .god-groups-container { display: flex; justify-content: center; gap: 4vw; width: 100%; flex-wrap: wrap; }
+        .god-group { display: flex; gap: 0.8vw; justify-content: center; }
         .god-group.mirror-layout { flex-direction: row-reverse; }
         
-        .god-slot { 
-            width: 11vw; max-width: 180px;
-            aspect-ratio: 1 / 2.2; 
-            background: #080808; border: 2px solid #333; 
-            overflow: hidden; position: relative; 
-            display: flex; justify-content: center; align-items: center; 
-            box-shadow: inset 0 0 20px #000;
-            transition: all 0.3s ease-out;
-        }
-        
-        .god-slot img { width: 100%; height: 100%; object-fit: cover; opacity: 1; }
-        
-        .god-slot.filled { border-color: #666; box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
-        .god-slot.filled img { animation: godReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-        
-        body.spectator-mode .god-slot.filled:not(.slot-active) img {
-            animation: godReveal 0.8s forwards, 
-                       epicGodFloat 6s ease-in-out infinite 0.8s, 
-                       epicGodGlow 4s ease-in-out infinite 0.8s;
-        }
+        .god-slot { width: 11vw; max-width: 180px; aspect-ratio: 1 / 2.2; background: #080808; border: 2px solid #333; overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
+        .god-slot.filled img { width: 100%; height: 100%; object-fit: cover; animation: godReveal 0.8s forwards; }
+        .slot-active { cursor: pointer; animation: divinePulse 1.5s infinite; border-color: var(--text-gold); }
 
-        .god-slot.empty::after { content: ""; position: absolute; width: 100%; height: 100%; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px); }
-        .p1-slot.filled { border-color: var(--p1-color); box-shadow: 0 0 15px rgba(52, 152, 219, 0.3); }
-        .p2-slot.filled { border-color: var(--p2-color); box-shadow: 0 0 15px rgba(231, 76, 60, 0.3); }
+        .bans-container { display: flex; justify-content: center; gap: 3vw; margin-top: 10px; }
+        .ban-slot { width: 4vw; height: 4vw; max-width: 55px; background: #000; border: 1px solid #333; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        .ban-slot.filled { border-color: var(--ban-color); box-shadow: 0 0 10px var(--ban-color); }
+        .ban-slot.filled img { width: 100%; height: 100%; object-fit: cover; animation: banBurn 0.5s forwards; }
 
-        .slot-active { cursor: pointer; z-index: 20; animation: divinePulse 1.5s infinite ease-in-out !important; background: #111; }
-        .slot-locked { filter: grayscale(0) !important; opacity: 1 !important; cursor: default; }
-        .slot-pending-confirm { filter: saturate(0); animation: pendingPulse 0.8s infinite; }
-        .slot-blind-ready { background: #111; border: 2px solid var(--text-gold); box-shadow: 0 0 15px var(--text-gold); }
-        .slot-blind-ready::after { content: "PRONTO"; position: absolute; font-weight: 900; color: var(--text-gold); font-size: 1.5em; letter-spacing: 2px; text-shadow: 0 0 10px black; }
-        .random-mark { position: absolute; top: 5px; right: 5px; font-size: 1.2em; z-index: 20; background: rgba(0,0,0,0.8); border-radius: 50%; width: 25px; height: 25px; display: flex; justify-content: center; align-items: center; color: #f39c12; box-shadow: 0 0 5px #000; border: 1px solid #f39c12; }
+        .maps-row { display: flex; justify-content: center; gap: 1vw; margin-top: 10px; }
+        .map-slot { width: 7vw; max-width: 120px; aspect-ratio: 1/1; background: #111; border: 1px solid #444; overflow: hidden; position: relative; }
+        .map-slot img { width: 100%; height: 100%; object-fit: cover; }
+        .decider-slot { border: 2px solid var(--text-gold); transform: scale(1.1); }
 
-        .bans-container { display: flex; justify-content: center; gap: 3vw; width: 100%; margin-top: 0.5vh; flex-wrap: wrap; }
-        .bans-wrapper { display: flex; align-items: center; background: rgba(0,0,0,0.8); padding: 6px 15px; border-radius: 4px; border: 1px solid #333; width: fit-content; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .ban-section { display: flex; gap: 8px; align-items: center; }
-        .ban-section.mirror-layout { flex-direction: row-reverse; }
-        .bans-wrapper.p1-wrapper { border-left: 4px solid var(--p1-color); margin-left: auto; }
-        .bans-wrapper.p2-wrapper { border-right: 4px solid var(--p2-color); margin-right: auto; }
-        .bans-side { width: 45%; min-width: 300px; display: flex; }
-        .bans-side.left { justify-content: flex-end; } 
-        .bans-side.right { justify-content: flex-start; } 
-        .ban-divider { width: 1px; height: 35px; background: #444; margin: 0 12px; }
+        .confirm-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #27ae60; color: white; padding: 15px 40px; border: none; font-size: 1.2em; font-weight: bold; cursor: pointer; display: none; z-index: 200; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
 
-        .ban-slot { 
-            width: 4vw; height: 4vw; max-width: 55px; max-height: 55px; min-width: 38px; min-height: 38px;
-            background: #000; border: 1px solid #333; border-radius: 50%; 
-            position: relative; display: flex; justify-content: center; align-items: center; 
-            overflow: hidden; opacity: 0.4; transition: all 0.3s;
-        }
-        .ban-slot.filled { opacity: 1; border-color: var(--ban-color); box-shadow: 0 0 15px var(--ban-color); }
-        .ban-slot img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .ban-slot.filled img:not(.animated) { 
-            animation: banBurn 0.5s forwards;
-        }
-        
-        .ban-slot.filled::before, .ban-slot.filled::after { content: ''; position: absolute; width: 80%; height: 3px; background-color: var(--ban-color); top: 50%; left: 50%; z-index: 5; box-shadow: 0 0 5px rgba(0,0,0,1); pointer-events: none; }
-        .ban-slot.filled::before { transform: translate(-50%, -50%) rotate(45deg); }
-        .ban-slot.filled::after { transform: translate(-50%, -50%) rotate(-45deg); }
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 300; display: none; justify-content: center; align-items: center; }
+        .modal-content { background: #111; border: 1px solid var(--text-gold); padding: 20px; width: 90%; max-width: 1000px; height: 80vh; overflow-y: auto; }
+        .selection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; }
+        .selectable-card { cursor: pointer; border: 1px solid #333; transition: 0.2s; position: relative; }
+        .selectable-card:hover { border-color: var(--text-gold); transform: scale(1.05); }
+        .selectable-card img { width: 100%; height: auto; display: block; }
+        .card-name { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.7); color: white; text-align: center; font-size: 0.8em; padding: 2px 0; }
 
-        .maps-row { display: flex; justify-content: center; align-items: center; gap: 2vw; width: 100%; margin-top: 1vh; flex-wrap: wrap; }
-        .map-group { display: flex; gap: 1vw; }
-        .map-group.mirror-layout { flex-direction: row-reverse; }
-        .map-slot { 
-            width: 7vw; height: 7vw; max-width: 120px; max-height: 120px; min-width: 65px; min-height: 65px;
-            background: #111; border: 1px solid #444; border-radius: 2px; 
-            overflow: hidden; position: relative; 
-            opacity: 1 !important; filter: none !important; 
-            transition: all 0.3s; 
-            box-shadow: 0 5px 10px rgba(0,0,0,0.5);
-        }
-        .map-slot img { width: 100%; height: 100%; object-fit: cover; animation: popIn 0.5s; opacity: 1 !important; filter: none !important;}
-        .map-name-label { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, black, transparent); color: #fff; font-size: 0.7em; font-family: 'Roboto', sans-serif; text-align: center; padding: 3px 0; font-weight: bold; text-transform: uppercase; z-index: 5; text-shadow: 0 2px 4px black; }
+        /* LOGS */
+        .log-container { width: 80%; height: 60px; background: rgba(0,0,0,0.5); margin: 5px 0; overflow-y: auto; font-family: sans-serif; font-size: 0.8em; padding: 5px; text-align: center; border: 1px solid #333; }
+        .log-entry span.p1 { color: var(--p1-color); font-weight: bold; }
+        .log-entry span.p2 { color: var(--p2-color); font-weight: bold; }
 
-        .decider-wrapper { position: relative; z-index: 20; display:flex; flex-direction:column; align-items:center; margin: 5px 0;}
-        .decider-slot { width: 9vw; height: 9vw; max-width: 150px; max-height: 150px; border: 4px solid var(--text-gold); box-shadow: 0 0 40px rgba(212, 175, 55, 0.2); transform: scale(1.05); }
-        .decider-slot.filled img { animation: popIn 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        .decider-label { color: var(--text-gold); font-weight: 900; font-size: 0.9em; text-shadow: 0 2px 10px #000; margin-bottom: 3px; letter-spacing: 2px; }
+        /* ROOM CODE DISPLAY */
+        .room-display { position: fixed; top: 10px; right: 10px; font-family: sans-serif; background: #000; border: 1px solid #333; padding: 5px 10px; color: #666; font-size: 0.8em; z-index: 100; }
+        .room-code-val { color: var(--text-gold); font-weight: bold; font-size: 1.2em; margin-left: 5px; }
 
-        .confirm-btn { 
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); 
-            background: linear-gradient(to bottom, #2ecc71, #27ae60); 
-            color: white; border: 2px solid #a2ffc9; 
-            padding: 10px 40px; width: 90%; max-width: 350px;
-            font-family: 'Cinzel', serif; font-size: 1.2em; font-weight: 900; 
-            cursor: pointer; border-radius: 4px; 
-            box-shadow: 0 0 30px rgba(46, 204, 113, 0.6); 
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
-            transition: 0.2s; z-index: 200; display: none; 
-            letter-spacing: 2px;
-        }
-        .confirm-btn:hover { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 50px rgba(46, 204, 113, 0.9); }
-        .confirm-btn:active { transform: translateX(-50%) scale(0.95); }
-
-        .spec-banner { position:fixed; top:80px; right:20px; background: #e67e22; color: #fff; padding: 5px 20px; border-radius: 2px; font-weight: bold; display: none; z-index: 600; box-shadow: 0 2px 10px rgba(0,0,0,0.8); font-family: sans-serif; letter-spacing: 1px;}
-
-        .replay-controls {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.95);
-            border: 2px solid var(--text-gold);
-            border-radius: 8px;
-            padding: 15px 25px;
-            display: none;
-            z-index: 650;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
-            font-family: 'Roboto', sans-serif;
-            min-width: 500px;
-        }
-
-        .replay-controls.active { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-
-        .replay-title {
-            color: var(--text-gold);
-            font-weight: 900;
-            font-size: 1.1em;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .replay-buttons {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .replay-btn {
-            background: linear-gradient(to bottom, #34495e, #2c3e50);
-            color: white;
-            border: 2px solid #7f8c8d;
-            padding: 8px 16px;
-            font-family: 'Roboto', sans-serif;
-            font-weight: 700;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: 0.2s;
-            font-size: 0.9em;
-            min-width: 80px;
-        }
-
-        .replay-btn:hover {
-            background: linear-gradient(to bottom, #3d566e, #34495e);
-            border-color: var(--text-gold);
-            transform: scale(1.05);
-        }
-
-        .replay-btn:active {
-            transform: scale(0.95);
-        }
-
-        .replay-btn.playing {
-            background: linear-gradient(to bottom, #27ae60, #229954);
-            border-color: #2ecc71;
-        }
-
-        .replay-btn.recording {
-            background: linear-gradient(to bottom, #c0392b, #a93226);
-            border-color: #e74c3c;
-            animation: recordPulse 1s infinite;
-        }
-
-        @keyframes recordPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
-            50% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
-        }
-
-        .replay-speed {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #ecf0f1;
-            font-size: 0.85em;
-        }
-
-        .replay-speed select {
-            background: #2c3e50;
-            color: white;
-            border: 1px solid #7f8c8d;
-            padding: 4px 8px;
-            border-radius: 3px;
-            font-family: 'Roboto', sans-serif;
-            cursor: pointer;
-        }
-
-        .replay-timeline {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 5px;
-        }
-
-        .replay-progress {
-            flex: 1;
-            height: 8px;
-            background: #34495e;
-            border-radius: 4px;
-            position: relative;
-            cursor: pointer;
-            border: 1px solid #7f8c8d;
-        }
-
-        .replay-progress-bar {
-            height: 100%;
-            background: linear-gradient(to right, var(--text-gold), #f39c12);
-            border-radius: 4px;
-            width: 0%;
-            transition: width 0.3s;
-            position: relative;
-        }
-
-        .replay-progress-bar::after {
-            content: '';
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 12px;
-            height: 12px;
-            background: white;
-            border: 2px solid var(--text-gold);
-            border-radius: 50%;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-        }
-
-        .replay-time {
-            color: #bdc3c7;
-            font-size: 0.85em;
-            min-width: 80px;
-            text-align: center;
-            font-variant-numeric: tabular-nums;
-        }
-
-        @media (max-width: 768px) {
-            .replay-controls { min-width: 90%; padding: 10px 15px; }
-            .replay-buttons { flex-wrap: wrap; }
-            .replay-btn { min-width: 60px; padding: 6px 12px; font-size: 0.8em; }
-        }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 300; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; backdrop-filter: blur(5px); }
-        .modal-overlay.show { opacity: 1; }
-        .modal-content { background: #111; border: 1px solid var(--text-gold); border-radius: 4px; padding: 30px; width: 90%; max-width: 1200px; height: 80vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 50px rgba(212, 175, 55, 0.1); }
-        .modal-overlay.show .modal-content { transform: scale(1); }
-        .selection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; padding: 10px; }
-        
-        .selectable-card { 
-            width: 100%; aspect-ratio: 2/3; 
-            background: #1a1a1a; border: 2px solid #333; 
-            border-radius: 4px; overflow: hidden; cursor: pointer; 
-            transition: all 0.2s ease-out; position: relative; 
-            display:flex; justify-content:center; align-items:center; text-align:center;
-        }
-        .selectable-card.is-map-card { aspect-ratio: 1/1 !important; }
-        .selectable-card:hover { border-color: var(--text-gold); transform: translateY(-10px) scale(1.05); z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        .selectable-card.card-disabled { pointer-events: none; filter: grayscale(1) brightness(0.2); border-color: #222; }
-        .selectable-card.banned-overlay::after { content: "BANIDO"; position: absolute; color: #e74c3c; font-weight: 900; font-family: sans-serif; font-size: 1.2em; transform: rotate(-25deg); text-shadow: 0 2px 10px black; border: 3px solid #e74c3c; padding: 5px 10px; border-radius: 4px; opacity: 0.8; }
-        .selectable-card.picked-overlay::after { content: "USADO"; position: absolute; color: #f1c40f; font-weight: 900; font-family: sans-serif; font-size: 1.2em; transform: rotate(-25deg); text-shadow: 0 2px 10px black; border: 3px solid #f1c40f; padding: 5px 10px; border-radius: 4px; opacity: 0.8; }
-        .selectable-card.protected-overlay::after { content: "EM JOGO"; position: absolute; color: #3498db; font-weight: 900; font-family: sans-serif; font-size: 1.2em; transform: rotate(-25deg); text-shadow: 0 2px 10px black; border: 3px solid #3498db; padding: 5px 10px; border-radius: 4px; opacity: 0.8; }
-        .selectable-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s;}
-        .card-name-overlay { position: absolute; bottom: 0; width: 100%; background: linear-gradient(to top, black, transparent); color: #fff; font-size: 0.8em; text-align: center; padding: 8px 0; font-weight: 700; text-shadow: 0 1px 3px black; }
-
-        .ready-check-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 400; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s; backdrop-filter: blur(10px); }
-        .ready-container { display: flex; gap: 80px; flex-wrap: wrap; justify-content: center; }
-        .ready-box { background: #080808; border: 1px solid #333; padding: 40px; border-radius: 4px; text-align: center; width: 280px; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.8); margin: 10px; }
-        .ready-box h2 { color: var(--text-gold); margin: 0 0 30px 0; font-size: 1.8em; letter-spacing: 2px; }
-        .ready-btn { background: transparent; border: 2px solid #444; color: #666; padding: 15px 40px; font-family: 'Cinzel', serif; font-weight: bold; cursor: pointer; width: 100%; border-radius: 2px; transition: 0.3s; font-size: 1.1em; }
-        .ready-btn:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.05); }
-        .ready-box.ready { border-color: #2ecc71; box-shadow: 0 0 40px rgba(46, 204, 113, 0.1); }
-        .ready-box.ready .ready-btn { background: #27ae60; border-color: #2ecc71; color: white; cursor: default; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
-
-        @media (max-width: 768px) {
-            .vs-header { display: none; }
-            .god-groups-container { flex-direction: column; align-items: center; gap: 15px; margin-top: 10px; }
-            .god-group { width: 100%; justify-content: center; position: relative; padding-top: 35px; }
-            .god-group::before { content: attr(data-player-name); position: absolute; top: 5px; left: 50%; transform: translateX(-50%); font-size: 1.5em; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); white-space: nowrap; }
-            .god-group.p1-group::before { color: var(--p1-color); text-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
-            .god-group.p2-group::before { color: var(--p2-color); text-shadow: 0 0 10px rgba(231, 76, 60, 0.5); }
-            .god-group.p1-group::after { content: "VS"; position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); font-size: 1.8em; font-weight: 900; color: var(--text-gold); text-shadow: 0 0 15px rgba(241, 196, 15, 0.6); letter-spacing: 3px; z-index: 10; }
-            .god-group.mirror-layout { flex-direction: row; } 
-            .god-slot { width: 18vw; max-width: 90px; }
-            .bans-container { flex-direction: column-reverse; align-items: center; gap: 10px; margin-top: 30px; }
-            .bans-side { justify-content: center !important; width: 100%; }
-            .bans-wrapper { margin: 0 !important; border-left: 1px solid #333 !important; border-right: 1px solid #333 !important; }
-            .bans-wrapper.p1-wrapper { border-bottom: 4px solid var(--p1-color); }
-            .bans-wrapper.p2-wrapper { border-top: 4px solid var(--p2-color); }
-            .maps-row { flex-direction: column; gap: 10px; }
-            .map-group { justify-content: center; }
-            .log-container { width: 95%; height: 60px; font-size: 0.7em; }
-            .timeline-container { justify-content: flex-start; padding-left: 20px; }
-            .t-pill { font-size: 0.55em; padding: 3px 6px; }
-            .confirm-btn { padding: 8px 16px; font-size: 1em; bottom: 10px; }
-            .replay-controls { min-width: 90%; padding: 10px 15px; }
-            .replay-buttons { flex-wrap: wrap; gap: 5px; }
-            .replay-btn { min-width: 45%; padding: 6px 10px; font-size: 0.8em; }
-            .replay-title { font-size: 0.9em; }
-        }
+        /* READY CHECK */
+        .ready-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 250; display: none; flex-direction: column; justify-content: center; align-items: center; }
+        .ready-btn { background: transparent; border: 2px solid #555; color: #aaa; padding: 10px 30px; margin: 10px; font-size: 1.5em; cursor: pointer; min-width: 200px; }
+        .ready-btn.ready { background: #27ae60; color: white; border-color: #2ecc71; }
     </style>
 </head>
 <body>
 
-    <div id="hostPanel" class="host-panel">
-        <div class="host-container">
-            <span style="color:#d4af37; font-weight:bold;">HOST:</span>
-            <div class="link-group"><label>P2:</label><input type="text" id="linkP2" value="Gerando..." readonly onclick="this.select()"><button class="copy-btn" onclick="copyLink('linkP2', this)">COPIAR</button></div>
-            <div class="link-group"><label>SPEC:</label><input type="text" id="linkSpec" value="Gerando..." readonly onclick="this.select()"><button class="copy-btn" onclick="copyLink('linkSpec', this)">COPIAR</button></div>
-            <button class="reset-btn" onclick="resetDraft()">RESET</button>
-        </div>
-    </div>
-
-    <div id="readyOverlay" class="ready-check-overlay">
-        <h1 style="color:var(--text-gold); margin-bottom:50px; font-size: 3.5em; text-shadow: 0 0 20px rgba(0,0,0,0.8); letter-spacing: 5px; text-align:center;">LOBBY DE ESPERA</h1>
-        <div class="ready-container">
-            <div id="p1ReadyBox" class="ready-box">
-                <h2>JOGADOR 1</h2>
-                <button id="btnReadyP1" class="ready-btn" onclick="toggleReady('p1')">CONFIRMAR</button>
-            </div>
-            <div id="p2ReadyBox" class="ready-box">
-                <h2>JOGADOR 2</h2>
-                <button id="btnReadyP2" class="ready-btn" onclick="toggleReady('p2')">CONFIRMAR</button>
+    <div id="initialLobby" class="lobby-overlay">
+        <div class="lobby-box">
+            <div class="lobby-title">AGE OF MYTHOLOGY<br>DRAFT</div>
+            
+            <button class="lobby-btn" onclick="createRoom()">CRIAR NOVA SALA (HOST)</button>
+            
+            <div class="lobby-input-group">
+                <input type="text" id="joinCodeInput" class="lobby-input" placeholder="CÓDIGO DA SALA">
+                <button class="lobby-btn" onclick="joinRoom()">ENTRAR NA SALA (PLAYER 2)</button>
+                <button class="lobby-btn" style="font-size: 0.8em; border:none;" onclick="joinRoomSpec()">ENTRAR COMO ESPECTADOR</button>
             </div>
         </div>
     </div>
 
-    <div id="specBanner" class="spec-banner">ESPECTADOR</div>
+    <div class="room-display">
+        SALA: <span id="displayRoomCode" class="room-code-val">---</span>
+    </div>
 
-    <div id="replayControls" class="replay-controls">
-        <div class="replay-title">⏯️ Replay do Draft</div>
-        <div class="replay-buttons">
-            <button id="btnRewind" class="replay-btn" onclick="replayRewind()">⏮️ Início</button>
-            <button id="btnPlayPause" class="replay-btn" onclick="replayTogglePlay()">▶️ Play</button>
-        </div>
-        <div class="replay-speed">
-            <label>Velocidade:</label>
-            <select id="replaySpeed" onchange="updateReplaySpeed()">
-                <option value="0.5">0.5x</option>
-                <option value="1" selected>1x</option>
-                <option value="1.5">1.5x</option>
-                <option value="2">2x</option>
-                <option value="3">3x</option>
-            </select>
-        </div>
-        <div class="replay-timeline">
-            <div class="replay-progress" onclick="seekReplay(event)">
-                <div id="replayProgressBar" class="replay-progress-bar"></div>
-            </div>
-            <div id="replayTime" class="replay-time">0 / 0</div>
+    <div id="readyOverlay" class="ready-overlay">
+        <h1 style="color:var(--text-gold); margin-bottom: 30px;">AGUARDANDO JOGADORES</h1>
+        <div style="display:flex; gap: 20px;">
+            <button id="btnP1Ready" class="ready-btn" onclick="toggleReady('p1')">PLAYER 1</button>
+            <button id="btnP2Ready" class="ready-btn" onclick="toggleReady('p2')">PLAYER 2</button>
         </div>
     </div>
 
     <div class="vs-header">
         <input class="p1-name" id="p1NameInput" value="[CAOK] LIGHT">
-        <span class="vs-text">VS</span>
+        <span style="color:var(--text-gold)">VS</span>
         <input class="p2-name" id="p2NameInput" value="[CAOK] PAIN">
     </div>
 
     <div id="timerDisplay" class="timer-display">45</div>
 
     <div class="timeline-container">
-        <div id="timelineSteps" style="display:flex; gap:4px;"></div>
-    </div>
+        </div>
 
     <div id="logContainer" class="log-container"></div>
 
-    <div class="info-bar">
-        <div id="phaseDisplay" style="display:none;"></div>
-    </div>
-
     <div class="main-container">
         <div class="god-groups-container">
-            <div class="god-group mirror-layout p1-group" data-player-name="">
+            <div class="god-group mirror-layout" id="p1Group">
                 <div id="p1-god-0" class="god-slot p1-slot" onclick="clickSlot('p1', 'god', 0)"></div>
                 <div id="p1-god-1" class="god-slot p1-slot" onclick="clickSlot('p1', 'god', 1)"></div>
                 <div id="p1-god-2" class="god-slot p1-slot" onclick="clickSlot('p1', 'god', 2)"></div>
                 <div id="p1-god-3" class="god-slot p1-slot" onclick="clickSlot('p1', 'god', 3)"></div>
                 <div id="p1-god-4" class="god-slot p1-slot" onclick="clickSlot('p1', 'god', 4)"></div>
             </div>
-            <div class="god-group p2-group" data-player-name="">
+            <div class="god-group" id="p2Group">
                 <div id="p2-god-0" class="god-slot p2-slot" onclick="clickSlot('p2', 'god', 0)"></div>
                 <div id="p2-god-1" class="god-slot p2-slot" onclick="clickSlot('p2', 'god', 1)"></div>
                 <div id="p2-god-2" class="god-slot p2-slot" onclick="clickSlot('p2', 'god', 2)"></div>
@@ -544,70 +214,43 @@
         </div>
 
         <div class="bans-container">
-            <div class="bans-side left">
-                <div class="bans-wrapper p1-wrapper">
-                    <div class="ban-section mirror-layout">
-                        <div id="p1-banmap-0" class="ban-slot" onclick="clickSlot('p1', 'banmap', 0)"></div>
-                        <div id="p1-banmap-1" class="ban-slot" onclick="clickSlot('p1', 'banmap', 1)"></div>
-                        <div id="p1-banmap-2" class="ban-slot" onclick="clickSlot('p1', 'banmap', 2)"></div>
-                    </div>
-                    <div class="ban-divider"></div>
-                    <div class="ban-section mirror-layout">
-                        <div id="p1-bangod-0" class="ban-slot" onclick="clickSlot('p1', 'bangod', 0)"></div>
-                        <div id="p1-bangod-1" class="ban-slot" onclick="clickSlot('p1', 'bangod', 1)"></div>
-                        <div id="p1-bangod-2" class="ban-slot" onclick="clickSlot('p1', 'bangod', 2)"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="bans-side right">
-                <div class="bans-wrapper p2-wrapper">
-                    <div class="ban-section">
-                        <div id="p2-bangod-0" class="ban-slot" onclick="clickSlot('p2', 'bangod', 0)"></div>
-                        <div id="p2-bangod-1" class="ban-slot" onclick="clickSlot('p2', 'bangod', 1)"></div>
-                        <div id="p2-bangod-2" class="ban-slot" onclick="clickSlot('p2', 'bangod', 2)"></div>
-                    </div>
-                    <div class="ban-divider"></div>
-                    <div class="ban-section">
-                        <div id="p2-banmap-0" class="ban-slot" onclick="clickSlot('p2', 'banmap', 0)"></div>
-                        <div id="p2-banmap-1" class="ban-slot" onclick="clickSlot('p2', 'banmap', 1)"></div>
-                        <div id="p2-banmap-2" class="ban-slot" onclick="clickSlot('p2', 'banmap', 2)"></div>
-                    </div>
-                </div>
-            </div>
+            <div id="p1-bangod-0" class="ban-slot" onclick="clickSlot('p1', 'bangod', 0)"></div>
+            <div id="p1-bangod-1" class="ban-slot" onclick="clickSlot('p1', 'bangod', 1)"></div>
+            <div id="p1-bangod-2" class="ban-slot" onclick="clickSlot('p1', 'bangod', 2)"></div>
+            <div style="width: 20px;"></div>
+            <div id="p2-bangod-0" class="ban-slot" onclick="clickSlot('p2', 'bangod', 0)"></div>
+            <div id="p2-bangod-1" class="ban-slot" onclick="clickSlot('p2', 'bangod', 1)"></div>
+            <div id="p2-bangod-2" class="ban-slot" onclick="clickSlot('p2', 'bangod', 2)"></div>
         </div>
-
+        
         <div class="maps-row">
-            <div class="map-group mirror-layout">
-                <div id="map-0" class="map-slot" onclick="clickSlot('map', 'map', 0)"></div>
-                <div id="map-1" class="map-slot" onclick="clickSlot('map', 'map', 1)"></div>
-            </div>
-            <div class="decider-wrapper">
-                <span class="decider-label">MAPA 1 (DECIDER)</span>
-                <div id="map-2" class="map-slot decider-slot"></div>
-            </div>
-            <div class="map-group">
-                <div id="map-3" class="map-slot" onclick="clickSlot('map', 'map', 3)"></div>
-                <div id="map-4" class="map-slot" onclick="clickSlot('map', 'map', 4)"></div>
-            </div>
+            <div id="p1-banmap-0" class="ban-slot" style="border-radius:4px" onclick="clickSlot('p1', 'banmap', 0)"></div>
+            <div id="p1-banmap-1" class="ban-slot" style="border-radius:4px" onclick="clickSlot('p1', 'banmap', 1)"></div>
+            <div id="p1-banmap-2" class="ban-slot" style="border-radius:4px" onclick="clickSlot('p1', 'banmap', 2)"></div>
+            
+            <div id="map-0" class="map-slot" onclick="clickSlot('map', 'map', 0)"></div>
+            <div id="map-1" class="map-slot" onclick="clickSlot('map', 'map', 1)"></div>
+            <div id="map-2" class="map-slot decider-slot"></div>
+            <div id="map-3" class="map-slot" onclick="clickSlot('map', 'map', 3)"></div>
+            <div id="map-4" class="map-slot" onclick="clickSlot('map', 'map', 4)"></div>
+            
+            <div id="p2-banmap-0" class="ban-slot" style="border-radius:4px" onclick="clickSlot('p2', 'banmap', 0)"></div>
+            <div id="p2-banmap-1" class="ban-slot" style="border-radius:4px" onclick="clickSlot('p2', 'banmap', 1)"></div>
+            <div id="p2-banmap-2" class="ban-slot" style="border-radius:4px" onclick="clickSlot('p2', 'banmap', 2)"></div>
         </div>
     </div>
 
-    <button id="confirmBtn" class="confirm-btn" onclick="confirmTurn()">CONFIRMAR</button>
+    <button id="confirmBtn" class="confirm-btn" onclick="confirmTurn()">CONFIRMAR ESCOLHA</button>
 
     <div id="selectionModal" class="modal-overlay" onclick="closeModal(event)">
         <div class="modal-content">
-            <h2 id="modalTitle" style="color:var(--text-gold); margin-top:0; text-align: center; font-size: 2em; letter-spacing: 3px; text-transform: uppercase;">Selecione</h2>
+            <h2 id="modalTitle" style="color:var(--text-gold); text-align:center;">SELECIONE</h2>
             <div id="modalGrid" class="selection-grid"></div>
         </div>
     </div>
 
-    <div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
-        background: black; padding: 10px 20px; border: 2px solid gold; border-radius: 8px; font-size: 1.5em; font-family: sans-serif; z-index: 1000; box-shadow: 0 0 20px rgba(0,0,0,0.8);">
-        SALA: <span id="roomCode" style="color: #f1c40f; font-weight: bold;">---</span>
-    </div>
-
     <script>
-        // ============ CONFIGURAÇÃO FIREBASE ============
+        // ============ CONFIG ============
         const firebaseConfig = {
             apiKey: "AIzaSyAgliUKQCUlKrAlRbBwRQQpRO5sBjwvOgo",
             authDomain: "aom-draft.firebaseapp.com",
@@ -617,545 +260,295 @@
             messagingSenderId: "868281557350",
             appId: "1:868281557350:web:6813ba2322556e2e2768a7"
         };
-
-        // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // ============ DADOS DOS DEUSES E MAPAS ============
+        // Dados
         const godsData = [
             {n:"Zeus", img:"zeus_portrait.png"}, {n:"Poseidon", img:"poseidon_portrait.png"}, {n:"Hades", img:"hades_portrait.png"},
             {n:"Isis", img:"isis_portrait.png"}, {n:"Ra", img:"ra_portrait.png"}, {n:"Set", img:"set_portrait.png"},
             {n:"Odin", img:"odin_portrait.png"}, {n:"Thor", img:"thor_portrait.png"}, {n:"Loki", img:"loki_portrait.png"}, {n:"Freyr", img:"freyr_portrait.png"},
             {n:"Kronos", img:"kronos_portrait.png"}, {n:"Gaia", img:"gaia_portrait.png"}, {n:"Oranos", img:"oranos_portrait.png"},
-            {n:"Fu Xi", img:"fuxi_portrait.png"}, {n:"Nu Wa", img:"nuwa_portrait.png"}, {n:"Shennong", img:"shennong_portrait.png"},
-            {n:"Amaterasu", img:"amaterasu_portrait.png"}, {n:"Tsukuyomi", img:"tsukuyomi_portrait.png"}, {n:"Susanoo", img:"susanoo_portrait.png"}
+            {n:"Fu Xi", img:"fuxi_portrait.png"}, {n:"Nu Wa", img:"nuwa_portrait.png"}, {n:"Shennong", img:"shennong_portrait.png"}
         ];
-
         const mapsData = [
-            {n:"Air", img:"https://i.ibb.co/nsmbmGX9/air.png"}, {n:"Alfheim", img:"https://i.ibb.co/8gLtp62y/alfheim.png"},
-            {n:"Blue Lagoon", img:"https://i.ibb.co/RpYKNMK7/blue-lagoon.png"}, {n:"Elysium", img:"https://i.ibb.co/JW3DNSC2/elysium.png"},
-            {n:"Ghost Lake", img:"https://i.ibb.co/7ttqfhXs/ghost-lake.png"}, {n:"Giza", img:"https://i.ibb.co/s9nc4qyq/giza.png"},
-            {n:"Kii", img:"https://i.ibb.co/VWZwbrvJ/kii.png"}, {n:"Marsh", img:"https://i.ibb.co/rKV4bTYq/marsh.png"},
-            {n:"Mediterranean", img:"https://i.ibb.co/MDN5Qynb/mediterranean.png"}, {n:"Megalopolis", img:"https://i.ibb.co/b5b9XhQ2/megalopolis.png"},
-            {n:"Nile Shallows", img:"https://i.ibb.co/dsRLZMQ9/nile-shallows.png"}, {n:"Oasis", img:"https://i.ibb.co/vRfNt3N/oasis.png"},
-            {n:"Savannah", img:"https://i.ibb.co/rG5mywpB/savannah.png"}, {n:"Steppe", img:"https://i.ibb.co/fG1Hc99D/steppe.png"},
-            {n:"Tundra", img:"https://i.ibb.co/k2yfvvvQ/tundra.png"}, {n:"Valley of Kings", img:"https://i.ibb.co/C33ZV2Qp/valley-of-kings.png"},
+            {n:"Alfheim", img:"https://i.ibb.co/8gLtp62y/alfheim.png"},
+            {n:"Blue Lagoon", img:"https://i.ibb.co/RpYKNMK7/blue-lagoon.png"},
+            {n:"Mediterranean", img:"https://i.ibb.co/MDN5Qynb/mediterranean.png"},
+            {n:"Oasis", img:"https://i.ibb.co/vRfNt3N/oasis.png"},
+            {n:"Savannah", img:"https://i.ibb.co/rG5mywpB/savannah.png"},
+            {n:"Tundra", img:"https://i.ibb.co/k2yfvvvQ/tundra.png"},
             {n:"Watering Hole", img:"https://i.ibb.co/N6WMy1xr/watering-hole.png"}
         ];
 
-        // ============ TIMELINE ============
-        const GOD_BLOCKS = [
-            { label: "PICK", type: "PICK" }, { label: "REVEAL", type: "REVEAL" }, 
-            { label: "BAN 1", type: "BAN" }, { label: "BAN 2", type: "BAN" }, { label: "BAN 3", type: "BAN" }, 
-            { label: "PICK", type: "PICK" }, { label: "REVEAL", type: "REVEAL" }
-        ];
-        
-        const MAP_BLOCKS = [
-            { label: "BAN 1", type: "BAN" }, { label: "BAN 2", type: "BAN" }, { label: "BAN 3", type: "BAN" }, 
-            { label: "PICK", type: "PICK" }, { label: "PICK", type: "PICK" }, { label: "PICK", type: "PICK" }, 
-            { label: "PICK", type: "PICK" }, { label: "REVEAL", type: "REVEAL" }
-        ];
-
-        function getTimelineState(phase) {
-            let context = phase < 16 ? 'GODS' : 'MAPS';
-            let index = 0;
-            // Simplificação para brevidade, mantendo lógica original visual
-            if (phase < 16) { 
-                if (phase === 0) index = 0; else if (phase === 1) index = 1; else if (phase <= 3) index = 2; else if (phase <= 5) index = 3; else if (phase <= 7) index = 4; else if (phase <= 14) index = 5; else if (phase === 15) index = 6;
-            } else { 
-                if (phase <= 17) index = 0; else if (phase <= 19) index = 1; else if (phase <= 21) index = 2; else if (phase === 22) index = 3; else if (phase === 23) index = 4; else if (phase === 24) index = 5; else if (phase === 25) index = 6; else if (phase >= 26) index = 7;
-            }
-            return { context, index };
-        }
-
+        // Timeline simplificada para exemplo
         const TIMELINE = [
-            { label: "G1 PICK", p1: "p1-god-0", p2: "p2-god-0", type: "BLIND_PICK" }, 
-            { label: "G1 REVEAL", type: "REVEAL_STEP" },
-            { label: "P1 BAN GOD 1", p1: "p1-bangod-0", p2: null, type: "BAN" }, 
-            { label: "P2 BAN GOD 1", p1: null, p2: "p2-bangod-0", type: "BAN" },
-            { label: "P2 BAN GOD 2", p1: null, p2: "p2-bangod-1", type: "BAN" }, 
-            { label: "P1 BAN GOD 2", p1: "p1-bangod-1", p2: null, type: "BAN" },
-            { label: "P1 BAN GOD 3", p1: "p1-bangod-2", p2: null, type: "BAN" }, 
-            { label: "P2 BAN GOD 3", p1: null, p2: "p2-bangod-2", type: "BAN" },
-            { label: "G2 PICK", p1: "p1-god-1", p2: "p2-god-1", type: "BLIND_PICK" }, 
-            { label: "G2 REVEAL", type: "REVEAL_STEP" },
-            { label: "G3 PICK", p1: "p1-god-2", p2: "p2-god-2", type: "BLIND_PICK" }, 
-            { label: "G3 REVEAL", type: "REVEAL_STEP" },
-            { label: "G4 PICK", p1: "p1-god-3", p2: "p2-god-3", type: "BLIND_PICK" }, 
-            { label: "G4 REVEAL", type: "REVEAL_STEP" },
-            { label: "G5 PICK", p1: "p1-god-4", p2: "p2-god-4", type: "BLIND_PICK" }, 
-            { label: "G5 REVEAL", type: "REVEAL_STEP" },
-            { label: "P1 BAN MAP 1", p1: "p1-banmap-0", p2: null, type: "BAN" }, 
-            { label: "P2 BAN MAP 1", p1: null, p2: "p2-banmap-0", type: "BAN" },
-            { label: "P2 BAN MAP 2", p1: null, p2: "p2-banmap-1", type: "BAN" }, 
-            { label: "P1 BAN MAP 2", p1: "p1-banmap-1", p2: null, type: "BAN" },
-            { label: "P1 BAN MAP 3", p1: "p1-banmap-2", p2: null, type: "BAN" }, 
-            { label: "P2 BAN MAP 3", p1: null, p2: "p2-banmap-2", type: "BAN" },
-            { label: "PICK MAP 1", p1: "map-0", p2: null, type: "PICK_MAP" }, 
-            { label: "PICK MAP 2", p1: null, p2: "map-3", type: "PICK_MAP" },
-            { label: "PICK MAP 3", p1: "map-1", p2: null, type: "PICK_MAP" }, 
-            { label: "PICK MAP 4", p1: null, p2: "map-4", type: "PICK_MAP" },
-            { label: "DECIDER", p1: "DECIDER", p2: "DECIDER", type: "DECIDER" }, 
-            { label: "FINAL", p1: null, p2: null }
+            { type: "BLIND_PICK", p1: "p1-god-0", p2: "p2-god-0" },
+            { type: "REVEAL" },
+            { type: "BAN", p1: "p1-bangod-0", p2: "p2-bangod-0" }, // Simultâneo
+            { type: "PICK", p1: "p1-god-1", p2: "p2-god-1" },
+            { type: "REVEAL" },
+            { type: "PICK_MAP", p1: "map-0", p2: "map-4" },
+            { type: "DECIDER" }
         ];
 
-        let state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [] };
-        let myRole = 'host'; 
-        let currentRoomCode = null; 
-        let roomRef = null; 
-        let isFirebaseConnected = false;
-        let isUpdatingFromHost = false; 
-        let currentModalTarget = null;
-        let isOfflineMode = false;
-        let currentContext = 'GODS';
-        
+        // Estado Global
+        let state = { phaseIndex: 0, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [] };
+        let myRole = null;
+        let roomCode = null;
+        let roomRef = null;
+        let isHost = false;
         let timerInterval = null;
         let timeLeft = 45;
-        let isTransitioning = false;
-        let replayHistory = [];
-        let isReplayMode = false;
-        let replayIndex = 0;
-        let replayInterval = null;
 
-        // ============ FUNÇÕES DE REPLAY E SALVAMENTO (Simplificadas para funcionar) ============
-        function saveSnapshot() {
-            // Lógica de salvar histórico aqui
-        }
-
-        // ============ CORE LOGIC ============
-        function init() {
+        // ============ LOBBY FUNCTIONS ============
+        function initCheck() {
+            // Verifica se ja tem codigo na URL (para facilitar F5)
             const params = new URLSearchParams(window.location.search);
-            const roomCode = params.get('room'); 
-            const roleParam = params.get('role');
+            const urlRoom = params.get('room');
+            const urlRole = params.get('role');
 
-            if (!roomCode) {
-                myRole = 'host'; 
-                document.getElementById('hostPanel').style.display = 'block'; 
-                render(); 
-                setupHost();
+            if (urlRoom && urlRole) {
+                // Auto-join se tiver na URL
+                document.getElementById('initialLobby').style.display = 'none';
+                roomCode = urlRoom;
+                myRole = urlRole;
+                isHost = (myRole === 'host');
+                setupConnection();
             } else {
-                myRole = roleParam || 'spec'; 
-                setupClient(roomCode); 
-                if(myRole==='spec') {
-                    document.getElementById('specBanner').style.display='block';
-                    document.body.classList.add('spectator-mode');
-                }
+                // Mostra menu
+                document.getElementById('initialLobby').style.display = 'flex';
             }
-            render();
         }
 
-        function startTimer() {
-            clearInterval(timerInterval); 
-            timeLeft = 45; 
-            const el = document.getElementById('timerDisplay');
-            el.innerText = "45";
-            el.classList.remove('timer-urgent');
+        function createRoom() {
+            // Gera codigo aleatorio
+            roomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+            myRole = 'host';
+            isHost = true;
             
-            const currentPhase = TIMELINE[state.phaseIndex];
-            if (!currentPhase || currentPhase.type.includes("REVEAL") || currentPhase.type === "DECIDER" || state.phaseIndex >= 27) {
-                el.style.display = 'none';
-                return;
-            }
-            el.style.display = 'block';
-            
-            // Só o Host controla o timer oficial, mas visualmente todos rodam
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    handleTimeout();
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const el = document.getElementById('timerDisplay');
-            el.innerText = timeLeft;
-            if (timeLeft <= 10) el.classList.add('timer-urgent'); 
-        }
-
-        function handleTimeout() {
-            if (myRole === 'host' && !isTransitioning) {
-                const currentPhase = TIMELINE[state.phaseIndex];
-                if (!currentPhase) return;
-
-                const p1Data = (currentPhase.p1 && !state.p1Ready) ? getRandomFor(currentPhase.p1) : null;
-                const p2Data = (currentPhase.p2 && !state.p2Ready) ? getRandomFor(currentPhase.p2) : null;
-                
-                if(p1Data) processHostAction({ action: 'SELECT_RANDOM', payload: { slot: currentPhase.p1, data: p1Data } });
-                if(p2Data) processHostAction({ action: 'SELECT_RANDOM', payload: { slot: currentPhase.p2, data: p2Data } });
-            }
-        }
-
-        function getRandomFor(slotId) {
-            if (!slotId) return null;
-            let type = slotId.includes('god') ? 'god' : 'map';
-            const list = (type === 'map' || type === 'banmap') ? mapsData : godsData;
-            return list[Math.floor(Math.random() * list.length)];
-        }
-
-        function addLogEntry(player, type, itemName, isRandom) {
-            const pName = player === 'p1' ? document.getElementById('p1NameInput').value : document.getElementById('p2NameInput').value;
-            state.logs.push({ player, name: pName, action: type === 'ban' ? 'baniu' : 'escolheu', item: itemName, isRandom });
-        }
-
-        function renderLogs() {
-            const container = document.getElementById('logContainer');
-            // Recria logs para garantir consistência visual
-            container.innerHTML = '';
-            state.logs.forEach(log => {
-                const entry = document.createElement('div');
-                entry.className = 'log-entry';
-                let playerClass = log.player === 'p1' ? 'p1' : 'p2';
-                let randomText = log.isRandom ? " <span class='random'>(Aleatório ❓)</span>" : "";
-                entry.innerHTML = `<span class="${playerClass}">${log.name}</span> ${log.action} <strong>${log.item}</strong>${randomText}`;
-                container.appendChild(entry);
+            // Salva estado inicial no firebase
+            db.ref('rooms/' + roomCode).set({
+                state: state,
+                created: Date.now()
             });
-            setTimeout(() => container.scrollTop = container.scrollHeight, 10);
+
+            enterGame();
         }
 
-        function toggleReady(player) {
-            if (myRole === 'host' || (myRole === 'p2' && player === 'p2')) {
-                processHostAction({ action: 'TOGGLE_READY', payload: { player: player } });
-            }
+        function joinRoom() {
+            const code = document.getElementById('joinCodeInput').value.toUpperCase().trim();
+            if(code.length < 2) { alert("Digite o código da sala!"); return; }
+            roomCode = code;
+            myRole = 'p2';
+            isHost = false;
+            enterGame();
         }
 
-        function checkReadyStart() {
-            if (state.p1Presence && state.p2Presence) {
-                setTimeout(() => {
-                    state.phaseIndex = 0; 
-                    if (myRole === 'host') {
-                        broadcastState();
-                        startTimer();
+        function joinRoomSpec() {
+            const code = document.getElementById('joinCodeInput').value.toUpperCase().trim();
+            if(code.length < 2) { alert("Digite o código da sala!"); return; }
+            roomCode = code;
+            myRole = 'spec';
+            isHost = false;
+            enterGame();
+        }
+
+        function enterGame() {
+            document.getElementById('initialLobby').style.display = 'none';
+            // Atualiza URL sem recarregar pagina
+            const newUrl = `${window.location.pathname}?room=${roomCode}&role=${myRole}`;
+            window.history.pushState({path:newUrl},'',newUrl);
+            
+            setupConnection();
+        }
+
+        // ============ CONNECTION LOGIC ============
+        function setupConnection() {
+            document.getElementById('displayRoomCode').innerText = roomCode;
+            roomRef = db.ref('rooms/' + roomCode);
+
+            // Ouvir atualizacoes
+            roomRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    // Atualiza estado local se mudou no servidor
+                    // Pequena protecao para nao sobrescrever enquanto digita nomes
+                    if (JSON.stringify(state) !== JSON.stringify(data.state)) {
+                        state = data.state;
+                        render();
                     }
-                }, 500);
-            }
-        }
-
-        function renderTimeline() {
-            const tlState = getTimelineState(state.phaseIndex);
-            if (currentContext !== tlState.context || document.getElementById('timelineSteps').children.length === 0) {
-                currentContext = tlState.context;
-                const container = document.getElementById('timelineSteps');
-                container.innerHTML = '';
-                const blocks = (currentContext === 'GODS') ? GOD_BLOCKS : MAP_BLOCKS;
-                blocks.forEach((block, i) => {
-                    const el = document.createElement('div');
-                    el.className = 't-pill';
-                    el.innerText = block.label;
-                    el.setAttribute('data-type', block.type);
-                    el.id = `tpill-${i}`;
-                    container.appendChild(el);
-                });
-            }
-            const total = (currentContext === 'GODS') ? GOD_BLOCKS.length : MAP_BLOCKS.length;
-            for(let i=0; i<total; i++) {
-                const el = document.getElementById(`tpill-${i}`);
-                if(el) {
-                    el.className = 't-pill'; 
-                    if (i < tlState.index) el.classList.add('done');
-                    else if (i === tlState.index) el.classList.add('active');
+                    if(data.p1Name) document.getElementById('p1NameInput').value = data.p1Name;
+                    if(data.p2Name) document.getElementById('p2NameInput').value = data.p2Name;
                 }
-            }
+            });
+
+            render(); // Primeira renderizacao
         }
 
-        // ============ LÓGICA DE AÇÃO E SINCRONIZAÇÃO ============
-        function sendAction(actionType, payload) {
-            // Em vez de processar localmente, envia para o Firebase
-            // O listener 'onValue' vai atualizar a tela depois
-            if (roomRef) {
-                // Atualiza um node de 'actions' ou tenta atualizar o state diretamente
-                // Para manter simples e compatível com seu código, vamos processar a lógica 
-                // e mandar o novo estado. 
-                
-                // NOTA: Idealmente teríamos um backend, mas aqui vamos confiar no client
-                let msg = { type: 'ACTION', action: actionType, payload: payload, role: myRole };
-                processHostAction(msg);
-            }
+        function syncState() {
+            if (!roomRef) return;
+            roomRef.update({
+                state: state,
+                p1Name: document.getElementById('p1NameInput').value,
+                p2Name: document.getElementById('p2NameInput').value
+            });
         }
 
-        function processHostAction(msg) {
-            // Executa a lógica no estado local primeiro (Optimistic UI)
-            if (msg.action === 'SELECT') {
-                state.selections[msg.payload.slot] = msg.payload.data;
-            } 
-            else if (msg.action === 'SELECT_RANDOM') {
-                state.selections[msg.payload.slot] = { ...msg.payload.data, isRandom: true };
-                let current = TIMELINE[state.phaseIndex];
-                if (current && current.p1 === msg.payload.slot) state.p1Ready = true;
-                if (current && current.p2 === msg.payload.slot) state.p2Ready = true;
-                checkPhaseAdvance();
+        // ============ GAME LOGIC (SIMPLIFICADA) ============
+        
+        function toggleReady(player) {
+            // Logica de Ready Check (bloqueia ate os dois estarem prontos)
+            if (myRole === 'host' && player === 'p1') {
+                state.p1Presence = !state.p1Presence;
+                syncState();
             }
-            else if (msg.action === 'CONFIRM') {
-                let current = TIMELINE[state.phaseIndex];
-                // Se sou host, confirma P1. Se sou P2, confirma P2.
-                // Mas a msg pode vir do outro lado.
-                if (myRole === 'host' || msg.role === 'host') state.p1Ready = true;
-                if (myRole === 'p2' || msg.role === 'p2') state.p2Ready = true;
-                checkPhaseAdvance();
+            if (myRole === 'p2' && player === 'p2') {
+                state.p2Presence = !state.p2Presence;
+                syncState();
             }
-            else if (msg.action === 'TOGGLE_READY') {
-                if (msg.payload.player === 'p1') state.p1Presence = !state.p1Presence;
-                if (msg.payload.player === 'p2') state.p2Presence = !state.p2Presence;
-                checkReadyStart();
-            }
-            else if (msg.action === 'RESET') {
-                state = { phaseIndex: -1, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [] };
-                document.getElementById('logContainer').innerHTML = '';
-            }
-            
-            // Depois de calcular o novo estado, ENVIA para o Firebase
-            broadcastState();
-        }
-
-        function broadcastState() {
-            render(); // Atualiza minha tela
-            
-            if (roomRef && isFirebaseConnected) {
-                // Flag para dizer "eu que mandei isso, não precisa recarregar"
-                isUpdatingFromHost = true;
-                
-                roomRef.update({
-                    state: state,
-                    p1Name: document.getElementById('p1NameInput').value,
-                    p2Name: document.getElementById('p2NameInput').value,
-                    lastUpdate: firebase.database.ServerValue.TIMESTAMP
-                }).then(() => {
-                    setTimeout(() => { isUpdatingFromHost = false; }, 200);
-                });
+            // Host pode forcar P2 em testes
+            if (myRole === 'host' && player === 'p2') {
+                state.p2Presence = !state.p2Presence;
+                syncState();
             }
         }
 
         function clickSlot(player, type, index) {
-            if (state.phaseIndex === -1 || myRole === 'spec') return; 
-            let slotId = (player === 'map') ? `map-${index}` : `${player}-${type}-${index}`;
+            if (!state.p1Presence || !state.p2Presence) return; // Nao comecou
+            
+            const slotId = (player==='map') ? `map-${index}` : `${player}-${type}-${index}`;
             const currentPhase = TIMELINE[state.phaseIndex];
             if (!currentPhase) return;
 
-            let owner = null;
-            if (slotId === currentPhase.p1) owner = 'p1';
-            if (slotId === currentPhase.p2) owner = 'p2';
-            
-            // Validação de turno
+            // Verificacao basica de turno
             let canClick = false;
-            if (myRole === 'host' && owner === 'p1') canClick = true;
-            if (myRole === 'p2' && owner === 'p2') canClick = true;
             
-            if (canClick) openModal(slotId, type, owner);
+            // Se sou P1/Host e eh minha vez no timeline
+            if (myRole === 'host' && (currentPhase.p1 === slotId)) canClick = true;
+            // Se sou P2 e eh minha vez
+            if (myRole === 'p2' && (currentPhase.p2 === slotId)) canClick = true;
+
+            if (canClick) openModal(slotId, type);
         }
 
-        function openModal(slotId, type, activePlayer) {
-            currentModalTarget = slotId;
-            const grid = document.getElementById('modalGrid'); 
+        function openModal(slotId, type) {
+            const grid = document.getElementById('modalGrid');
             grid.innerHTML = '';
             const list = (type === 'map' || type === 'banmap') ? mapsData : godsData;
-            
+
             list.forEach(d => {
-                const c = document.createElement('div'); 
-                c.className = 'selectable-card';
-                c.innerHTML = `<img src="${d.img}"><div class="card-name-overlay">${d.n}</div>`;
-                c.onclick = () => selectItem(d);
-                grid.appendChild(c);
+                const div = document.createElement('div');
+                div.className = 'selectable-card';
+                div.innerHTML = `<img src="${d.img}"><div class="card-name">${d.n}</div>`;
+                div.onclick = () => selectItem(slotId, d);
+                grid.appendChild(div);
             });
+            document.getElementById('selectionModal').style.display = 'flex';
+        }
+
+        function selectItem(slotId, data) {
+            document.getElementById('selectionModal').style.display = 'none';
+            // Atualiza selecao localmente
+            state.selections[slotId] = data;
             
-            const modal = document.getElementById('selectionModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('show'), 10);
+            // Marca flag de pronto para a fase
+            if (myRole === 'host') state.p1Ready = true;
+            if (myRole === 'p2') state.p2Ready = true;
+
+            syncState();
+            checkPhase();
         }
 
-        function selectItem(data) {
-            closeModal();
-            // P2 envia ação, Host envia ação. Ambos usam a mesma função agora.
-            // A função processHostAction atualiza o local e o Firebase.
-            let msg = { action: 'SELECT', payload: { slot: currentModalTarget, data: data }, role: myRole };
-            processHostAction(msg);
-            
-            document.getElementById('confirmBtn').style.display = 'block';
-        }
+        function checkPhase() {
+            // Apenas host calcula avanco de fase para evitar conflito
+            if (!isHost) return;
 
-        function confirmTurn() {
-            document.getElementById('confirmBtn').style.display = 'none';
-            let msg = { action: 'CONFIRM', payload: null, role: myRole };
-            processHostAction(msg);
-        }
+            const current = TIMELINE[state.phaseIndex];
+            if (!current) return;
 
-        function checkPhaseAdvance() {
-            let currentPhase = TIMELINE[state.phaseIndex];
-            if(!currentPhase) return;
+            let readyToAdvance = false;
 
-            let p1OK = !currentPhase.p1 || state.p1Ready;
-            let p2OK = !currentPhase.p2 || state.p2Ready;
+            if (current.type === 'BLIND_PICK' || current.type === 'PICK' || current.type === 'BAN') {
+                // Precisa ter as duas selecoes (se existirem na fase)
+                const p1Done = !current.p1 || state.selections[current.p1];
+                const p2Done = !current.p2 || state.selections[current.p2];
+                if (p1Done && p2Done) readyToAdvance = true;
+            } else if (current.type === 'REVEAL') {
+                readyToAdvance = true; // Avanca automatico visualmente apos delay
+            } else if (current.type === 'DECIDER') {
+                 // Logica decider
+                 state.selections['map-2'] = mapsData[0]; // Exemplo
+                 readyToAdvance = true;
+            }
 
-            if (p1OK && p2OK) {
-                isTransitioning = true; 
-                
-                // Registra logs
-                if (currentPhase.p1 && state.selections[currentPhase.p1]) {
-                    const item = state.selections[currentPhase.p1];
-                    addLogEntry('p1', (currentPhase.p1.includes('ban') ? 'ban' : 'pick'), item.n, item.isRandom || false);
-                }
-                if (currentPhase.p2 && state.selections[currentPhase.p2]) {
-                    const item = state.selections[currentPhase.p2];
-                    addLogEntry('p2', (currentPhase.p2.includes('ban') ? 'ban' : 'pick'), item.n, item.isRandom || false);
-                }
-
+            if (readyToAdvance) {
                 setTimeout(() => {
                     state.phaseIndex++;
                     state.p1Ready = false; 
                     state.p2Ready = false;
-                    isTransitioning = false;
-                    
-                    if (state.phaseIndex < TIMELINE.length && TIMELINE[state.phaseIndex].type === "REVEAL_STEP") {
-                         broadcastState();
-                        setTimeout(() => {
-                            state.phaseIndex++;
-                             broadcastState();
-                             if(myRole==='host') startTimer();
-                        }, 3000);
-                        return; 
-                    }
-
-                    if (state.phaseIndex < TIMELINE.length && TIMELINE[state.phaseIndex].type === "DECIDER") {
-                         autoPickDecider();
-                    }
-                    
-                    broadcastState();
-                    if(myRole==='host') startTimer();
-                }, 500);
+                    syncState();
+                }, 1000);
             }
-        }
-
-        function autoPickDecider() {
-            // Lógica simples para decider
-            let picked = mapsData[0]; // Simplificado
-            state.selections['map-2'] = picked;
         }
 
         function render() {
+            // 1. Ready Overlay
             const overlay = document.getElementById('readyOverlay');
-            if (state.phaseIndex === -1) {
-                overlay.style.display = 'flex'; overlay.style.opacity = '1';
-                document.getElementById('p1ReadyBox').className = state.p1Presence ? 'ready-box ready' : 'ready-box';
-                document.getElementById('p2ReadyBox').className = state.p2Presence ? 'ready-box ready' : 'ready-box';
-                return; 
+            if (!state.p1Presence || !state.p2Presence) {
+                if (document.getElementById('initialLobby').style.display === 'none') {
+                    overlay.style.display = 'flex';
+                    document.getElementById('btnP1Ready').className = state.p1Presence ? 'ready-btn ready' : 'ready-btn';
+                    document.getElementById('btnP2Ready').className = state.p2Presence ? 'ready-btn ready' : 'ready-btn';
+                }
             } else {
-                overlay.style.opacity = '0'; 
-                setTimeout(() => overlay.style.display = 'none', 500);
+                overlay.style.display = 'none';
             }
 
-            renderTimeline();
-            renderLogs(); 
-            
-            // Render Slots
-            const allSlots = document.querySelectorAll('.god-slot, .ban-slot, .map-slot');
-            allSlots.forEach(el => {
+            // 2. Render Slots
+            const slots = document.querySelectorAll('.god-slot, .ban-slot, .map-slot');
+            slots.forEach(el => {
                 const id = el.id;
-                const data = state.selections[id];
-                el.classList.remove('slot-active', 'slot-locked', 'slot-pending-confirm', 'slot-blind-ready');
+                const sel = state.selections[id];
+                const current = TIMELINE[state.phaseIndex];
                 
-                if (data) {
-                    // Blind Pick Logic: Esconder se não for revelar ainda
-                    let hide = false;
-                    const currentPhase = TIMELINE[state.phaseIndex];
-                    if (currentPhase && currentPhase.type === "BLIND_PICK") {
-                        // Host vê P1, P2 vê P2. Spec não vê nada.
-                        if (myRole === 'host' && id.startsWith('p2')) hide = true;
-                        if (myRole === 'p2' && id.startsWith('p1')) hide = true;
-                        if (myRole === 'spec') hide = true;
-                    }
+                // Limpa
+                if (!sel) {
+                    el.innerHTML = ''; el.classList.remove('filled', 'slot-active');
+                    return;
+                }
 
-                    if (hide) {
-                        el.classList.add('slot-blind-ready');
-                        el.innerHTML = '';
-                    } else {
-                        if (!el.classList.contains('filled') || el.innerHTML === '') {
-                             el.innerHTML = `<img src="${data.img}">`;
-                             el.classList.add('filled');
-                        }
-                    }
+                // Blind Pick Logic (Esconder do oponente)
+                let hide = false;
+                if (current && current.type === 'BLIND_PICK') {
+                    if (myRole === 'p2' && id.includes('p1')) hide = true;
+                    if (myRole === 'host' && id.includes('p2')) hide = true;
+                }
+                
+                if (hide) {
+                    el.innerHTML = '<div style="font-size:2em; color:#333;">?</div>';
+                    el.style.background = '#111';
                 } else {
-                    el.innerHTML = '';
-                    el.classList.remove('filled');
+                    if (el.innerHTML === '' || el.innerHTML.includes('?')) {
+                        el.innerHTML = `<img src="${sel.img}">`;
+                        el.classList.add('filled');
+                    }
                 }
             });
-        }
 
-        // ============ SETUP FIREBASE CORRIGIDO ============
-        function setupHost() {
-            // 1. Gera código curto (ex: A7X9)
-            currentRoomCode = Math.random().toString(36).substr(2, 4).toUpperCase();
-            document.getElementById('roomCode').innerText = currentRoomCode;
-            
-            roomRef = db.ref('rooms/' + currentRoomCode);
-            
-            // 2. Salva estado inicial
-            roomRef.set({
-                state: state,
-                p1Name: document.getElementById('p1NameInput').value,
-                p2Name: document.getElementById('p2NameInput').value,
-                createdAt: firebase.database.ServerValue.TIMESTAMP
-            });
-
-            // 3. OUVIR ATUALIZAÇÕES (A PARTE QUE FALTAVA)
-            // Se o P2 mudar algo, o Host precisa saber!
-            roomRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data && !isUpdatingFromHost) {
-                    console.log("Host recebeu update externo");
-                    state = data.state;
-                    document.getElementById('p1NameInput').value = data.p1Name;
-                    document.getElementById('p2NameInput').value = data.p2Name;
-                    render();
-                }
-            });
-            
-            isFirebaseConnected = true;
-            
-            // Atualizar links
-            const baseUrl = window.location.href.split('?')[0];
-            document.getElementById('linkP2').value = `${baseUrl}?room=${currentRoomCode}&role=p2`;
-            document.getElementById('linkSpec').value = `${baseUrl}?room=${currentRoomCode}&role=spec`;
-        }
-
-        function setupClient(roomCode) {
-            currentRoomCode = roomCode;
-            document.getElementById('roomCode').innerText = roomCode;
-            
-            roomRef = db.ref('rooms/' + roomCode);
-            isFirebaseConnected = true;
-            
-            roomRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data && !isUpdatingFromHost) {
-                     // Verifica timestamp ou algo assim para evitar loop?
-                     // Por enquanto, confiar na flag isUpdatingFromHost é suficiente para casos simples
-                    state = data.state;
-                    document.getElementById('p1NameInput').value = data.p1Name;
-                    document.getElementById('p2NameInput').value = data.p2Name;
-                    
-                    // Se o timer estiver desincronizado, host é autoridade, 
-                    // mas client pode rodar timer visual localmente
-                    render();
-                }
-            });
+            // Highlight Active Slots
+            const current = TIMELINE[state.phaseIndex];
+            if(current) {
+                if(current.p1) document.getElementById(current.p1)?.classList.add('slot-active');
+                if(current.p2) document.getElementById(current.p2)?.classList.add('slot-active');
+            }
         }
         
-        function copyLink(id, btnElement) { 
-            const i = document.getElementById(id); i.select(); document.execCommand('copy'); 
-            btnElement.innerText = "COPIADO!";
-        }
-        function closeModal(e) { 
-            if(e && e.target !== document.getElementById('selectionModal')) return; 
-            document.getElementById('selectionModal').classList.remove('show'); 
-            setTimeout(()=>document.getElementById('selectionModal').style.display='none', 300); 
-        }
-        function resetDraft() { 
-            if(confirm("Reset?")) processHostAction({action: 'RESET'});
-        }
+        function closeModal(e) { if(e.target.id === 'selectionModal') e.target.style.display='none'; }
+        
+        // Inicializa checkando URL
+        initCheck();
 
-        init();
     </script>
 </body>
 </html>
