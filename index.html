@@ -1403,11 +1403,18 @@
             
             if (state.p1Presence && state.p2Presence) {
                 console.log('✅ Ambos prontos! Iniciando draft...');
-                setTimeout(() => {
-                    state.phaseIndex = 0;
-                    broadcastState();
-                    if (myRole === 'host') startTimer();
-                }, 500);
+                
+                // Apenas o HOST inicia o draft e faz broadcast
+                if (myRole === 'host') {
+                    setTimeout(() => {
+                        state.phaseIndex = 0;
+                        broadcastState();
+                        startTimer();
+                    }, 500);
+                } else {
+                    // P2 apenas renderiza a tela de espera
+                    render();
+                }
             }
         }
 
@@ -1874,6 +1881,9 @@
                         if (data && !isUpdatingFromHost) {
                             console.log('📥 HOST recebeu atualização do Firebase!');
                             
+                            const oldP1Presence = state.p1Presence;
+                            const oldP2Presence = state.p2Presence;
+                            
                             // Atualizar estado local com dados do Firebase
                             state = data.state;
                             
@@ -1884,6 +1894,12 @@
                             console.log('   phaseIndex:', state.phaseIndex, 'p1:', state.p1Presence, 'p2:', state.p2Presence);
                             
                             render();
+                            
+                            // Verificar se precisa iniciar draft
+                            if (state.phaseIndex === -1 && (oldP1Presence !== state.p1Presence || oldP2Presence !== state.p2Presence)) {
+                                console.log('🔔 Status de ready mudou no HOST, verificando...');
+                                checkReadyStart();
+                            }
                         }
                     });
                 }, 1000);
@@ -1941,6 +1957,9 @@
                         console.log('📥 Atualização recebida do Firebase!');
                         
                         const oldPhase = state.phaseIndex;
+                        const oldP1Presence = state.p1Presence;
+                        const oldP2Presence = state.p2Presence;
+                        
                         state = data.state;
                         
                         // Garantir que selections sempre existe
@@ -1954,6 +1973,12 @@
                         
                         render();
                         saveSnapshot();
+                        
+                        // Verificar se precisa iniciar draft
+                        if (state.phaseIndex === -1 && (oldP1Presence !== state.p1Presence || oldP2Presence !== state.p2Presence)) {
+                            console.log('🔔 Status de ready mudou, verificando...');
+                            checkReadyStart();
+                        }
                         
                         if (state.phaseIndex !== oldPhase && state.phaseIndex < 27) {
                             startTimer();
