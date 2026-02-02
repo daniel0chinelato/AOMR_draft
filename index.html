@@ -2,255 +2,63 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AoM Draft - Lobby System</title>
-    
+    <title>Teste Firebase</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700;900&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --bg-body: #050505;
-            --text-gold: #f1c40f;
-            --p1-color: #3498db;
-            --p2-color: #e74c3c;
-            --slot-bg: #0f0f0f;
-            --slot-border: #333;
-            --ban-color: #c0392b;
-            --tl-pick-bg: #27ae60;
-            --tl-ban-bg: #c0392b;
-            --tl-reveal-bg: #ecf0f1;
-            --tl-inactive: #111;
-        }
-
         body {
-            font-family: 'Cinzel', serif;
-            background-color: rgba(0, 0, 0, 0.85); 
-            background-image: url('fundooo.png'); /* Certifique-se que essa imagem existe ou remova a linha */
-            background-blend-mode: multiply;
-            background-repeat: no-repeat;
-            background-position: center center;
-            background-attachment: fixed;
-            background-size: cover;
-            color: #ecf0f1;
-            margin: 0; padding: 0; 
-            min-height: 100vh;
-            width: 100vw; 
-            overflow-x: hidden;
-            display: flex; flex-direction: column; align-items: center;
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #111;
+            color: #fff;
         }
-
-        /* ============ MENU INICIAL (NOVO) ============ */
-        .lobby-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
-            z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.5s;
+        button {
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
         }
-
-        .lobby-box {
-            border: 2px solid var(--text-gold);
-            padding: 40px;
-            background: #080808;
-            box-shadow: 0 0 50px rgba(241, 196, 15, 0.1);
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
+        button:hover {
+            background: #2980b9;
         }
-
-        .lobby-title {
-            font-size: 2.5em; color: var(--text-gold); margin-bottom: 30px;
-            text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 3px;
+        #log {
+            background: #222;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            min-height: 200px;
+            font-family: monospace;
         }
-
-        .lobby-btn {
-            background: transparent; border: 2px solid #444; color: #aaa;
-            padding: 15px 30px; font-family: 'Cinzel', serif; font-size: 1.2em; font-weight: bold;
-            cursor: pointer; width: 100%; margin-bottom: 15px; transition: 0.3s;
+        .success {
+            color: #2ecc71;
         }
-        .lobby-btn:hover { border-color: var(--text-gold); color: #fff; background: rgba(241, 196, 15, 0.1); }
-        
-        .lobby-input-group { margin-top: 30px; border-top: 1px solid #333; padding-top: 30px; }
-        .lobby-input {
-            background: #111; border: 1px solid #555; color: white;
-            padding: 10px; font-size: 1.2em; text-align: center; width: 60%;
-            font-family: 'Roboto', sans-serif; letter-spacing: 2px;
-            text-transform: uppercase; margin-bottom: 10px;
+        .error {
+            color: #e74c3c;
         }
-        .lobby-input:focus { outline: none; border-color: var(--text-gold); }
-
-        /* ============ ANIMAÇÕES ORIGINAIS ============ */
-        @keyframes godReveal { 
-            0% { opacity: 0; transform: scale(1.4) translateY(-15px); filter: brightness(3) contrast(0.5); } 
-            30% { opacity: 1; filter: brightness(1.5) contrast(0.9); }
-            100% { transform: scale(1) translateY(0); filter: brightness(1) contrast(1); opacity: 1; } 
+        .info {
+            color: #3498db;
         }
-        @keyframes divinePulse { 
-            0% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0.4); border-color: #f1c40f; transform: scale(1); } 
-            50% { box-shadow: 0 0 30px 5px rgba(241, 196, 15, 0.1); border-color: #fffaf0; transform: scale(1.03); } 
-            100% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0); border-color: #f1c40f; transform: scale(1); } 
-        }
-        @keyframes banBurn {
-            0% { filter: grayscale(0) brightness(2) opacity(0); transform: scale(1.5) rotate(-90deg); }
-            100% { filter: grayscale(1) contrast(1.5) brightness(0.5) opacity(1); transform: scale(1) rotate(0deg); }
-        }
-        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        
-        /* Layout CSS Simplificado (Mantendo estrutura original) */
-        .main-container { display: flex; flex-direction: column; width: 98vw; max-width: 1900px; justify-content: flex-start; align-items: center; gap: 1vh; flex: 1; padding-bottom: 20px; }
-        .vs-header { display: flex; align-items: center; justify-content: center; font-size: 3vh; font-weight: 900; text-transform: uppercase; margin-top: 55px; margin-bottom: 5px; width: 100%; text-align: center; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
-        .p1-name, .p2-name { margin: 0 2vw; background: transparent; border: none; color: inherit; font-family: inherit; font-size: inherit; width: 30vw; text-align: center; }
-        
-        .timer-display { font-size: 1.8em; font-weight: 900; color: #fff; background: rgba(0,0,0,0.8); padding: 3px 20px; border-radius: 4px; border: 1px solid #444; margin-bottom: 8px; }
-        .timer-urgent { color: #ff0000; text-shadow: 0 0 10px red; }
-
-        .god-groups-container { display: flex; justify-content: center; gap: 4vw; width: 100%; flex-wrap: wrap; }
-        .god-group { display: flex; gap: 0.8vw; justify-content: center; }
-        .god-group.mirror-layout { flex-direction: row-reverse; }
-        
-        .god-slot { width: 11vw; max-width: 180px; aspect-ratio: 1 / 2.2; background: #080808; border: 2px solid #333; overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
-        .god-slot.filled img { width: 100%; height: 100%; object-fit: cover; animation: godReveal 0.8s forwards; }
-        .slot-active { cursor: pointer; animation: divinePulse 1.5s infinite; border-color: var(--text-gold); }
-
-        .bans-container { display: flex; justify-content: center; gap: 3vw; margin-top: 10px; }
-        .ban-slot { width: 4vw; height: 4vw; max-width: 55px; background: #000; border: 1px solid #333; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-        .ban-slot.filled { border-color: var(--ban-color); box-shadow: 0 0 10px var(--ban-color); }
-        .ban-slot.filled img { width: 100%; height: 100%; object-fit: cover; animation: banBurn 0.5s forwards; }
-
-        .maps-row { display: flex; justify-content: center; gap: 1vw; margin-top: 10px; }
-        .map-slot { width: 7vw; max-width: 120px; aspect-ratio: 1/1; background: #111; border: 1px solid #444; overflow: hidden; position: relative; }
-        .map-slot img { width: 100%; height: 100%; object-fit: cover; }
-        .decider-slot { border: 2px solid var(--text-gold); transform: scale(1.1); }
-
-        .confirm-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #27ae60; color: white; padding: 15px 40px; border: none; font-size: 1.2em; font-weight: bold; cursor: pointer; display: none; z-index: 200; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
-
-        /* MODAL */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 300; display: none; justify-content: center; align-items: center; }
-        .modal-content { background: #111; border: 1px solid var(--text-gold); padding: 20px; width: 90%; max-width: 1000px; height: 80vh; overflow-y: auto; }
-        .selection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; }
-        .selectable-card { cursor: pointer; border: 1px solid #333; transition: 0.2s; position: relative; }
-        .selectable-card:hover { border-color: var(--text-gold); transform: scale(1.05); }
-        .selectable-card img { width: 100%; height: auto; display: block; }
-        .card-name { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.7); color: white; text-align: center; font-size: 0.8em; padding: 2px 0; }
-
-        /* LOGS */
-        .log-container { width: 80%; height: 60px; background: rgba(0,0,0,0.5); margin: 5px 0; overflow-y: auto; font-family: sans-serif; font-size: 0.8em; padding: 5px; text-align: center; border: 1px solid #333; }
-        .log-entry span.p1 { color: var(--p1-color); font-weight: bold; }
-        .log-entry span.p2 { color: var(--p2-color); font-weight: bold; }
-
-        /* ROOM CODE DISPLAY */
-        .room-display { position: fixed; top: 10px; right: 10px; font-family: sans-serif; background: #000; border: 1px solid #333; padding: 5px 10px; color: #666; font-size: 0.8em; z-index: 100; }
-        .room-code-val { color: var(--text-gold); font-weight: bold; font-size: 1.2em; margin-left: 5px; }
-
-        /* READY CHECK */
-        .ready-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 250; display: none; flex-direction: column; justify-content: center; align-items: center; }
-        .ready-btn { background: transparent; border: 2px solid #555; color: #aaa; padding: 10px 30px; margin: 10px; font-size: 1.5em; cursor: pointer; min-width: 200px; }
-        .ready-btn.ready { background: #27ae60; color: white; border-color: #2ecc71; }
     </style>
 </head>
 <body>
-
-    <div id="initialLobby" class="lobby-overlay">
-        <div class="lobby-box">
-            <div class="lobby-title">AGE OF MYTHOLOGY<br>DRAFT</div>
-            
-            <button class="lobby-btn" onclick="createRoom()">CRIAR NOVA SALA (HOST)</button>
-            
-            <div class="lobby-input-group">
-                <input type="text" id="joinCodeInput" class="lobby-input" placeholder="CÓDIGO DA SALA">
-                <button class="lobby-btn" onclick="joinRoom()">ENTRAR NA SALA (PLAYER 2)</button>
-                <button class="lobby-btn" style="font-size: 0.8em; border:none;" onclick="joinRoomSpec()">ENTRAR COMO ESPECTADOR</button>
-            </div>
-        </div>
+    <h1>🔥 Teste de Conexão Firebase</h1>
+    
+    <div>
+        <button onclick="testConnection()">1. Testar Conexão</button>
+        <button onclick="testWrite()">2. Escrever Dados</button>
+        <button onclick="testRead()">3. Ler Dados</button>
+        <button onclick="clearLog()">Limpar Log</button>
     </div>
+    
+    <div id="log"></div>
 
-    <div class="room-display">
-        SALA: <span id="displayRoomCode" class="room-code-val">---</span>
-    </div>
-
-    <div id="readyOverlay" class="ready-overlay">
-        <h1 style="color:var(--text-gold); margin-bottom: 30px;">AGUARDANDO JOGADORES</h1>
-        <div style="display:flex; gap: 20px;">
-            <button id="btnP1Ready" class="ready-btn" onclick="toggleReady('p1')">PLAYER 1</button>
-            <button id="btnP2Ready" class="ready-btn" onclick="toggleReady('p2')">PLAYER 2</button>
-        </div>
-    </div>
-
-    <div class="vs-header">
-        <input class="p1-name" id="p1NameInput" value="[CAOK] LIGHT">
-        <span style="color:var(--text-gold)">VS</span>
-        <input class="p2-name" id="p2NameInput" value="[CAOK] PAIN">
-    </div>
-
-    <div id="timerDisplay" class="timer-display">45</div>
-
-    <div class="timeline-container">
-        </div>
-
-    <div id="logContainer" class="log-container"></div>
-
-    <div class="main-container">
-        <div class="god-groups-container">
-            <div class="god-group mirror-layout" id="p1Group">
-                <div id="p1-god-0" class="god-slot p1-slot" onclick="clickSlot('p1', 'god', 0)"></div>
-                <div id="p1-god-1" class="god-slot p1-slot" onclick="clickSlot('p1', 'god', 1)"></div>
-                <div id="p1-god-2" class="god-slot p1-slot" onclick="clickSlot('p1', 'god', 2)"></div>
-                <div id="p1-god-3" class="god-slot p1-slot" onclick="clickSlot('p1', 'god', 3)"></div>
-                <div id="p1-god-4" class="god-slot p1-slot" onclick="clickSlot('p1', 'god', 4)"></div>
-            </div>
-            <div class="god-group" id="p2Group">
-                <div id="p2-god-0" class="god-slot p2-slot" onclick="clickSlot('p2', 'god', 0)"></div>
-                <div id="p2-god-1" class="god-slot p2-slot" onclick="clickSlot('p2', 'god', 1)"></div>
-                <div id="p2-god-2" class="god-slot p2-slot" onclick="clickSlot('p2', 'god', 2)"></div>
-                <div id="p2-god-3" class="god-slot p2-slot" onclick="clickSlot('p2', 'god', 3)"></div>
-                <div id="p2-god-4" class="god-slot p2-slot" onclick="clickSlot('p2', 'god', 4)"></div>
-            </div>
-        </div>
-
-        <div class="bans-container">
-            <div id="p1-bangod-0" class="ban-slot" onclick="clickSlot('p1', 'bangod', 0)"></div>
-            <div id="p1-bangod-1" class="ban-slot" onclick="clickSlot('p1', 'bangod', 1)"></div>
-            <div id="p1-bangod-2" class="ban-slot" onclick="clickSlot('p1', 'bangod', 2)"></div>
-            <div style="width: 20px;"></div>
-            <div id="p2-bangod-0" class="ban-slot" onclick="clickSlot('p2', 'bangod', 0)"></div>
-            <div id="p2-bangod-1" class="ban-slot" onclick="clickSlot('p2', 'bangod', 1)"></div>
-            <div id="p2-bangod-2" class="ban-slot" onclick="clickSlot('p2', 'bangod', 2)"></div>
-        </div>
-        
-        <div class="maps-row">
-            <div id="p1-banmap-0" class="ban-slot" style="border-radius:4px" onclick="clickSlot('p1', 'banmap', 0)"></div>
-            <div id="p1-banmap-1" class="ban-slot" style="border-radius:4px" onclick="clickSlot('p1', 'banmap', 1)"></div>
-            <div id="p1-banmap-2" class="ban-slot" style="border-radius:4px" onclick="clickSlot('p1', 'banmap', 2)"></div>
-            
-            <div id="map-0" class="map-slot" onclick="clickSlot('map', 'map', 0)"></div>
-            <div id="map-1" class="map-slot" onclick="clickSlot('map', 'map', 1)"></div>
-            <div id="map-2" class="map-slot decider-slot"></div>
-            <div id="map-3" class="map-slot" onclick="clickSlot('map', 'map', 3)"></div>
-            <div id="map-4" class="map-slot" onclick="clickSlot('map', 'map', 4)"></div>
-            
-            <div id="p2-banmap-0" class="ban-slot" style="border-radius:4px" onclick="clickSlot('p2', 'banmap', 0)"></div>
-            <div id="p2-banmap-1" class="ban-slot" style="border-radius:4px" onclick="clickSlot('p2', 'banmap', 1)"></div>
-            <div id="p2-banmap-2" class="ban-slot" style="border-radius:4px" onclick="clickSlot('p2', 'banmap', 2)"></div>
-        </div>
-    </div>
-
-    <button id="confirmBtn" class="confirm-btn" onclick="confirmTurn()">CONFIRMAR ESCOLHA</button>
-
-    <div id="selectionModal" class="modal-overlay" onclick="closeModal(event)">
-        <div class="modal-content">
-            <h2 id="modalTitle" style="color:var(--text-gold); text-align:center;">SELECIONE</h2>
-            <div id="modalGrid" class="selection-grid"></div>
-        </div>
-    </div>
-
-   <script>
-        // ============ CONFIGURAÇÃO FIREBASE ============
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyAgliUKQCUlKrAlRbBwRQQpRO5sBjwvOgo",
             authDomain: "aom-draft.firebaseapp.com",
@@ -260,328 +68,96 @@
             messagingSenderId: "868281557350",
             appId: "1:868281557350:web:6813ba2322556e2e2768a7"
         };
-        // Prevenção de erro se o Firebase já estiver rodando
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+
+        let db;
+        let roomCode = "TEST" + Math.random().toString(36).substr(2, 4).toUpperCase();
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div class="${type}">[${time}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
         }
-        const db = firebase.database();
 
-        // ============ DADOS (Gods & Maps) ============
-        const godsData = [
-            {n:"Zeus", img:"zeus_portrait.png"}, {n:"Poseidon", img:"poseidon_portrait.png"}, {n:"Hades", img:"hades_portrait.png"},
-            {n:"Isis", img:"isis_portrait.png"}, {n:"Ra", img:"ra_portrait.png"}, {n:"Set", img:"set_portrait.png"},
-            {n:"Odin", img:"odin_portrait.png"}, {n:"Thor", img:"thor_portrait.png"}, {n:"Loki", img:"loki_portrait.png"}, {n:"Freyr", img:"freyr_portrait.png"},
-            {n:"Kronos", img:"kronos_portrait.png"}, {n:"Gaia", img:"gaia_portrait.png"}, {n:"Oranos", img:"oranos_portrait.png"},
-            {n:"Fu Xi", img:"fuxi_portrait.png"}, {n:"Nu Wa", img:"nuwa_portrait.png"}, {n:"Shennong", img:"shennong_portrait.png"},
-            {n:"Amaterasu", img:"amaterasu_portrait.png"}, {n:"Tsukuyomi", img:"tsukuyomi_portrait.png"}, {n:"Susanoo", img:"susanoo_portrait.png"}
-        ];
-        
-        const mapsData = [
-            {n:"Alfheim", img:"https://i.ibb.co/8gLtp62y/alfheim.png"}, {n:"Blue Lagoon", img:"https://i.ibb.co/RpYKNMK7/blue-lagoon.png"},
-            {n:"Mediterranean", img:"https://i.ibb.co/MDN5Qynb/mediterranean.png"}, {n:"Oasis", img:"https://i.ibb.co/vRfNt3N/oasis.png"},
-            {n:"Savannah", img:"https://i.ibb.co/rG5mywpB/savannah.png"}, {n:"Tundra", img:"https://i.ibb.co/k2yfvvvQ/tundra.png"},
-            {n:"Watering Hole", img:"https://i.ibb.co/N6WMy1xr/watering-hole.png"}
-        ];
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
 
-        // ============ TIMELINE ============
-        const TIMELINE = [
-            { type: "BLIND_PICK", p1: "p1-god-0", p2: "p2-god-0" }, { type: "REVEAL" },
-            { type: "BAN", p1: "p1-bangod-0", p2: "p2-bangod-0" }, // Ban simultâneo
-            { type: "PICK", p1: "p1-god-1", p2: "p2-god-1" }, { type: "REVEAL" },
-            { type: "PICK_MAP", p1: "map-0", p2: "map-4" }, { type: "DECIDER" }
-        ];
-
-        // ============ ESTADO GLOBAL ============
-        let state = { phaseIndex: 0, p1Ready: false, p2Ready: false, p1Presence: false, p2Presence: false, selections: {}, logs: [] };
-        let myRole = null;
-        let roomCode = null;
-        let roomRef = null;
-        let isHost = false;
-
-        // ============ LÓGICA DE INICIALIZAÇÃO ============
-        function initCheck() {
-            const params = new URLSearchParams(window.location.search);
-            const urlRoom = params.get('room');
-            const urlRole = params.get('role');
-
-            if (urlRoom && urlRole) {
-                // Modo Automático (Entrou pelo Link)
-                document.getElementById('initialLobby').style.display = 'none';
-                roomCode = urlRoom;
-                myRole = urlRole;
-                isHost = (myRole === 'host');
-                setupConnection();
-            } else {
-                // Modo Manual (Tela de Lobby)
-                document.getElementById('initialLobby').style.display = 'flex';
+        function testConnection() {
+            log('🔥 Iniciando Firebase...', 'info');
+            
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                    log('✅ Firebase inicializado com sucesso!', 'success');
+                } else {
+                    log('✅ Firebase já estava inicializado!', 'success');
+                }
+                
+                db = firebase.database();
+                log('✅ Database conectado!', 'success');
+                log(`📍 URL: ${firebaseConfig.databaseURL}`, 'info');
+                log(`🎯 Código de teste: ${roomCode}`, 'info');
+                
+            } catch (error) {
+                log('❌ Erro ao inicializar: ' + error.message, 'error');
             }
         }
 
-        function createRoom() {
-            roomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
-            myRole = 'host';
-            isHost = true;
-            
-            // Cria a sala no Firebase
-            db.ref('rooms/' + roomCode).set({
-                state: state,
-                created: Date.now()
-            }).then(() => {
-                enterGame();
-            });
-        }
-
-        function joinRoom() {
-            const code = document.getElementById('joinCodeInput').value.toUpperCase().trim();
-            if(code.length < 2) { alert("Digite o código da sala!"); return; }
-            roomCode = code;
-            myRole = 'p2';
-            isHost = false;
-            enterGame();
-        }
-
-        function joinRoomSpec() {
-            const code = document.getElementById('joinCodeInput').value.toUpperCase().trim();
-            if(code.length < 2) { alert("Digite o código da sala!"); return; }
-            roomCode = code;
-            myRole = 'spec';
-            isHost = false;
-            enterGame();
-        }
-
-        function enterGame() {
-            document.getElementById('initialLobby').style.display = 'none';
-            // Atualiza URL visualmente
-            const newUrl = `${window.location.pathname}?room=${roomCode}&role=${myRole}`;
-            window.history.pushState({path:newUrl},'',newUrl);
-            setupConnection();
-        }
-
-        // ============ CONEXÃO FIREBASE (CORRIGIDA) ============
-        function setupConnection() {
-            document.getElementById('displayRoomCode').innerText = roomCode;
-            roomRef = db.ref('rooms/' + roomCode);
-
-            // Listener: Ocorre sempre que o Firebase muda
-            roomRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    // Atualiza o estado local com o que veio do servidor
-                    if (data.state) {
-                        state = data.state;
-                        render(); // Atualiza a tela
-                    }
-                    if(data.p1Name) document.getElementById('p1NameInput').value = data.p1Name;
-                    if(data.p2Name) document.getElementById('p2NameInput').value = data.p2Name;
-                }
-            });
-        }
-
-        // ============ READY CHECK (CORRIGIDO) ============
-        function toggleReady(player) {
-            if (!roomRef) return;
-
-            // Validação de quem pode clicar
-            let allowed = false;
-            if (myRole === 'host' && player === 'p1') allowed = true;
-            if (myRole === 'p2' && player === 'p2') allowed = true;
-            
-            // Trava de segurança para não clicar no inimigo
-            if (!allowed) {
-                console.log("Clique bloqueado: Você é " + myRole + " tentando mudar " + player);
+        function testWrite() {
+            if (!db) {
+                log('❌ Execute o teste de conexão primeiro!', 'error');
                 return;
             }
-
-            console.log("Enviando Ready para: " + player);
-
-            // ATUALIZAÇÃO GRANULAR (O Segredo para corrigir o bug)
-            // Ao invés de enviar o objeto 'state' inteiro, enviamos só o campo booleano
-            if (player === 'p1') {
-                roomRef.child('state').update({ p1Presence: !state.p1Presence });
-            } else {
-                roomRef.child('state').update({ p2Presence: !state.p2Presence });
-            }
-        }
-
-        // ============ GAMEPLAY LOGIC ============
-        function clickSlot(player, type, index) {
-            // Só permite clicar se ambos estiverem presentes (Ready Check passou)
-            if (!state.p1Presence || !state.p2Presence) return; 
-
-            if (myRole === 'spec') return; // Espectador não clica
-
-            const slotId = (player==='map') ? `map-${index}` : `${player}-${type}-${index}`;
-            const currentPhase = TIMELINE[state.phaseIndex];
-            if (!currentPhase) return;
-
-            // Regras de Turno
-            let canClick = false;
-            // Host pode clicar nos slots do P1
-            if (myRole === 'host' && (currentPhase.p1 === slotId)) canClick = true;
-            // P2 pode clicar nos slots do P2
-            if (myRole === 'p2' && (currentPhase.p2 === slotId)) canClick = true;
-
-            if (canClick) openModal(slotId, type);
-        }
-
-        function openModal(slotId, type) {
-            const grid = document.getElementById('modalGrid');
-            grid.innerHTML = '';
-            const list = (type === 'map' || type === 'banmap') ? mapsData : godsData;
-
-            list.forEach(d => {
-                const div = document.createElement('div');
-                div.className = 'selectable-card';
-                div.innerHTML = `<img src="${d.img}"><div class="card-name">${d.n}</div>`;
-                div.onclick = () => selectItem(slotId, d);
-                grid.appendChild(div);
-            });
-            document.getElementById('selectionModal').style.display = 'flex';
-        }
-
-        function selectItem(slotId, data) {
-            document.getElementById('selectionModal').style.display = 'none';
             
-            // Prepara a atualização
-            const updates = {};
-            // Salva a seleção
-            updates[`state/selections/${slotId}`] = data;
+            log('📝 Escrevendo dados no Firebase...', 'info');
             
-            // Marca flag de "Turno Terminado"
-            if (myRole === 'host') updates['state/p1Ready'] = true;
-            if (myRole === 'p2') updates['state/p2Ready'] = true;
-
-            // Envia para o Firebase (Merge)
-            roomRef.update(updates).then(() => {
-                // Host verifica se a fase acabou
-                if (isHost) checkPhaseAdvance();
-            });
+            const testData = {
+                message: 'Hello Firebase!',
+                timestamp: Date.now(),
+                randomNumber: Math.floor(Math.random() * 1000)
+            };
+            
+            db.ref('test/' + roomCode).set(testData)
+                .then(() => {
+                    log('✅ Dados escritos com sucesso!', 'success');
+                    log(`   ${JSON.stringify(testData, null, 2)}`, 'info');
+                })
+                .catch((error) => {
+                    log('❌ Erro ao escrever: ' + error.message, 'error');
+                });
         }
 
-        function checkPhaseAdvance() {
-            // Pequeno delay para garantir que os dados chegaram
-            setTimeout(() => {
-                const current = TIMELINE[state.phaseIndex];
-                if (!current) return;
-
-                // Verifica se precisa avançar
-                let readyToAdvance = false;
-
-                if (current.type === 'BLIND_PICK' || current.type === 'PICK' || current.type === 'BAN' || current.type === 'PICK_MAP') {
-                    // Verifica se os slots necessários foram preenchidos
-                    const p1Needed = current.p1;
-                    const p2Needed = current.p2;
-                    
-                    const p1Done = !p1Needed || (state.selections && state.selections[p1Needed]);
-                    const p2Done = !p2Needed || (state.selections && state.selections[p2Needed]);
-
-                    if (p1Done && p2Done) readyToAdvance = true;
-                } 
-                else if (current.type === 'REVEAL') {
-                    readyToAdvance = true; 
-                } 
-                else if (current.type === 'DECIDER') {
-                    // Lógica automática para decider (simulada)
-                    roomRef.child('state/selections/map-2').set(mapsData[0]); 
-                    readyToAdvance = true;
-                }
-
-                if (readyToAdvance) {
-                    // Reseta flags e avança fase
-                    const nextUpdates = {};
-                    nextUpdates['state/phaseIndex'] = state.phaseIndex + 1;
-                    nextUpdates['state/p1Ready'] = false;
-                    nextUpdates['state/p2Ready'] = false;
-                    
-                    // Delay visual para Reveal
-                    let delay = (current.type === 'REVEAL') ? 3000 : 500;
-                    
-                    setTimeout(() => {
-                        roomRef.update(nextUpdates);
-                    }, delay);
-                }
-            }, 500);
-        }
-
-        function confirmTurn() {
-            // Função caso queira um botão de confirmação manual
-            // Por enquanto está automático no click da carta
-        }
-
-        // ============ RENDERIZAÇÃO ============
-        function render() {
-            // 1. Controle do Overlay de Ready
-            const overlay = document.getElementById('readyOverlay');
-            // Se o jogo ainda não começou (presença falsa) e o lobby já sumiu
-            if ((!state.p1Presence || !state.p2Presence) && document.getElementById('initialLobby').style.display === 'none') {
-                overlay.style.display = 'flex';
-                
-                // Atualiza visual dos botões
-                const btn1 = document.getElementById('btnP1Ready');
-                const btn2 = document.getElementById('btnP2Ready');
-                
-                btn1.className = state.p1Presence ? 'ready-btn ready' : 'ready-btn';
-                btn1.innerText = state.p1Presence ? 'P1: PRONTO' : 'P1: CONFIRMAR';
-                
-                btn2.className = state.p2Presence ? 'ready-btn ready' : 'ready-btn';
-                btn2.innerText = state.p2Presence ? 'P2: PRONTO' : 'P2: CONFIRMAR';
-
-            } else {
-                overlay.style.display = 'none';
+        function testRead() {
+            if (!db) {
+                log('❌ Execute o teste de conexão primeiro!', 'error');
+                return;
             }
-
-            // 2. Renderiza Slots
-            const slots = document.querySelectorAll('.god-slot, .ban-slot, .map-slot');
-            slots.forEach(el => {
-                const id = el.id;
-                const sel = state.selections ? state.selections[id] : null;
-                const current = TIMELINE[state.phaseIndex];
-                
-                el.classList.remove('slot-active');
-
-                // Lógica de Blind Pick (Esconde do inimigo)
-                let hide = false;
-                if (sel && current && current.type === 'BLIND_PICK') {
-                    if (myRole === 'p2' && id.includes('p1')) hide = true;
-                    if (myRole === 'host' && id.includes('p2')) hide = true;
-                    if (myRole === 'spec') hide = true;
-                }
-                
-                if (hide) {
-                    el.innerHTML = '<div style="font-size:2em; color:#333; font-weight:bold;">?</div>';
-                    el.style.background = '#111';
-                    el.style.border = '2px solid #d4af37';
-                } else {
-                    if (sel) {
-                        if (!el.innerHTML.includes(sel.img)) {
-                            el.innerHTML = `<img src="${sel.img}">`;
-                            el.classList.add('filled');
-                            el.style.background = ''; // Reseta background do blind
-                        }
+            
+            log('📖 Lendo dados do Firebase...', 'info');
+            
+            db.ref('test/' + roomCode).once('value')
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        log('✅ Dados lidos com sucesso!', 'success');
+                        log(`   ${JSON.stringify(data, null, 2)}`, 'info');
                     } else {
-                        el.innerHTML = '';
-                        el.classList.remove('filled');
-                        el.style.background = '';
-                        el.style.border = '';
+                        log('⚠️ Nenhum dado encontrado. Execute o teste de escrita primeiro!', 'error');
                     }
-                }
-                
-                // Highlight de quem é a vez
-                if (current) {
-                    if (myRole === 'host' && current.p1 === id) el.classList.add('slot-active');
-                    if (myRole === 'p2' && current.p2 === id) el.classList.add('slot-active');
-                }
-            });
+                })
+                .catch((error) => {
+                    log('❌ Erro ao ler: ' + error.message, 'error');
+                });
         }
-        
-        function closeModal(e) { 
-            if(e.target.id === 'selectionModal') e.target.style.display='none'; 
-        }
-        
-        // Inicializa
-        initCheck();
+
+        // Auto-teste ao carregar
+        window.onload = function() {
+            log('🎯 Página carregada! Clique nos botões para testar.', 'info');
+            log('', 'info');
+            testConnection();
+        };
     </script>
 </body>
 </html>
-
-
