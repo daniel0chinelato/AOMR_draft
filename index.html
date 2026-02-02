@@ -1325,18 +1325,20 @@
             let opponentPickedGods = [];
             const opponentPrefix = (activePlayer === 'p1') ? 'p2-' : 'p1-';
 
-            Object.keys(state.selections).forEach(key => {
-                const item = state.selections[key];
-                if (!item) return;
-                if (key.includes('ban')) bannedNames.push(item.n);
-                else {
-                    if (key.includes('god')) {
-                        if (key.startsWith(opponentPrefix)) opponentPickedGods.push(item.n);
-                        if (key.startsWith(activePlayer + '-god-')) myUsedNames.push(item.n);
+            if (state.selections) {
+                Object.keys(state.selections).forEach(key => {
+                    const item = state.selections[key];
+                    if (!item) return;
+                    if (key.includes('ban')) bannedNames.push(item.n);
+                    else {
+                        if (key.includes('god')) {
+                            if (key.startsWith(opponentPrefix)) opponentPickedGods.push(item.n);
+                            if (key.startsWith(activePlayer + '-god-')) myUsedNames.push(item.n);
+                        }
+                        if (key.startsWith('map-')) globalUsedMaps.push(item.n);
                     }
-                    if (key.startsWith('map-')) globalUsedMaps.push(item.n);
-                }
-            });
+                });
+            }
 
             let validItems = list.filter(d => {
                 if (bannedNames.includes(d.n)) return false;
@@ -1358,6 +1360,12 @@
 
         function renderLogs() {
             const container = document.getElementById('logContainer');
+            
+            // Garantir que logs existe
+            if (!state.logs) {
+                state.logs = [];
+                return;
+            }
             
             // CORREÇÃO: Só adicionar novos logs, não recriar tudo
             const currentLogCount = container.querySelectorAll('.log-entry').length;
@@ -1541,18 +1549,20 @@
             const opponentPrefix = (activePlayer === 'p1') ? 'p2-' : 'p1-';
             let opponentPickedGods = [];
 
-            Object.keys(state.selections).forEach(key => {
-                const item = state.selections[key];
-                if (!item) return;
-                if (key.includes('ban')) bannedNames.push(item.n);
-                else {
-                    if (key.includes('god')) {
-                        if (key.startsWith(opponentPrefix)) opponentPickedGods.push(item.n);
-                        if (key.startsWith(activePlayer + '-god-')) myUsedNames.push(item.n);
+            if (state.selections) {
+                Object.keys(state.selections).forEach(key => {
+                    const item = state.selections[key];
+                    if (!item) return;
+                    if (key.includes('ban')) bannedNames.push(item.n);
+                    else {
+                        if (key.includes('god')) {
+                            if (key.startsWith(opponentPrefix)) opponentPickedGods.push(item.n);
+                            if (key.startsWith(activePlayer + '-god-')) myUsedNames.push(item.n);
+                        }
+                        if (key.startsWith('map-')) globalUsedMaps.push(item.n);
                     }
-                    if (key.startsWith('map-')) globalUsedMaps.push(item.n);
-                }
-            });
+                });
+            }
 
             list.forEach(d => {
                 const c = document.createElement('div'); 
@@ -1675,7 +1685,9 @@
 
         function autoPickDecider() {
             let forbidden = [];
-            Object.values(state.selections).forEach(s => forbidden.push(s.n));
+            if (state.selections) {
+                Object.values(state.selections).forEach(s => forbidden.push(s.n));
+            }
             let available = mapsData.filter(m => !forbidden.includes(m.n));
             if (available.length > 0) {
                 let picked = available[Math.floor(Math.random() * available.length)];
@@ -1860,14 +1872,17 @@
                     roomRef.on('value', (snapshot) => {
                         const data = snapshot.val();
                         if (data && !isUpdatingFromHost) {
-                            console.log('📥 HOST recebeu atualização do Firebase!', {
-                                phaseIndex: data.state.phaseIndex,
-                                p1Presence: data.state.p1Presence,
-                                p2Presence: data.state.p2Presence
-                            });
+                            console.log('📥 HOST recebeu atualização do Firebase!');
                             
                             // Atualizar estado local com dados do Firebase
                             state = data.state;
+                            
+                            // Garantir que selections sempre existe
+                            if (!state.selections) state.selections = {};
+                            if (!state.logs) state.logs = [];
+                            
+                            console.log('   phaseIndex:', state.phaseIndex, 'p1:', state.p1Presence, 'p2:', state.p2Presence);
+                            
                             render();
                         }
                     });
@@ -1907,6 +1922,11 @@
                 const data = snapshot.val();
                 console.log('📦 Dados iniciais:', data);
                 state = data.state;
+                
+                // Garantir que selections sempre existe
+                if (!state.selections) state.selections = {};
+                if (!state.logs) state.logs = [];
+                
                 document.getElementById('p1NameInput').value = data.p1Name;
                 document.getElementById('p2NameInput').value = data.p2Name;
                 
@@ -1918,13 +1938,16 @@
                 roomRef.on('value', (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
-                        console.log('📥 Atualização recebida do Firebase!', {
-                            phaseIndex: data.state.phaseIndex,
-                            selections: Object.keys(data.state.selections).length
-                        });
+                        console.log('📥 Atualização recebida do Firebase!');
                         
                         const oldPhase = state.phaseIndex;
                         state = data.state;
+                        
+                        // Garantir que selections sempre existe
+                        if (!state.selections) state.selections = {};
+                        if (!state.logs) state.logs = [];
+                        
+                        console.log('   phaseIndex:', state.phaseIndex, 'p1:', state.p1Presence, 'p2:', state.p2Presence);
                         
                         document.getElementById('p1NameInput').value = data.p1Name;
                         document.getElementById('p2NameInput').value = data.p2Name;
