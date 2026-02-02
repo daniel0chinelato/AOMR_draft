@@ -1378,39 +1378,27 @@
         function toggleReady(player) {
             let allowed = false;
             
-            if(isOfflineMode) {
-                allowed = true;
-            } else {
-                if (myRole === 'host') {
-                    if (player === 'p1') allowed = true;
-                    if (player === 'p2' && connections.length === 0) allowed = true;
-                }
-                if (myRole === 'p2' && player === 'p2') allowed = true;
-            }
+            // HOST pode confirmar P1, P2 só pode confirmar P2
+            if (myRole === 'host' && player === 'p1') allowed = true;
+            if (myRole === 'p2' && player === 'p2') allowed = true;
 
             if (allowed) {
-                if (isOfflineMode) {
-                    if (player === 'p1') state.p1Presence = !state.p1Presence;
-                    if (player === 'p2') state.p2Presence = !state.p2Presence;
-                    checkReadyStart();
-                    render();
-                } else {
-                    sendAction('TOGGLE_READY', { player: player });
-                }
+                console.log(`🎮 ${myRole} confirmando ${player}`);
+                sendAction('TOGGLE_READY', { player: player });
+            } else {
+                console.log(`⛔ ${myRole} tentou confirmar ${player} - bloqueado`);
             }
         }
 
         function checkReadyStart() {
+            console.log('🔍 Verificando ready:', { p1: state.p1Presence, p2: state.p2Presence });
+            
             if (state.p1Presence && state.p2Presence) {
+                console.log('✅ Ambos prontos! Iniciando draft...');
                 setTimeout(() => {
-                    state.phaseIndex = 0; 
-                    if (!isOfflineMode) {
-                        broadcastState();
-                        if (myRole === 'host') startTimer();
-                    } else {
-                        startTimer(); 
-                        render();
-                    }
+                    state.phaseIndex = 0;
+                    broadcastState();
+                    if (myRole === 'host') startTimer();
                 }, 500);
             }
         }
@@ -1864,18 +1852,29 @@
             }).then(() => {
                 console.log('✅ Sala criada com sucesso!');
                 isFirebaseConnected = true;
+                
+                // Aguardar um pouco antes de ativar listener para não pegar a própria criação
+                setTimeout(() => {
+                    // Escutar mudanças (para sincronizar ações de outros jogadores)
+                    console.log('👂 HOST: Iniciando listener de atualizações...');
+                    roomRef.on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data && !isUpdatingFromHost) {
+                            console.log('📥 HOST recebeu atualização do Firebase!', {
+                                phaseIndex: data.state.phaseIndex,
+                                p1Presence: data.state.p1Presence,
+                                p2Presence: data.state.p2Presence
+                            });
+                            
+                            // Atualizar estado local com dados do Firebase
+                            state = data.state;
+                            render();
+                        }
+                    });
+                }, 1000);
             }).catch((error) => {
                 console.error('❌ Erro ao criar sala:', error);
                 alert('Erro ao criar sala Firebase. Verifique sua conexão com a internet.');
-            });
-            
-            // Escutar mudanças (para sincronizar ações de outros jogadores)
-            roomRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data && !isUpdatingFromHost) {
-                    // Atualizar apenas se a mudança veio de outro cliente
-                    console.log('📥 Recebendo atualização de cliente...');
-                }
             });
             
             // Atualizar links na interface
