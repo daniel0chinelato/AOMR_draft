@@ -1534,7 +1534,7 @@
             else {
                 if (myRole === 'host' && owner === 'p1') hasPermission = true;
                 if (myRole === 'p2' && owner === 'p2') hasPermission = true;
-                if (myRole === 'host' && owner === 'p2' && connections.length === 0) hasPermission = true;
+                if (myRole === 'host' && owner === 'p2') hasPermission = true;
             }
 
             if (owner === 'p1' && state.p1Ready) hasPermission = false;
@@ -1738,7 +1738,7 @@
             
             if(currentPhase && !currentPhase.type.includes("REVEAL") && currentPhase.type !== "DECIDER") {
                 let show = false;
-                if(isOfflineMode || (myRole === 'host' && connections.length === 0)) {
+                if(isOfflineMode || (myRole === 'host')) {
                     if((currentPhase.p1 && !state.p1Ready) || (currentPhase.p2 && !state.p2Ready)) show = true;
                 } else {
                     if(myRole === 'host' && currentPhase.p1 && !state.p1Ready && state.selections[currentPhase.p1]) show = true;
@@ -1804,7 +1804,7 @@
                             if ((id === currentPhase.p1 && state.p1Ready) || (id === currentPhase.p2 && state.p2Ready)) hideMe = true; 
                         } 
                         else { 
-                            if(myRole === 'host' && connections.length === 0) { 
+                            if(myRole === 'host') { 
                                 if((id===currentPhase.p1 && state.p1Ready) || (id===currentPhase.p2 && state.p2Ready)) hideMe = true; 
                             } else {
                                 if (myRole === 'host' && id === currentPhase.p2) hideMe = true; 
@@ -1839,7 +1839,7 @@
                     el.classList.add('slot-active');
                     let pending = false;
                     if(data) {
-                        if(isOfflineMode || (myRole === 'host' && connections.length === 0)) { 
+                        if(isOfflineMode || (myRole === 'host')) { 
                             if ((id === currentPhase.p1 && !state.p1Ready) || (id === currentPhase.p2 && !state.p2Ready)) pending = true; 
                         }
                         else { 
